@@ -101,6 +101,10 @@ public partial class EmployeesViewModel : ObservableObject
     [ObservableProperty]
     private DateTime _lastSaveTime;
 
+    public string LastSaveTimeDisplay => LastSaveTime == default 
+        ? "Never" 
+        : LastSaveTime.ToString("g");
+
     public bool CanSave => !Editor.HasErrors &&
                            !string.IsNullOrWhiteSpace(Editor.FirstName) &&
                            !string.IsNullOrWhiteSpace(Editor.LastName);
@@ -112,7 +116,7 @@ public partial class EmployeesViewModel : ObservableObject
     // ═══════════════════════════════════════════════════════════════
 
     [RelayCommand]
-    private async Task LoadEmployeesAsync()
+    public async Task LoadEmployeesAsync()
     {
         IsLoading = true;
         StatusMessage = "Loading employees...";

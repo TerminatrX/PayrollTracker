@@ -10,32 +10,23 @@ namespace PayrollManager.UI.Views;
 /// </summary>
 public sealed partial class PayStubPage : Page
 {
-    public PayStubViewModel ViewModel { get; private set; }
+    public PayStubViewModel ViewModel { get; }
 
     public PayStubPage()
     {
+        ViewModel = App.GetService<PayStubViewModel>();
         this.InitializeComponent();
+        this.DataContext = ViewModel;
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
 
-        // ViewModel can be passed as navigation parameter or resolved from DI
-        if (e.Parameter is PayStubViewModel vm)
+        // Handle navigation parameters
+        if (e.Parameter is int payStubId)
         {
-            ViewModel = vm;
+            _ = ViewModel.LoadPayStubCommand.ExecuteAsync(payStubId);
         }
-        else if (e.Parameter is int payStubId)
-        {
-            ViewModel = App.GetService<PayStubViewModel>();
-            ViewModel.LoadPayStub(payStubId);
-        }
-        else
-        {
-            ViewModel = App.GetService<PayStubViewModel>();
-        }
-
-        this.DataContext = ViewModel;
     }
 }

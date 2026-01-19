@@ -373,6 +373,56 @@ public partial class PayStubViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private async Task ExportPayStubCsvAsync(int payStubId)
+    {
+        IsLoading = true;
+        StatusMessage = "Exporting to CSV...";
+
+        try
+        {
+            var filePath = await _exportService.ExportPayStubToCsvAsync(payStubId);
+            StatusMessage = $"Exported to: {filePath}";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Export error: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task ExportPayStubPdfAsync(int payStubId)
+    {
+        IsLoading = true;
+        StatusMessage = "Exporting to PDF...";
+
+        try
+        {
+            var filePath = await _exportService.ExportPayStubToPdfAsync(payStubId);
+            StatusMessage = $"Exported to: {filePath}";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Export error: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    public event EventHandler? NavigateBackRequested;
+
+    [RelayCommand]
+    private void NavigateBack()
+    {
+        NavigateBackRequested?.Invoke(this, EventArgs.Empty);
+    }
+
+    [RelayCommand]
     private void ApplyFilters()
     {
         FilteredPayStubs.Clear();

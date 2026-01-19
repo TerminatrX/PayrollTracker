@@ -15,11 +15,12 @@ public sealed partial class PayrollRunPage : Page
 
     public PayrollRunPage()
     {
-        InitializeComponent();
         _scope = App.Services.CreateScope();
         var dbContext = _scope.ServiceProvider.GetRequiredService<AppDbContext>();
         var payrollService = _scope.ServiceProvider.GetRequiredService<PayrollService>();
         ViewModel = new PayRunWizardViewModel(dbContext, payrollService);
+        this.InitializeComponent();
+        this.DataContext = ViewModel;
         _ = ViewModel.InitializeAsync();
     }
 

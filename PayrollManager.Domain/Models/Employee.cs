@@ -26,7 +26,17 @@ public class Employee
 
     public decimal OtherDeductionsPerPeriod { get; set; }
 
+    public string? JobTitle { get; set; }
+
+    public string? Department { get; set; }
+
+    public string? AvatarUrl { get; set; }
+
     public ICollection<PayStub> PayStubs { get; set; } = new List<PayStub>();
 
     public string FullName => $"{FirstName} {LastName}".Trim();
+
+    public string EmployeeId => $"EMP{Id:D3}";
+
+    public string DepartmentCode => Department?.Length > 3 ? Department[..3] : Department ?? "";
 }

@@ -222,9 +222,9 @@ public partial class SettingsViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void DiscardChanges()
+    private async Task DiscardChanges()
     {
-        LoadSettingsAsyncCommand.Execute(null);
+        await LoadSettingsAsync();
         HasChanges = false;
     }
 

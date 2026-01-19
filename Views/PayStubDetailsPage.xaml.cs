@@ -2,6 +2,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using PayrollManager.Domain.Models;
+using PayrollManager.UI.ViewModels;
 using System.Collections.ObjectModel;
 using System.Text;
 
@@ -12,11 +13,24 @@ public sealed partial class PayStubDetailsPage : Page
     private PayStub? _payStub;
     private Employee? _employee;
 
+    public PayStubViewModel ViewModel { get; }
+
     public ObservableCollection<EarningLineDisplay> EarningLines { get; } = new();
 
     public PayStubDetailsPage()
     {
+        ViewModel = App.GetService<PayStubViewModel>();
         InitializeComponent();
+        this.DataContext = ViewModel;
+        
+        // Subscribe to navigation request
+        ViewModel.NavigateBackRequested += (s, e) =>
+        {
+            if (Frame.CanGoBack)
+            {
+                Frame.GoBack();
+            }
+        };
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -28,6 +42,17 @@ public sealed partial class PayStubDetailsPage : Page
             _payStub = param.PayStub;
             _employee = param.Employee;
             LoadPayStubDetails();
+            
+            // Store pay stub ID for export commands
+            if (_payStub != null)
+            {
+                ViewModel.SelectedPayStub = new PayStubListItem
+                {
+                    Id = _payStub.Id,
+                    EmployeeName = _employee?.FullName ?? "Unknown",
+                    PayDate = _payStub.PayRun?.PayDate ?? DateTime.MinValue
+                };
+            }
         }
     }
 
@@ -95,91 +120,6 @@ public sealed partial class PayStubDetailsPage : Page
         YtdNetText.Text = _payStub.YtdNet.ToString("C2");
     }
 
-    private async void ExportCsv_Click(object sender, RoutedEventArgs e)
-    {
-        if (_payStub == null || _employee == null) return;
-
-        try
-        {
-            var fileName = $"paystub_{_employee.LastName}_{_payStub.PayRun?.PayDate:yyyyMMdd}.csv";
-            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName);
-
-            var sb = new StringBuilder();
-            sb.AppendLine("Pay Stub Export");
-            sb.AppendLine($"Employee,{_employee.FullName}");
-            sb.AppendLine($"Pay Period,{_payStub.PayRun?.PeriodStart:d} - {_payStub.PayRun?.PeriodEnd:d}");
-            sb.AppendLine($"Pay Date,{_payStub.PayRun?.PayDate:d}");
-            sb.AppendLine();
-
-            // Earning lines
-            sb.AppendLine("EARNINGS");
-            sb.AppendLine("Type,Description,Hours,Rate,Amount");
-            foreach (var line in _payStub.EarningLines)
-            {
-                sb.AppendLine($"{line.Type},{line.Description},{line.Hours},{line.Rate},{line.Amount}");
-            }
-            sb.AppendLine($",,,,Gross Pay,{_payStub.GrossPay}");
-            sb.AppendLine();
-
-            sb.AppendLine("DEDUCTIONS & TAXES");
-            sb.AppendLine($"401k Deduction,-{_payStub.PreTax401kDeduction}");
-            sb.AppendLine($"Federal Tax,-{_payStub.TaxFederal}");
-            sb.AppendLine($"State Tax,-{_payStub.TaxState}");
-            sb.AppendLine($"Social Security,-{_payStub.TaxSocialSecurity}");
-            sb.AppendLine($"Medicare,-{_payStub.TaxMedicare}");
-            sb.AppendLine($"Post-Tax Deductions,-{_payStub.PostTaxDeductions}");
-            sb.AppendLine();
-
-            sb.AppendLine($"Net Pay,{_payStub.NetPay}");
-            sb.AppendLine();
-            sb.AppendLine("YEAR-TO-DATE");
-            sb.AppendLine($"YTD Gross,{_payStub.YtdGross}");
-            sb.AppendLine($"YTD Net,{_payStub.YtdNet}");
-
-            await File.WriteAllTextAsync(path, sb.ToString(), Encoding.UTF8);
-
-            var dialog = new ContentDialog
-            {
-                Title = "Export Complete",
-                Content = $"Pay stub exported to:\n{path}",
-                CloseButtonText = "OK",
-                XamlRoot = this.XamlRoot
-            };
-            await dialog.ShowAsync();
-        }
-        catch (Exception ex)
-        {
-            var dialog = new ContentDialog
-            {
-                Title = "Export Failed",
-                Content = ex.Message,
-                CloseButtonText = "OK",
-                XamlRoot = this.XamlRoot
-            };
-            await dialog.ShowAsync();
-        }
-    }
-
-    private async void ExportPdf_Click(object sender, RoutedEventArgs e)
-    {
-        // TODO: Implement PDF export using a library like QuestPDF or iTextSharp
-        var dialog = new ContentDialog
-        {
-            Title = "Coming Soon",
-            Content = "PDF export functionality will be available in a future update.",
-            CloseButtonText = "OK",
-            XamlRoot = this.XamlRoot
-        };
-        await dialog.ShowAsync();
-    }
-
-    private void Back_Click(object sender, RoutedEventArgs e)
-    {
-        if (Frame.CanGoBack)
-        {
-            Frame.GoBack();
-        }
-    }
 }
 
 public class EarningLineDisplay

@@ -28,7 +28,7 @@
                      Style="{StaticResource FormTextBoxStyle}" />
 
             <ComboBox Header="Status" Width="140"
-                      SelectedIndex="{x:Bind ViewModel.ActiveFilterIndex, Mode=TwoWay}">
+                      SelectedIndex="{x:Bind ViewModel.StatusFilterIndex, Mode=TwoWay}">
                 <ComboBoxItem Content="All" />
                 <ComboBoxItem Content="Active" />
                 <ComboBoxItem Content="Inactive" />

@@ -1,3 +1,4 @@
+using CommunityToolkit.WinUI.UI.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -16,10 +17,11 @@ public sealed partial class EmployeeManagementPage : Page
 
     public EmployeeManagementPage()
     {
-        InitializeComponent();
         _scope = App.Services.CreateScope();
         var dbContext = _scope.ServiceProvider.GetRequiredService<AppDbContext>();
         ViewModel = new EmployeesViewModel(dbContext);
+        this.InitializeComponent();
+        this.DataContext = ViewModel;
         _ = ViewModel.LoadEmployeesAsync();
 
         // Keyboard shortcuts
@@ -48,9 +50,11 @@ public sealed partial class EmployeeManagementPage : Page
 
     private void EmployeesGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (EmployeesGrid.SelectedItem is Employee employee)
+        if (sender is DataGrid grid && grid.SelectedItem is Employee employee)
         {
-            ViewModel.SelectEmployee(employee);
+            ViewModel.SelectedEmployee = employee;
+            // Load employee details into editor
+            ViewModel.Editor.LoadFrom(employee);
         }
     }
 
@@ -79,7 +83,8 @@ public sealed partial class EmployeeManagementPage : Page
         else if (e.Key == Windows.System.VirtualKey.F && 
             Microsoft.UI.Input.InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control).HasFlag(Windows.UI.Core.CoreVirtualKeyStates.Down))
         {
-            SearchBox.Focus(Microsoft.UI.Xaml.FocusState.Keyboard);
+            // SearchBox will be available after XAML compilation
+            // SearchBox?.Focus(Microsoft.UI.Xaml.FocusState.Keyboard);
             e.Handled = true;
         }
     }

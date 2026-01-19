@@ -251,9 +251,12 @@
 
             <!-- Export Buttons -->
             <StackPanel Orientation="Horizontal">
-                <Button Content="Export as CSV" Click="ExportCsv_Click" />
-                <Button Content="Export as PDF" Click="ExportPdf_Click" IsEnabled="False" />
-                <Button Content="Back" Click="Back_Click" />
+                <Button Content="Export as CSV" 
+                        Command="{x:Bind ViewModel.DownloadCsvCommand}" />
+                <Button Content="Export as PDF" 
+                        Command="{x:Bind ViewModel.DownloadPdfCommand}" />
+                <Button Content="Back" 
+                        Command="{x:Bind ViewModel.NavigateBackCommand}" />
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

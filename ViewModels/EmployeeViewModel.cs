@@ -396,6 +396,8 @@ public partial class EmployeeViewModel : ObservableObject, INotifyDataErrorInfo
         PreTax401kPercent = employee.PreTax401kPercent;
         HealthInsurancePerPeriod = employee.HealthInsurancePerPeriod;
         OtherDeductionsPerPeriod = employee.OtherDeductionsPerPeriod;
+        JobTitle = employee.JobTitle ?? string.Empty;
+        Department = employee.Department ?? "Engineering";
         _errors.Clear();
     }
 
@@ -410,6 +412,8 @@ public partial class EmployeeViewModel : ObservableObject, INotifyDataErrorInfo
         employee.PreTax401kPercent = PreTax401kPercent;
         employee.HealthInsurancePerPeriod = HealthInsurancePerPeriod;
         employee.OtherDeductionsPerPeriod = OtherDeductionsPerPeriod;
+        employee.JobTitle = string.IsNullOrWhiteSpace(JobTitle) ? null : JobTitle.Trim();
+        employee.Department = string.IsNullOrWhiteSpace(Department) ? null : Department.Trim();
     }
 
     public void Reset()

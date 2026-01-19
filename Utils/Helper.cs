@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Windowing;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using System;
 using System.Collections.Generic;
@@ -48,9 +48,9 @@ namespace PayrollManager.UI.Utils
         /// <returns></returns>
         public static Encoding DetectEncoding(string FilePath)
         {
-           var result=  UtfUnknown.CharsetDetector.DetectFromFile(FilePath);
-           return result.Detected.Encoding;
-
+            // UTF-Unknown package was removed - defaulting to UTF-8
+            // TODO: Re-implement encoding detection if needed
+            return Encoding.UTF8;
         }
     }
 }

@@ -320,12 +320,12 @@ public class ExportService
 
                 page.Footer()
                     .AlignCenter()
+                    .DefaultTextStyle(TextStyle.Default.FontSize(8))
                     .Text(x =>
                     {
                         x.Span("Generated on ");
                         x.Span(DateTime.Now.ToString("MMM dd, yyyy HH:mm"));
-                    })
-                    .FontSize(8);
+                    });
             });
         });
 
@@ -507,12 +507,12 @@ public class ExportService
 
                 page.Footer()
                     .AlignCenter()
+                    .DefaultTextStyle(TextStyle.Default.FontSize(8))
                     .Text(x =>
                     {
                         x.Span("Generated on ");
                         x.Span(DateTime.Now.ToString("MMM dd, yyyy HH:mm"));
-                    })
-                    .FontSize(8);
+                    });
             });
         });
 

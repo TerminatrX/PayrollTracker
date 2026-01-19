@@ -16,19 +16,19 @@
                         IsBackEnabled="False"
                         IsPaneOpen="True"
                         OpenPaneLength="240"
-                        SelectionChanged="MainNav_OnSelectionChanged"
+                        ItemInvoked="MainNav_ItemInvoked"
                         IsSettingsVisible="False">
             
             <!-- Navigation Header -->
             <NavigationView.PaneHeader>
-                <StackPanel Orientation="Horizontal" Margin="{StaticResource SpacingSM},{StaticResource SpacingXS}">
+                <StackPanel Orientation="Horizontal" Margin="12,8,0,0">
                     <Border Width="32" Height="32" 
                             CornerRadius="{StaticResource CornerRadiusMD}"
                             Background="{StaticResource PrimaryBrush}">
                         <FontIcon Glyph="&#xE8C7;" FontSize="16" Foreground="White"
                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
-                    <StackPanel VerticalAlignment="Center" Margin="{StaticResource SpacingSM},0,0,0">
+                    <StackPanel VerticalAlignment="Center" Margin="12,0,0,0">
                         <TextBlock Text="PayrollManager" 
                                    Style="{StaticResource TypographyBodyStrong}" />
                         <TextBlock Text="Enterprise" 

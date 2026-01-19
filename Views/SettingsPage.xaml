@@ -190,7 +190,6 @@
                                     CornerRadius="12"
                                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                                     BorderThickness="2"
-                                    BorderDashArray="4,4"
                                     Background="{ThemeResource SubtleFillColorTertiaryBrush}">
                                 <Button HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"

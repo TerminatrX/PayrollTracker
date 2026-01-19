@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "A56qIKGg4IM=",
+  "dgSpecHash": "v2rouQXh4Xg=",
   "success": true,
   "projectFilePath": "C:\\Users\\Varun\\Documents\\CodingProject\\PayrollManager\\PayrollManager.Domain\\PayrollManager.Domain.csproj",
   "expectedPackageFiles": [
@@ -30,6 +30,7 @@
     "C:\\Users\\Varun\\.nuget\\packages\\microsoft.extensions.options\\8.0.0\\microsoft.extensions.options.8.0.0.nupkg.sha512",
     "C:\\Users\\Varun\\.nuget\\packages\\microsoft.extensions.primitives\\8.0.0\\microsoft.extensions.primitives.8.0.0.nupkg.sha512",
     "C:\\Users\\Varun\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
+    "C:\\Users\\Varun\\.nuget\\packages\\questpdf\\2024.12.0\\questpdf.2024.12.0.nupkg.sha512",
     "C:\\Users\\Varun\\.nuget\\packages\\sqlitepclraw.bundle_e_sqlite3\\2.1.6\\sqlitepclraw.bundle_e_sqlite3.2.1.6.nupkg.sha512",
     "C:\\Users\\Varun\\.nuget\\packages\\sqlitepclraw.core\\2.1.6\\sqlitepclraw.core.2.1.6.nupkg.sha512",
     "C:\\Users\\Varun\\.nuget\\packages\\sqlitepclraw.lib.e_sqlite3\\2.1.6\\sqlitepclraw.lib.e_sqlite3.2.1.6.nupkg.sha512",

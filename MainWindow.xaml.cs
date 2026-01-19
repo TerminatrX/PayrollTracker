@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using PayrollManager.UI.Views;
+using System.Linq;
 
 namespace PayrollManager.UI
 {
@@ -16,14 +17,21 @@ namespace PayrollManager.UI
             // Set window title
             Title = "PayrollManager - Enterprise Edition";
             
-            // Select first nav item and navigate to Employees page
-            MainNav.SelectedItem = MainNav.MenuItems[1]; // Skip header, select Employees
+            // Select first nav item and navigate to Employees page on startup
+            var employeesItem = MainNav.MenuItems.OfType<NavigationViewItem>()
+                .FirstOrDefault(item => item.Tag?.ToString() == "employees");
+            
+            if (employeesItem != null)
+            {
+                MainNav.SelectedItem = employeesItem;
+            }
+            
             ContentFrame.Navigate(typeof(EmployeesPage));
         }
 
-        private void MainNav_OnSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        private void MainNav_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
-            if (args.SelectedItem is not NavigationViewItem item || item.Tag is not string tag)
+            if (args.InvokedItemContainer is not NavigationViewItem item || item.Tag is not string tag)
             {
                 return;
             }

@@ -1,7 +1,16 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\Varun\\Documents\\CodingProject\\PayrollManager\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{CB23FA62-D58A-4925-8510-1565E671E7A2}|PayrollManager.UI.csproj|c:\\users\\varun\\documents\\codingproject\\payrollmanager\\viewmodels\\payrunwizardviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB23FA62-D58A-4925-8510-1565E671E7A2}|PayrollManager.UI.csproj|solutionrelative:viewmodels\\payrunwizardviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB23FA62-D58A-4925-8510-1565E671E7A2}|PayrollManager.UI.csproj|c:\\users\\varun\\documents\\codingproject\\payrollmanager\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{CB23FA62-D58A-4925-8510-1565E671E7A2}|PayrollManager.UI.csproj|solutionrelative:app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,11 +18,36 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "PayRunWizardViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\Varun\\Documents\\CodingProject\\PayrollManager\\ViewModels\\PayRunWizardViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\PayRunWizardViewModel.cs",
+              "ToolTip": "C:\\Users\\Varun\\Documents\\CodingProject\\PayrollManager\\ViewModels\\PayRunWizardViewModel.cs",
+              "RelativeToolTip": "ViewModels\\PayRunWizardViewModel.cs",
+              "ViewState": "AgIAALMAAAAAAAAAAAAxwLUAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-19T20:19:45.54Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "App.xaml",
+              "DocumentMoniker": "C:\\Users\\Varun\\Documents\\CodingProject\\PayrollManager\\App.xaml",
+              "RelativeDocumentMoniker": "App.xaml",
+              "ToolTip": "C:\\Users\\Varun\\Documents\\CodingProject\\PayrollManager\\App.xaml",
+              "RelativeToolTip": "App.xaml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-01-19T20:02:08.534Z"
             }
           ]
         }

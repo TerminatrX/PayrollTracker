@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:PayrollManager.UI"
     xmlns:converters="using:PayrollManager.UI.Converters"
+    xmlns:ui="using:Windows.UI"
     RequestedTheme="Dark">
     <Application.Resources>
         <ResourceDictionary>
@@ -14,38 +15,38 @@
             </ResourceDictionary.MergedDictionaries>
             
             <!-- Theme-aware color definitions (Dark theme by default) -->
-            <Color x:Key="PrimaryColor">#2B8CEE</Color>
-            <Color x:Key="PrimaryHoverColor">#3D9DFF</Color>
-            <Color x:Key="PrimaryPressedColor">#1A7BD6</Color>
+            <ui:Color x:Key="PrimaryColor">#2B8CEE</ui:Color>
+            <ui:Color x:Key="PrimaryHoverColor">#3D9DFF</ui:Color>
+            <ui:Color x:Key="PrimaryPressedColor">#1A7BD6</ui:Color>
             
             <!-- Dark Theme Colors (default) -->
-            <Color x:Key="BackgroundPrimary">#101922</Color>
-            <Color x:Key="BackgroundSecondary">#192633</Color>
-            <Color x:Key="BackgroundTertiary">#233648</Color>
-            <Color x:Key="BackgroundElevated">#2D3A4A</Color>
-            <Color x:Key="SurfaceDefault">#192633</Color>
-            <Color x:Key="SurfaceSubtle">#233648</Color>
-            <Color x:Key="SurfaceHover">#2D3A4A</Color>
-            <Color x:Key="SurfacePressed">#364556</Color>
-            <Color x:Key="BorderDefault">#233648</Color>
-            <Color x:Key="BorderSubtle">#2D3A4A</Color>
-            <Color x:Key="BorderStrong">#364556</Color>
-            <Color x:Key="TextPrimary">#FFFFFF</Color>
-            <Color x:Key="TextSecondary">#B0B8C4</Color>
-            <Color x:Key="TextTertiary">#7A8494</Color>
-            <Color x:Key="TextDisabled">#4A5568</Color>
-            <Color x:Key="SuccessColor">#22C55E</Color>
-            <Color x:Key="WarningColor">#F97316</Color>
-            <Color x:Key="ErrorColor">#EF4444</Color>
-            <Color x:Key="InfoColor">#3B82F6</Color>
-            <Color x:Key="StatusActiveColor">#22C55E</Color>
-            <Color x:Key="StatusTerminatedColor">#6B7280</Color>
-            <Color x:Key="StatusLeaveColor">#F59E0B</Color>
+            <ui:Color x:Key="BackgroundPrimary">#101922</ui:Color>
+            <ui:Color x:Key="BackgroundSecondary">#192633</ui:Color>
+            <ui:Color x:Key="BackgroundTertiary">#233648</ui:Color>
+            <ui:Color x:Key="BackgroundElevated">#2D3A4A</ui:Color>
+            <ui:Color x:Key="SurfaceDefault">#192633</ui:Color>
+            <ui:Color x:Key="SurfaceSubtle">#233648</ui:Color>
+            <ui:Color x:Key="SurfaceHover">#2D3A4A</ui:Color>
+            <ui:Color x:Key="SurfacePressed">#364556</ui:Color>
+            <ui:Color x:Key="BorderDefault">#233648</ui:Color>
+            <ui:Color x:Key="BorderSubtle">#2D3A4A</ui:Color>
+            <ui:Color x:Key="BorderStrong">#364556</ui:Color>
+            <ui:Color x:Key="TextPrimary">#FFFFFF</ui:Color>
+            <ui:Color x:Key="TextSecondary">#B0B8C4</ui:Color>
+            <ui:Color x:Key="TextTertiary">#7A8494</ui:Color>
+            <ui:Color x:Key="TextDisabled">#4A5568</ui:Color>
+            <ui:Color x:Key="SuccessColor">#22C55E</ui:Color>
+            <ui:Color x:Key="WarningColor">#F97316</ui:Color>
+            <ui:Color x:Key="ErrorColor">#EF4444</ui:Color>
+            <ui:Color x:Key="InfoColor">#3B82F6</ui:Color>
+            <ui:Color x:Key="StatusActiveColor">#22C55E</ui:Color>
+            <ui:Color x:Key="StatusTerminatedColor">#6B7280</ui:Color>
+            <ui:Color x:Key="StatusLeaveColor">#F59E0B</ui:Color>
             
             <!-- Legacy color aliases for backward compatibility -->
-            <Color x:Key="AccentColor">#2B8CEE</Color>
-            <Color x:Key="CardBackgroundColor">#192633</Color>
-            <Color x:Key="SectionBackgroundColor">#101922</Color>
+            <ui:Color x:Key="AccentColor">#2B8CEE</ui:Color>
+            <ui:Color x:Key="CardBackgroundColor">#192633</ui:Color>
+            <ui:Color x:Key="SectionBackgroundColor">#101922</ui:Color>
 
             <!-- Value Converters -->
             <converters:CurrencyConverter x:Key="CurrencyConverter" />
@@ -78,7 +79,7 @@
 
             <!-- Additional Typography Styles (not in Theme.xaml) -->
             <Style x:Key="LabelStyle" TargetType="TextBlock" BasedOn="{StaticResource TypographySmallStrong}">
-                <Setter Property="Margin" Value="0,0,0,{StaticResource SpacingXXS}" />
+                <Setter Property="Margin" Value="0,0,0,4" />
             </Style>
 
             <Style x:Key="ValueStyle" TargetType="TextBlock" BasedOn="{StaticResource TypographyBody}" />

@@ -229,38 +229,6 @@
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Border x:Name="RootBorder"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding CornerRadius}"
-                            Padding="{TemplateBinding Padding}">
-                        <ContentPresenter x:Name="ContentPresenter"
-                                        Content="{TemplateBinding Content}"
-                                        ContentTemplate="{TemplateBinding ContentTemplate}"
-                                        Foreground="{TemplateBinding Foreground}"
-                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsPointerOver" Value="True">
-                            <Setter TargetName="RootBorder" Property="Background" Value="{StaticResource PrimaryHoverBrush}" />
-                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{StaticResource PrimaryHoverBrush}" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="RootBorder" Property="Background" Value="{StaticResource PrimaryPressedBrush}" />
-                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{StaticResource PrimaryPressedBrush}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="RootBorder" Property="Opacity" Value="0.4" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
     </Style>
 
     <!-- Secondary Button -->
@@ -276,38 +244,6 @@
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Border x:Name="RootBorder"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding CornerRadius}"
-                            Padding="{TemplateBinding Padding}">
-                        <ContentPresenter x:Name="ContentPresenter"
-                                        Content="{TemplateBinding Content}"
-                                        ContentTemplate="{TemplateBinding ContentTemplate}"
-                                        Foreground="{TemplateBinding Foreground}"
-                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsPointerOver" Value="True">
-                            <Setter TargetName="RootBorder" Property="Background" Value="{StaticResource SurfaceHoverBrush}" />
-                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{StaticResource PrimaryHoverBrush}" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="RootBorder" Property="Background" Value="{StaticResource SurfacePressedBrush}" />
-                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{StaticResource PrimaryPressedBrush}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="RootBorder" Property="Opacity" Value="0.4" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
     </Style>
 
     <!-- Ghost Button -->
@@ -323,36 +259,6 @@
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Border x:Name="RootBorder"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding CornerRadius}"
-                            Padding="{TemplateBinding Padding}">
-                        <ContentPresenter x:Name="ContentPresenter"
-                                        Content="{TemplateBinding Content}"
-                                        ContentTemplate="{TemplateBinding ContentTemplate}"
-                                        Foreground="{TemplateBinding Foreground}"
-                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsPointerOver" Value="True">
-                            <Setter TargetName="RootBorder" Property="Background" Value="{StaticResource SurfaceHoverBrush}" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="RootBorder" Property="Background" Value="{StaticResource SurfacePressedBrush}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="RootBorder" Property="Opacity" Value="0.4" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
     </Style>
 
     <!-- ═══════════════════════════════════════════════════════════════ -->

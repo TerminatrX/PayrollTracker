@@ -21,6 +21,14 @@ public sealed partial class SettingsPage : Page
 
     /// <summary>
     /// Handles settings navigation item clicks to scroll to the appropriate section.
+    /// This is a UI-only handler for scrolling and does not forward to ViewModel commands.
+    /// 
+    /// For business logic handlers, use the standard forwarding pattern:
+    /// private void <HandlerName>_Click(object sender, RoutedEventArgs e)
+    /// {
+    ///     if (ViewModel.<CommandName>.CanExecute(null))
+    ///         ViewModel.<CommandName>.Execute(null);
+    /// }
     /// </summary>
     private void SettingsNavItem_Click(object sender, RoutedEventArgs e)
     {

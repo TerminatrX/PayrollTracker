@@ -1,10 +1,15 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.UI;
+using Microsoft.UI.Text;
+using Microsoft.UI.Xaml.Media;
 using PayrollManager.Domain.Data;
 using PayrollManager.Domain.Models;
 using PayrollManager.Domain.Services;
 using System.Collections.ObjectModel;
+using Windows.UI;
+using Windows.UI.Text;
 
 namespace PayrollManager.UI.ViewModels;
 
@@ -155,11 +160,185 @@ public partial class PayRunWizardViewModel : ObservableObject
     };
 
     // ═══════════════════════════════════════════════════════════════
+    // STEP 1 PROPERTIES
+    // ═══════════════════════════════════════════════════════════════
+
+    public SolidColorBrush Step1Background => GetStepBackground(0);
+    public SolidColorBrush Step1BorderBrush => GetStepBorderBrush(0);
+    public string Step1Icon => GetStepIcon(0);
+    public SolidColorBrush Step1Foreground => GetStepForeground(0);
+    public SolidColorBrush Step1ConnectorColor => GetStepConnectorColor(0);
+    public FontWeight Step1FontWeight => GetStepFontWeight(0);
+    public SolidColorBrush Step1TextColor => GetStepTextColor(0);
+    public string Step1Status => GetStepStatus(0);
+
+    // ═══════════════════════════════════════════════════════════════
+    // STEP 2 PROPERTIES
+    // ═══════════════════════════════════════════════════════════════
+
+    public SolidColorBrush Step2Background => GetStepBackground(1);
+    public SolidColorBrush Step2BorderBrush => GetStepBorderBrush(1);
+    public string Step2Icon => GetStepIcon(1);
+    public SolidColorBrush Step2Foreground => GetStepForeground(1);
+    public SolidColorBrush Step2ConnectorColor => GetStepConnectorColor(1);
+    public FontWeight Step2FontWeight => GetStepFontWeight(1);
+    public SolidColorBrush Step2TextColor => GetStepTextColor(1);
+    public string Step2Status => GetStepStatus(1);
+
+    // ═══════════════════════════════════════════════════════════════
+    // STEP 3 PROPERTIES
+    // ═══════════════════════════════════════════════════════════════
+
+    public SolidColorBrush Step3Background => GetStepBackground(2);
+    public SolidColorBrush Step3BorderBrush => GetStepBorderBrush(2);
+    public string Step3Icon => GetStepIcon(2);
+    public SolidColorBrush Step3Foreground => GetStepForeground(2);
+    public FontWeight Step3FontWeight => GetStepFontWeight(2);
+    public SolidColorBrush Step3TextColor => GetStepTextColor(2);
+    public string Step3Status => GetStepStatus(2);
+
+    // ═══════════════════════════════════════════════════════════════
+    // STEP STYLING HELPERS
+    // ═══════════════════════════════════════════════════════════════
+
+    private SolidColorBrush GetStepBackground(int stepIndex)
+    {
+        if (stepIndex < CurrentStep || (stepIndex == 0 && IsStep1Complete) || 
+            (stepIndex == 1 && IsStep2Complete) || (stepIndex == 2 && IsStep3Complete))
+        {
+            // Complete - green background
+            return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 34, 197, 94)); // Success green
+        }
+        else if (stepIndex == CurrentStep)
+        {
+            // Current - accent/primary background
+            return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 43, 140, 238)); // Primary blue
+        }
+        else
+        {
+            // Not started - gray background
+            return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 107, 114, 128)); // Gray
+        }
+    }
+
+    private SolidColorBrush GetStepBorderBrush(int stepIndex)
+    {
+        if (stepIndex < CurrentStep || (stepIndex == 0 && IsStep1Complete) || 
+            (stepIndex == 1 && IsStep2Complete) || (stepIndex == 2 && IsStep3Complete))
+        {
+            return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 22, 163, 74)); // Darker green
+        }
+        else if (stepIndex == CurrentStep)
+        {
+            return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 26, 123, 214)); // Darker blue
+        }
+        else
+        {
+            return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 75, 85, 99)); // Darker gray
+        }
+    }
+
+    private string GetStepIcon(int stepIndex)
+    {
+        if (stepIndex < CurrentStep || (stepIndex == 0 && IsStep1Complete) || 
+            (stepIndex == 1 && IsStep2Complete) || (stepIndex == 2 && IsStep3Complete))
+        {
+            return "\uE73E"; // Checkmark icon
+        }
+        else if (stepIndex == CurrentStep)
+        {
+            return stepIndex switch
+            {
+                0 => "\uE787", // Calendar icon
+                1 => "\uE8A5", // Edit icon
+                2 => "\uE8B8", // Review icon
+                _ => "\uE713"  // Circle icon
+            };
+        }
+        else
+        {
+            return "\uE76C"; // Circle icon (empty)
+        }
+    }
+
+    private SolidColorBrush GetStepForeground(int stepIndex)
+    {
+        // Icon foreground is always white for visibility
+        return new SolidColorBrush(Microsoft.UI.Colors.White);
+    }
+
+    private SolidColorBrush GetStepConnectorColor(int stepIndex)
+    {
+        // Connector shows progress - green if next step is complete or current
+        if (stepIndex == 0)
+        {
+            // Step1 connector - green if step1 is complete or we're on step2+
+            if (IsStep1Complete || CurrentStep >= 1)
+                return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 34, 197, 94));
+        }
+        else if (stepIndex == 1)
+        {
+            // Step2 connector - green if step2 is complete or we're on step3
+            if (IsStep2Complete || CurrentStep >= 2)
+                return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 34, 197, 94));
+        }
+        
+        // Default gray connector
+        return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 107, 114, 128));
+    }
+
+    private FontWeight GetStepFontWeight(int stepIndex)
+    {
+        if (stepIndex == CurrentStep)
+        {
+            return FontWeights.Bold;
+        }
+        return FontWeights.Normal;
+    }
+
+    private SolidColorBrush GetStepTextColor(int stepIndex)
+    {
+        if (stepIndex < CurrentStep || (stepIndex == 0 && IsStep1Complete) || 
+            (stepIndex == 1 && IsStep2Complete) || (stepIndex == 2 && IsStep3Complete))
+        {
+            // Complete - success green text
+            return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 34, 197, 94));
+        }
+        else if (stepIndex == CurrentStep)
+        {
+            // Current - primary/accent text
+            return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 43, 140, 238));
+        }
+        else
+        {
+            // Not started - gray text
+            return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 122, 132, 148));
+        }
+    }
+
+    private string GetStepStatus(int stepIndex)
+    {
+        if (stepIndex < CurrentStep || (stepIndex == 0 && IsStep1Complete) || 
+            (stepIndex == 1 && IsStep2Complete) || (stepIndex == 2 && IsStep3Complete))
+        {
+            return "Complete";
+        }
+        else if (stepIndex == CurrentStep)
+        {
+            return "In progress";
+        }
+        else
+        {
+            return "Not started";
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════
     // COMMANDS
     // ═══════════════════════════════════════════════════════════════
 
     [RelayCommand]
-    private async Task InitializeAsync()
+    public async Task InitializeAsync()
     {
         IsLoading = true;
         StatusMessage = "Loading...";
@@ -348,10 +527,11 @@ public partial class PayRunWizardViewModel : ObservableObject
                 // Add to generated stubs list for display
                 GeneratedStubs.Add(new PayStubResult
                 {
-                    EmployeeName = employee.FullName,
                     EmployeeId = employee.Id,
+                    EmployeeName = employee.FullName,
                     GrossPay = payStub.GrossPay,
                     NetPay = payStub.NetPay,
+                    TotalTaxes = payStub.TotalTaxes,
                     Taxes = payStub.TotalTaxes
                 });
 
@@ -440,6 +620,63 @@ public partial class PayRunWizardViewModel : ObservableObject
         OnPropertyChanged(nameof(CanGoBack));
         OnPropertyChanged(nameof(CanGoNext));
         OnPropertyChanged(nameof(StepTitle));
+        
+        // Update step styling properties
+        OnPropertyChanged(nameof(Step1Background));
+        OnPropertyChanged(nameof(Step1BorderBrush));
+        OnPropertyChanged(nameof(Step1Icon));
+        OnPropertyChanged(nameof(Step1Foreground));
+        OnPropertyChanged(nameof(Step1ConnectorColor));
+        OnPropertyChanged(nameof(Step1FontWeight));
+        OnPropertyChanged(nameof(Step1TextColor));
+        OnPropertyChanged(nameof(Step1Status));
+        
+        OnPropertyChanged(nameof(Step2Background));
+        OnPropertyChanged(nameof(Step2BorderBrush));
+        OnPropertyChanged(nameof(Step2Icon));
+        OnPropertyChanged(nameof(Step2Foreground));
+        OnPropertyChanged(nameof(Step2ConnectorColor));
+        OnPropertyChanged(nameof(Step2FontWeight));
+        OnPropertyChanged(nameof(Step2TextColor));
+        OnPropertyChanged(nameof(Step2Status));
+        
+        OnPropertyChanged(nameof(Step3Background));
+        OnPropertyChanged(nameof(Step3BorderBrush));
+        OnPropertyChanged(nameof(Step3Icon));
+        OnPropertyChanged(nameof(Step3Foreground));
+        OnPropertyChanged(nameof(Step3FontWeight));
+        OnPropertyChanged(nameof(Step3TextColor));
+        OnPropertyChanged(nameof(Step3Status));
+    }
+
+    partial void OnIsStep1CompleteChanged(bool value)
+    {
+        OnPropertyChanged(nameof(Step1Background));
+        OnPropertyChanged(nameof(Step1BorderBrush));
+        OnPropertyChanged(nameof(Step1Icon));
+        OnPropertyChanged(nameof(Step1ConnectorColor));
+        OnPropertyChanged(nameof(Step1TextColor));
+        OnPropertyChanged(nameof(Step1Status));
+        OnPropertyChanged(nameof(Step2ConnectorColor));
+    }
+
+    partial void OnIsStep2CompleteChanged(bool value)
+    {
+        OnPropertyChanged(nameof(Step2Background));
+        OnPropertyChanged(nameof(Step2BorderBrush));
+        OnPropertyChanged(nameof(Step2Icon));
+        OnPropertyChanged(nameof(Step2ConnectorColor));
+        OnPropertyChanged(nameof(Step2TextColor));
+        OnPropertyChanged(nameof(Step2Status));
+    }
+
+    partial void OnIsStep3CompleteChanged(bool value)
+    {
+        OnPropertyChanged(nameof(Step3Background));
+        OnPropertyChanged(nameof(Step3BorderBrush));
+        OnPropertyChanged(nameof(Step3Icon));
+        OnPropertyChanged(nameof(Step3TextColor));
+        OnPropertyChanged(nameof(Step3Status));
     }
 
     partial void OnPeriodStartChanged(DateTimeOffset value)
@@ -494,6 +731,50 @@ public partial class PayRunEmployeeRow : ObservableObject
     public string HourlyRateDisplay => $"${HourlyRate:N2}";
     public string GrossPayDisplay => $"${CalculatedGross:N2}";
     public double TotalHours => RegularHours + OvertimeHours;
+    
+    public string Initials
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(FullName))
+                return "??";
+            
+            var parts = FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length >= 2)
+                return $"{parts[0][0]}{parts[^1][0]}".ToUpperInvariant();
+            if (parts.Length == 1 && parts[0].Length >= 2)
+                return parts[0].Substring(0, 2).ToUpperInvariant();
+            return "??";
+        }
+    }
+    
+    public SolidColorBrush InitialsBackground
+    {
+        get
+        {
+            // Generate a consistent color based on the name
+            var hash = FullName.GetHashCode();
+            var colors = new[]
+            {
+                Windows.UI.Color.FromArgb(255, 43, 140, 238),   // Blue
+                Windows.UI.Color.FromArgb(255, 34, 197, 94),    // Green
+                Windows.UI.Color.FromArgb(255, 249, 115, 22),   // Orange
+                Windows.UI.Color.FromArgb(255, 168, 85, 247),   // Purple
+                Windows.UI.Color.FromArgb(255, 236, 72, 153),  // Pink
+                Windows.UI.Color.FromArgb(255, 14, 165, 233),  // Cyan
+                Windows.UI.Color.FromArgb(255, 251, 191, 36),  // Yellow
+                Windows.UI.Color.FromArgb(255, 239, 68, 68),   // Red
+            };
+            var color = colors[Math.Abs(hash) % colors.Length];
+            return new SolidColorBrush(color);
+        }
+    }
+    
+    public SolidColorBrush InitialsForeground => new SolidColorBrush(Microsoft.UI.Colors.White);
+    
+    public SolidColorBrush OvertimeColor => OvertimeHours > 0 
+        ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 249, 115, 22)) // Orange for overtime
+        : new SolidColorBrush(Microsoft.UI.Colors.Transparent);
 
     private decimal CalculatedGross
     {
@@ -539,12 +820,14 @@ public partial class PayRunEmployeeRow : ObservableObject
 /// </summary>
 public class PayStubResult
 {
+    public int EmployeeId { get; set; }
     public string EmployeeName { get; set; } = string.Empty;
     public decimal RegularPay { get; set; }
     public decimal OvertimePay { get; set; }
     public decimal BonusPay { get; set; }
     public decimal GrossPay { get; set; }
     public decimal TotalTaxes { get; set; }
+    public decimal Taxes { get; set; } // Alias for TotalTaxes for compatibility
     public decimal NetPay { get; set; }
     public decimal YtdGross { get; set; }
     public decimal YtdNet { get; set; }
