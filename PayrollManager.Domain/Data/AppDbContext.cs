@@ -12,6 +12,7 @@ public class AppDbContext : DbContext
     public DbSet<Employee> Employees => Set<Employee>();
     public DbSet<PayRun> PayRuns => Set<PayRun>();
     public DbSet<PayStub> PayStubs => Set<PayStub>();
+    public DbSet<EarningLine> EarningLines => Set<EarningLine>();
     public DbSet<CompanySettings> CompanySettings => Set<CompanySettings>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -34,5 +35,15 @@ public class AppDbContext : DbContext
             .HasMany(p => p.PayStubs)
             .WithOne(s => s.PayRun)
             .HasForeignKey(s => s.PayRunId);
+
+        modelBuilder.Entity<PayStub>()
+            .HasMany(ps => ps.EarningLines)
+            .WithOne(el => el.PayStub)
+            .HasForeignKey(el => el.PayStubId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<EarningLine>()
+            .Property(el => el.Type)
+            .HasConversion<string>();
     }
 }

@@ -66,10 +66,16 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Step 2: Review Employees -->
+                <!-- Step 2: Review Employees with Earnings Input -->
                 <StackPanel Visibility="{x:Bind ViewModel.IsStep2, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                             Spacing="16">
-                    <TextBlock Text="REVIEW EMPLOYEES" Style="{StaticResource SectionTitleStyle}" />
+                    <TextBlock Text="REVIEW EMPLOYEES &amp; EARNINGS" Style="{StaticResource SectionTitleStyle}" />
+                    
+                    <InfoBar Title="Overtime Calculation" 
+                             Message="For hourly employees, overtime is paid at 1.5× the regular rate. Enter regular and overtime hours separately."
+                             IsOpen="True" 
+                             IsClosable="False"
+                             Severity="Informational" />
                     
                     <controls:DataGrid AutoGenerateColumns="False"
                                        ItemsSource="{x:Bind ViewModel.EmployeeRows, Mode=OneWay}"
@@ -77,18 +83,50 @@
                                        CanUserResizeColumns="True"
                                        MaxHeight="500">
                         <controls:DataGrid.Columns>
-                            <controls:DataGridCheckBoxColumn Header="Include" Binding="{Binding IsIncluded, Mode=TwoWay}" Width="70" />
-                            <controls:DataGridTextColumn Header="Employee" Binding="{Binding FullName}" Width="*" IsReadOnly="True" />
-                            <controls:DataGridTextColumn Header="Pay Type" Binding="{Binding PayType}" Width="80" IsReadOnly="True" />
-                            <controls:DataGridTextColumn Header="Rate" Binding="{Binding RateDisplay}" Width="120" IsReadOnly="True" />
-                            <controls:DataGridTemplateColumn Header="Hours" Width="100">
+                            <controls:DataGridCheckBoxColumn Header="Include" Binding="{Binding IsIncluded, Mode=TwoWay}" Width="60" />
+                            <controls:DataGridTextColumn Header="Employee" Binding="{Binding FullName}" Width="150" IsReadOnly="True" />
+                            <controls:DataGridTextColumn Header="Type" Binding="{Binding PayType}" Width="70" IsReadOnly="True" />
+                            <controls:DataGridTextColumn Header="Rate" Binding="{Binding RateDisplay}" Width="100" IsReadOnly="True" />
+                            <controls:DataGridTemplateColumn Header="Regular Hrs" Width="90">
                                 <controls:DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <NumberBox Value="{Binding HoursOverride, Mode=TwoWay}"
+                                        <NumberBox Value="{Binding RegularHours, Mode=TwoWay}"
                                                    IsEnabled="{Binding IsHourly}"
                                                    Minimum="0" Maximum="168"
                                                    SpinButtonPlacementMode="Compact"
-                                                   Margin="4" />
+                                                   Margin="2" />
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+                            <controls:DataGridTemplateColumn Header="OT Hrs" Width="90">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <NumberBox Value="{Binding OvertimeHours, Mode=TwoWay}"
+                                                   IsEnabled="{Binding IsHourly}"
+                                                   Minimum="0" Maximum="80"
+                                                   SpinButtonPlacementMode="Compact"
+                                                   Margin="2" />
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+                            <controls:DataGridTextColumn Header="OT Rate" Binding="{Binding OvertimeRateDisplay}" Width="110" IsReadOnly="True" />
+                            <controls:DataGridTemplateColumn Header="Bonus $" Width="100">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <NumberBox Value="{Binding BonusAmount, Mode=TwoWay}"
+                                                   Minimum="0"
+                                                   SpinButtonPlacementMode="Compact"
+                                                   Margin="2" />
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
+                            <controls:DataGridTemplateColumn Header="Commission $" Width="110">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <NumberBox Value="{Binding CommissionAmount, Mode=TwoWay}"
+                                                   Minimum="0"
+                                                   SpinButtonPlacementMode="Compact"
+                                                   Margin="2" />
                                     </DataTemplate>
                                 </controls:DataGridTemplateColumn.CellTemplate>
                             </controls:DataGridTemplateColumn>
@@ -106,8 +144,10 @@
                         <StackPanel Spacing="16">
                             <TextBlock Text="PAY RUN SUMMARY" Style="{StaticResource SectionTitleStyle}" />
                             
-                            <Grid ColumnSpacing="32" RowSpacing="16">
+                            <Grid ColumnSpacing="24" RowSpacing="16">
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
@@ -121,23 +161,41 @@
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="1">
-                                    <TextBlock Text="Est. Gross" Style="{StaticResource LabelStyle}" />
-                                    <TextBlock Text="{x:Bind ViewModel.EstimatedGross, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
-                                               Style="{StaticResource LargeValueStyle}" />
+                                    <TextBlock Text="Regular" Style="{StaticResource LabelStyle}" />
+                                    <TextBlock Text="{x:Bind ViewModel.EstimatedRegular, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                               Style="{StaticResource ValueStyle}" />
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Overtime" Style="{StaticResource LabelStyle}" />
+                                    <TextBlock Text="{x:Bind ViewModel.EstimatedOvertime, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                               Style="{StaticResource ValueStyle}" Foreground="{StaticResource AccentBrush}" />
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="3">
+                                    <TextBlock Text="Bonus/Comm" Style="{StaticResource LabelStyle}" />
+                                    <TextBlock Text="{x:Bind ViewModel.EstimatedBonus, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                               Style="{StaticResource ValueStyle}" />
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="4">
                                     <TextBlock Text="Est. Taxes" Style="{StaticResource LabelStyle}" />
                                     <TextBlock Text="{x:Bind ViewModel.EstimatedTaxes, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
                                                Style="{StaticResource LargeValueStyle}" Foreground="{StaticResource WarningBrush}" />
                                 </StackPanel>
 
-                                <StackPanel Grid.Column="3">
+                                <StackPanel Grid.Column="5">
                                     <TextBlock Text="Est. Net" Style="{StaticResource LabelStyle}" />
                                     <TextBlock Text="{x:Bind ViewModel.EstimatedNet, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
                                                Style="{StaticResource LargeValueStyle}" Foreground="{StaticResource SuccessBrush}" />
                                 </StackPanel>
                             </Grid>
+
+                            <StackPanel>
+                                <TextBlock Text="Total Gross" Style="{StaticResource LabelStyle}" />
+                                <TextBlock Text="{x:Bind ViewModel.EstimatedGross, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                           FontSize="28" FontWeight="Bold" />
+                            </StackPanel>
                         </StackPanel>
                     </Border>
 
@@ -159,7 +217,38 @@
                                            CanUserResizeColumns="True">
                             <controls:DataGrid.Columns>
                                 <controls:DataGridTextColumn Header="Employee" Binding="{Binding EmployeeName}" Width="*" />
-                                <controls:DataGridTemplateColumn Header="Gross" Width="120">
+                                <controls:DataGridTemplateColumn Header="Regular" Width="100">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding RegularPay, Converter={StaticResource CurrencyConverter}}" 
+                                                       HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                       FontWeight="{Binding IsTotalRow, Converter={StaticResource BoolToFontWeightConverter}}"
+                                                       Style="{StaticResource CurrencyStyle}" />
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+                                <controls:DataGridTemplateColumn Header="Overtime" Width="100">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding OvertimePay, Converter={StaticResource CurrencyConverter}}" 
+                                                       HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                       Foreground="{StaticResource AccentBrush}"
+                                                       FontWeight="{Binding IsTotalRow, Converter={StaticResource BoolToFontWeightConverter}}"
+                                                       Style="{StaticResource CurrencyStyle}" />
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+                                <controls:DataGridTemplateColumn Header="Bonus" Width="100">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding BonusPay, Converter={StaticResource CurrencyConverter}}" 
+                                                       HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                       FontWeight="{Binding IsTotalRow, Converter={StaticResource BoolToFontWeightConverter}}"
+                                                       Style="{StaticResource CurrencyStyle}" />
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+                                <controls:DataGridTemplateColumn Header="Gross" Width="110">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding GrossPay, Converter={StaticResource CurrencyConverter}}" 
@@ -169,17 +258,18 @@
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
                                 </controls:DataGridTemplateColumn>
-                                <controls:DataGridTemplateColumn Header="Taxes" Width="120">
+                                <controls:DataGridTemplateColumn Header="Taxes" Width="100">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding TotalTaxes, Converter={StaticResource CurrencyConverter}}" 
                                                        HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                       Foreground="{StaticResource WarningBrush}"
                                                        FontWeight="{Binding IsTotalRow, Converter={StaticResource BoolToFontWeightConverter}}"
                                                        Style="{StaticResource CurrencyStyle}" />
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
                                 </controls:DataGridTemplateColumn>
-                                <controls:DataGridTemplateColumn Header="Net Pay" Width="120">
+                                <controls:DataGridTemplateColumn Header="Net Pay" Width="110">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding NetPay, Converter={StaticResource CurrencyConverter}}" 
@@ -190,19 +280,10 @@
                                         </DataTemplate>
                                     </controls:DataGridTemplateColumn.CellTemplate>
                                 </controls:DataGridTemplateColumn>
-                                <controls:DataGridTemplateColumn Header="YTD Gross" Width="120">
+                                <controls:DataGridTemplateColumn Header="YTD Gross" Width="110">
                                     <controls:DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding YtdGross, Converter={StaticResource CurrencyConverter}}" 
-                                                       HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                       Style="{StaticResource CurrencyStyle}" />
-                                        </DataTemplate>
-                                    </controls:DataGridTemplateColumn.CellTemplate>
-                                </controls:DataGridTemplateColumn>
-                                <controls:DataGridTemplateColumn Header="YTD Net" Width="120">
-                                    <controls:DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding YtdNet, Converter={StaticResource CurrencyConverter}}" 
                                                        HorizontalAlignment="Right" VerticalAlignment="Center"
                                                        Style="{StaticResource CurrencyStyle}" />
                                         </DataTemplate>

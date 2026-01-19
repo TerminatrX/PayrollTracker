@@ -23,6 +23,9 @@ public partial class PayRunWizardViewModel : ObservableObject
 
     // Summary estimates
     private decimal _estimatedGross;
+    private decimal _estimatedRegular;
+    private decimal _estimatedOvertime;
+    private decimal _estimatedBonus;
     private decimal _estimatedTaxes;
     private decimal _estimatedNet;
     private int _includedCount;
@@ -67,7 +70,7 @@ public partial class PayRunWizardViewModel : ObservableObject
     public string StepTitle => CurrentStep switch
     {
         0 => "Step 1: Select Pay Period",
-        1 => "Step 2: Review Employees",
+        1 => "Step 2: Review Employees & Earnings",
         2 => IsRunComplete ? "Pay Run Complete" : "Step 3: Summary & Generate",
         _ => "Pay Run"
     };
@@ -120,6 +123,24 @@ public partial class PayRunWizardViewModel : ObservableObject
     {
         get => _estimatedGross;
         set => SetProperty(ref _estimatedGross, value);
+    }
+
+    public decimal EstimatedRegular
+    {
+        get => _estimatedRegular;
+        set => SetProperty(ref _estimatedRegular, value);
+    }
+
+    public decimal EstimatedOvertime
+    {
+        get => _estimatedOvertime;
+        set => SetProperty(ref _estimatedOvertime, value);
+    }
+
+    public decimal EstimatedBonus
+    {
+        get => _estimatedBonus;
+        set => SetProperty(ref _estimatedBonus, value);
     }
 
     public decimal EstimatedTaxes
@@ -227,6 +248,9 @@ public partial class PayRunWizardViewModel : ObservableObject
             var payPeriods = settings.PayPeriodsPerYear > 0 ? settings.PayPeriodsPerYear : 26;
 
             decimal totalGross = 0;
+            decimal totalRegular = 0;
+            decimal totalOvertime = 0;
+            decimal totalBonus = 0;
             decimal totalTaxes = 0;
             int count = 0;
 
@@ -234,10 +258,30 @@ public partial class PayRunWizardViewModel : ObservableObject
             {
                 count++;
                 var employee = row.Employee;
-                
-                decimal gross = employee.IsHourly 
-                    ? (decimal)row.HoursOverride * employee.HourlyRate 
-                    : employee.AnnualSalary / payPeriods;
+                decimal gross;
+
+                if (employee.IsHourly)
+                {
+                    // Regular earnings
+                    var regularAmount = (decimal)row.RegularHours * employee.HourlyRate;
+                    totalRegular += regularAmount;
+
+                    // Overtime at 1.5x
+                    var overtimeRate = employee.HourlyRate * 1.5m;
+                    var overtimeAmount = (decimal)row.OvertimeHours * overtimeRate;
+                    totalOvertime += overtimeAmount;
+
+                    gross = regularAmount + overtimeAmount;
+                }
+                else
+                {
+                    gross = employee.AnnualSalary / payPeriods;
+                    totalRegular += gross;
+                }
+
+                // Add bonus and commission
+                gross += (decimal)row.BonusAmount + (decimal)row.CommissionAmount;
+                totalBonus += (decimal)row.BonusAmount + (decimal)row.CommissionAmount;
 
                 var preTax401k = gross * (employee.PreTax401kPercent / 100m);
                 var taxable = gross - preTax401k;
@@ -252,6 +296,9 @@ public partial class PayRunWizardViewModel : ObservableObject
             }
 
             EstimatedGross = totalGross;
+            EstimatedRegular = totalRegular;
+            EstimatedOvertime = totalOvertime;
+            EstimatedBonus = totalBonus;
             EstimatedTaxes = totalTaxes;
             EstimatedNet = totalGross - totalTaxes;
             IncludedCount = count;
@@ -296,13 +343,25 @@ public partial class PayRunWizardViewModel : ObservableObject
                 processed++;
                 StatusMessage = $"Processing {processed}/{includedRows.Count}: {row.Employee.FullName}";
 
-                var hoursOverride = row.Employee.IsHourly ? (decimal?)row.HoursOverride : null;
-                var payStub = await _payrollService.GeneratePayStubAsync(row.Employee, payRun, hoursOverride);
+                var input = new PayStubInput
+                {
+                    RegularHours = (decimal)row.RegularHours,
+                    OvertimeHours = (decimal)row.OvertimeHours,
+                    BonusAmount = (decimal)row.BonusAmount,
+                    CommissionAmount = (decimal)row.CommissionAmount,
+                    BonusDescription = !string.IsNullOrEmpty(row.BonusDescription) ? row.BonusDescription : null,
+                    CommissionDescription = !string.IsNullOrEmpty(row.CommissionDescription) ? row.CommissionDescription : null
+                };
+
+                var payStub = await _payrollService.GeneratePayStubAsync(row.Employee, payRun, input);
                 _dbContext.PayStubs.Add(payStub);
 
                 var result = new PayStubResult
                 {
                     EmployeeName = row.Employee.FullName,
+                    RegularPay = payStub.RegularEarnings,
+                    OvertimePay = payStub.OvertimeEarnings,
+                    BonusPay = payStub.BonusEarnings + payStub.CommissionEarnings,
                     GrossPay = payStub.GrossPay,
                     TotalTaxes = payStub.TotalTaxes,
                     NetPay = payStub.NetPay,
@@ -322,6 +381,9 @@ public partial class PayRunWizardViewModel : ObservableObject
             GeneratedStubs.Add(new PayStubResult
             {
                 EmployeeName = "TOTAL",
+                RegularPay = GeneratedStubs.Where(s => !s.IsTotalRow).Sum(s => s.RegularPay),
+                OvertimePay = GeneratedStubs.Where(s => !s.IsTotalRow).Sum(s => s.OvertimePay),
+                BonusPay = GeneratedStubs.Where(s => !s.IsTotalRow).Sum(s => s.BonusPay),
                 GrossPay = totalGross,
                 TotalTaxes = totalTaxes,
                 NetPay = totalNet,
@@ -354,12 +416,23 @@ public partial class PayRunWizardViewModel : ObservableObject
 public partial class PayRunEmployeeRow : ObservableObject
 {
     private bool _isIncluded = true;
-    private double _hoursOverride;
+    private double _regularHours;
+    private double _overtimeHours;
+    private double _bonusAmount;
+    private double _commissionAmount;
+    private string _bonusDescription = string.Empty;
+    private string _commissionDescription = string.Empty;
 
     public PayRunEmployeeRow(Employee employee, int defaultHours)
     {
         Employee = employee;
-        _hoursOverride = employee.IsHourly ? defaultHours : 0;
+        
+        if (employee.IsHourly)
+        {
+            // Default: up to 40 regular, rest as overtime
+            _regularHours = Math.Min(defaultHours, 40);
+            _overtimeHours = Math.Max(0, defaultHours - 40);
+        }
     }
 
     public Employee Employee { get; }
@@ -370,6 +443,10 @@ public partial class PayRunEmployeeRow : ObservableObject
     public string RateDisplay => Employee.IsHourly
         ? $"{Employee.HourlyRate:C}/hr"
         : $"{Employee.AnnualSalary:C}/yr";
+    
+    public string OvertimeRateDisplay => Employee.IsHourly
+        ? $"{Employee.HourlyRate * 1.5m:C}/hr (1.5x)"
+        : "N/A";
 
     public bool IsIncluded
     {
@@ -377,16 +454,52 @@ public partial class PayRunEmployeeRow : ObservableObject
         set => SetProperty(ref _isIncluded, value);
     }
 
-    public double HoursOverride
+    public double RegularHours
     {
-        get => _hoursOverride;
-        set => SetProperty(ref _hoursOverride, value);
+        get => _regularHours;
+        set => SetProperty(ref _regularHours, value);
     }
+
+    public double OvertimeHours
+    {
+        get => _overtimeHours;
+        set => SetProperty(ref _overtimeHours, value);
+    }
+
+    public double BonusAmount
+    {
+        get => _bonusAmount;
+        set => SetProperty(ref _bonusAmount, value);
+    }
+
+    public double CommissionAmount
+    {
+        get => _commissionAmount;
+        set => SetProperty(ref _commissionAmount, value);
+    }
+
+    public string BonusDescription
+    {
+        get => _bonusDescription;
+        set => SetProperty(ref _bonusDescription, value);
+    }
+
+    public string CommissionDescription
+    {
+        get => _commissionDescription;
+        set => SetProperty(ref _commissionDescription, value);
+    }
+
+    // Computed total hours for display
+    public double TotalHours => RegularHours + OvertimeHours;
 }
 
 public class PayStubResult
 {
     public string EmployeeName { get; set; } = string.Empty;
+    public decimal RegularPay { get; set; }
+    public decimal OvertimePay { get; set; }
+    public decimal BonusPay { get; set; }
     public decimal GrossPay { get; set; }
     public decimal TotalTaxes { get; set; }
     public decimal NetPay { get; set; }

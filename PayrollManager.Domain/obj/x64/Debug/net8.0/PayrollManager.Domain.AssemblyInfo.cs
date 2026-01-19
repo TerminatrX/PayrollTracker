@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PayrollManager.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a3a7c048e1086d1b31d7b3f4a55cbbab31269857")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6a6ed9f0ee7607865e091e40aaf9f76f19107274")]
 [assembly: System.Reflection.AssemblyProductAttribute("PayrollManager.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PayrollManager.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
