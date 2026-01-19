@@ -1,29 +1,49 @@
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Navigation;
-using PayrollManager.Domain.Data;
 using PayrollManager.UI.ViewModels;
 
 namespace PayrollManager.UI.Views;
 
+/// <summary>
+/// Settings page with sidebar navigation for different configuration sections.
+/// Handles company profile, tax configuration, and pay period settings.
+/// </summary>
 public sealed partial class SettingsPage : Page
 {
-    private readonly IServiceScope _scope;
-
     public SettingsViewModel ViewModel { get; }
 
     public SettingsPage()
     {
-        InitializeComponent();
-        _scope = App.Services.CreateScope();
-        var dbContext = _scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        ViewModel = new SettingsViewModel(dbContext);
-        _ = ViewModel.LoadSettingsAsync();
+        ViewModel = App.GetService<SettingsViewModel>();
+        this.InitializeComponent();
+        this.DataContext = ViewModel;
     }
 
-    protected override void OnNavigatedFrom(NavigationEventArgs e)
+    /// <summary>
+    /// Handles settings navigation item clicks to scroll to the appropriate section.
+    /// </summary>
+    private void SettingsNavItem_Click(object sender, RoutedEventArgs e)
     {
-        base.OnNavigatedFrom(e);
-        _scope.Dispose();
+        if (sender is Button button && button.Tag is string sectionName)
+        {
+            // Find the target section and scroll to it
+            FrameworkElement? targetSection = sectionName switch
+            {
+                "CompanyProfileSection" => CompanyProfileSection,
+                "TaxConfigSection" => TaxConfigSection,
+                "PayPeriodsSection" => PayPeriodsSection,
+                _ => null
+            };
+
+            if (targetSection != null)
+            {
+                // Scroll the section into view
+                targetSection.StartBringIntoView(new BringIntoViewOptions
+                {
+                    AnimationDesired = true,
+                    VerticalAlignmentRatio = 0.0
+                });
+            }
+        }
     }
 }

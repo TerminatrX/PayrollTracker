@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="PayrollManager.UI.Views.EmployeesPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- TOOLBAR / COMMAND BAR                                           -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <Border Grid.Row="0" 
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="16,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Filter Chips -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" 
+                            CornerRadius="6" Padding="4">
+                        <StackPanel Orientation="Horizontal">
+                            <!-- Status Filter -->
+                            <ToggleButton x:Name="StatusFilterToggle"
+                                          IsChecked="{x:Bind ViewModel.IsStatusFilterActive, Mode=TwoWay}"
+                                          Padding="12,6" CornerRadius="4">
+                                <StackPanel Orientation="Horizontal">
+                                    <FontIcon Glyph="&#xE71C;" FontSize="12" />
+                                    <TextBlock Text="Status: Active" FontSize="12" FontWeight="SemiBold" />
+                                </StackPanel>
+                            </ToggleButton>
+
+                            <!-- Pay Type Filter -->
+                            <Button Padding="12,6" CornerRadius="4"
+                                    Background="Transparent">
+                                <StackPanel Orientation="Horizontal">
+                                    <FontIcon Glyph="&#xE8C7;" FontSize="12" />
+                                    <TextBlock Text="Pay Type: All" FontSize="12" FontWeight="SemiBold" />
+                                </StackPanel>
+                            </Button>
+
+                            <!-- Department Filter -->
+                            <ComboBox x:Name="DepartmentFilter"
+                                      PlaceholderText="Department"
+                                      SelectedItem="{x:Bind ViewModel.SelectedDepartment, Mode=TwoWay}"
+                                      ItemsSource="{x:Bind ViewModel.Departments, Mode=OneWay}"
+                                      MinWidth="150">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <FontIcon Glyph="&#xE80F;" FontSize="12" />
+                                            <TextBlock Text="{Binding}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Action Buttons -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <Button Style="{ThemeResource DefaultButtonStyle}"
+                            Command="{x:Bind ViewModel.ImportCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon Glyph="&#xE898;" FontSize="14" />
+                            <TextBlock Text="Import" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{ThemeResource AccentButtonStyle}"
+                            Command="{x:Bind ViewModel.NewEmployeeCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon Glyph="&#xE710;" FontSize="14" />
+                            <TextBlock Text="New Employee" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- MAIN CONTENT: MASTER-DETAIL SPLIT VIEW                          -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="450" MinWidth="350" MaxWidth="550" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- ─────────────────────────────────────────────────────────── -->
+            <!-- LEFT PANE: EMPLOYEE LIST (MASTER)                           -->
+            <!-- ─────────────────────────────────────────────────────────── -->
+            <Border Grid.Column="0"
+                    Background="{ThemeResource LayerFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="0,0,1,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Column Headers -->
+                    <Grid Grid.Row="0" 
+                          Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                          Padding="16,12"
+                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                          BorderThickness="0,0,0,1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="60" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Text="EMPLOYEE" 
+                                   Style="{ThemeResource CaptionTextBlockStyle}"
+                                   FontWeight="SemiBold" Opacity="0.7" />
+                        <TextBlock Grid.Column="1" Text="STATUS" 
+                                   Style="{ThemeResource CaptionTextBlockStyle}"
+                                   FontWeight="SemiBold" Opacity="0.7" />
+                        <TextBlock Grid.Column="2" Text="DEPT" 
+                                   Style="{ThemeResource CaptionTextBlockStyle}"
+                                   FontWeight="SemiBold" Opacity="0.7" />
+                    </Grid>
+
+                    <!-- Employee ListView -->
+                    <ListView Grid.Row="1"
+                              x:Name="EmployeeListView"
+                              ItemsSource="{x:Bind ViewModel.FilteredEmployees, Mode=OneWay}"
+                              SelectedItem="{x:Bind ViewModel.SelectedEmployee, Mode=TwoWay}"
+                              SelectionMode="Single">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Padding="12,10" ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="80" />
+                                        <ColumnDefinition Width="60" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Avatar + Name -->
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                        <PersonPicture Width="40" Height="40"
+                                                       DisplayName="{Binding FullName}"
+                                                       ProfilePicture="{Binding AvatarUrl}" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding FullName}" 
+                                                       FontWeight="SemiBold" />
+                                            <TextBlock FontSize="11" Opacity="0.6">
+                                                <Run Text="{Binding EmployeeId}" />
+                                                <Run Text=" • " />
+                                                <Run Text="{Binding JobTitle}" />
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- Status Badge -->
+                                    <Border Grid.Column="1" 
+                                            CornerRadius="4" Padding="8,3"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Background="{Binding IsActive, Converter={StaticResource StatusColorConverter}}">
+                                        <TextBlock Text="{Binding IsActive, Converter={StaticResource StatusTextConverter}}"
+                                                   FontSize="10" FontWeight="Bold"
+                                                   Foreground="White" />
+                                    </Border>
+
+                                    <!-- Department -->
+                                    <TextBlock Grid.Column="2" 
+                                               Text="{Binding DepartmentCode}"
+                                               VerticalAlignment="Center"
+                                               Opacity="0.6"
+                                               FontSize="12" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="Padding" Value="0" />
+                                <Setter Property="Margin" Value="0" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
+                </Grid>
+            </Border>
+
+            <!-- ─────────────────────────────────────────────────────────── -->
+            <!-- RIGHT PANE: EMPLOYEE DETAILS (DETAIL)                       -->
+            <!-- ─────────────────────────────────────────────────────────── -->
+            <ScrollViewer Grid.Column="1" 
+                          VerticalScrollBarVisibility="Auto"
+                          Padding="24">
+                <StackPanel MaxWidth="900">
+
+                    <!-- Empty State -->
+                    <StackPanel x:Name="EmptyStatePanel"
+                                Visibility="{x:Bind ViewModel.HasSelectedEmployee, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Margin="0,100,0,0"
+                                Spacing="16">
+                        <FontIcon Glyph="&#xE77B;" FontSize="64" Opacity="0.3" />
+                        <TextBlock Text="Select an employee to view details"
+                                   Style="{ThemeResource SubtitleTextBlockStyle}"
+                                   Opacity="0.5"
+                                   HorizontalAlignment="Center" />
+                    </StackPanel>
+
+                    <!-- Details Content -->
+                    <StackPanel x:Name="DetailsContent"
+                                Visibility="{x:Bind ViewModel.HasSelectedEmployee, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                                Spacing="20">
+
+                        <!-- ═══════════════════════════════════════════════ -->
+                        <!-- PROFILE HEADER CARD                              -->
+                        <!-- ═══════════════════════════════════════════════ -->
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1" CornerRadius="8"
+                                Padding="24">
+                            <Grid ColumnSpacing="24">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Large Avatar -->
+                                <PersonPicture Grid.Column="0"
+                                               Width="120" Height="120"
+                                               DisplayName="{x:Bind ViewModel.Editor.FullName, Mode=OneWay}" />
+
+                                <!-- Profile Info -->
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Text="{x:Bind ViewModel.Editor.FullName, Mode=OneWay}"
+                                                   Style="{ThemeResource TitleLargeTextBlockStyle}"
+                                                   FontWeight="Bold" />
+
+                                        <!-- Department Badge -->
+                                        <Border Grid.Column="1" 
+                                                Background="{ThemeResource AccentFillColorDefaultBrush}"
+                                                Opacity="0.15" CornerRadius="4" Padding="12,6">
+                                            <TextBlock Text="{x:Bind ViewModel.Editor.Department, Mode=OneWay}"
+                                                       FontSize="11" FontWeight="Bold"
+                                                       Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                                        </Border>
+                                    </Grid>
+
+                                    <TextBlock Text="{x:Bind ViewModel.Editor.JobTitle, Mode=OneWay}"
+                                               Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                               Opacity="0.7" />
+
+                                    <!-- Metadata Row -->
+                                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                        <StackPanel Orientation="Horizontal">
+                                            <FontIcon Glyph="&#xE8D7;" FontSize="12" Opacity="0.5" />
+                                            <TextBlock Text="{x:Bind ViewModel.Editor.EmployeeId, Mode=OneWay}"
+                                                       FontSize="12" Opacity="0.6" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <FontIcon Glyph="&#xE787;" FontSize="12" Opacity="0.5" />
+                                            <TextBlock Text="{x:Bind ViewModel.Editor.HireDateDisplay, Mode=OneWay}"
+                                                       FontSize="12" Opacity="0.6" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <FontIcon Glyph="&#xE81D;" FontSize="12" Opacity="0.5" />
+                                            <TextBlock Text="{x:Bind ViewModel.Editor.Location, Mode=OneWay}"
+                                                       FontSize="12" Opacity="0.6" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- Two Column Cards Row -->
+                        <Grid ColumnSpacing="20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- ═══════════════════════════════════════════════ -->
+                            <!-- COMPENSATION & BENEFITS CARD                     -->
+                            <!-- ═══════════════════════════════════════════════ -->
+                            <Border Grid.Column="0"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1" CornerRadius="8"
+                                    Padding="20">
+                                <StackPanel>
+                                    <!-- Header -->
+                                    <StackPanel Orientation="Horizontal">
+                                        <FontIcon Glyph="&#xE8C7;" FontSize="16" 
+                                                  Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                                        <TextBlock Text="Compensation &amp; Benefits" 
+                                                   FontWeight="Bold" />
+                                    </StackPanel>
+
+                                    <!-- Data Grid -->
+                                    <Grid ColumnSpacing="16" RowSpacing="16">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <StackPanel Grid.Row="0" Grid.Column="0">
+                                            <TextBlock Text="BASE SALARY" 
+                                                       Style="{ThemeResource CaptionTextBlockStyle}"
+                                                       FontWeight="Bold" Opacity="0.5" />
+                                            <TextBlock Text="{x:Bind ViewModel.Editor.AnnualSalary, Mode=OneWay, Converter={StaticResource CurrencyConverter}}"
+                                                       Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                                       FontSize="18" />
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Row="0" Grid.Column="1">
+                                            <TextBlock Text="PAY FREQUENCY" 
+                                                       Style="{ThemeResource CaptionTextBlockStyle}"
+                                                       FontWeight="Bold" Opacity="0.5" />
+                                            <TextBlock Text="{x:Bind ViewModel.Editor.PayFrequency, Mode=OneWay}"
+                                                       Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                                       FontSize="18" />
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Row="1" Grid.Column="0">
+                                            <TextBlock Text="HEALTH TIER" 
+                                                       Style="{ThemeResource CaptionTextBlockStyle}"
+                                                       FontWeight="Bold" Opacity="0.5" />
+                                            <TextBlock Text="{x:Bind ViewModel.Editor.HealthTier, Mode=OneWay}"
+                                                       Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                                       FontSize="18" />
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Row="1" Grid.Column="1">
+                                            <TextBlock Text="401(K) MATCH" 
+                                                       Style="{ThemeResource CaptionTextBlockStyle}"
+                                                       FontWeight="Bold" Opacity="0.5" />
+                                            <TextBlock Text="{x:Bind ViewModel.Editor.RetirementMatch, Mode=OneWay}"
+                                                       Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                                       FontSize="18" />
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <!-- Edit Link -->
+                                    <HyperlinkButton Content="Edit Compensation History →"
+                                                     Command="{x:Bind ViewModel.EditCompensationCommand}" />
+                                </StackPanel>
+                            </Border>
+
+                            <!-- ═══════════════════════════════════════════════ -->
+                            <!-- YTD SUMMARY CARD                                 -->
+                            <!-- ═══════════════════════════════════════════════ -->
+                            <Border Grid.Column="1"
+                                    Background="{ThemeResource AccentFillColorDefaultBrush}"
+                                    Opacity="0.1"
+                                    CornerRadius="8" />
+                            <Border Grid.Column="1"
+                                    BorderBrush="{ThemeResource AccentFillColorDefaultBrush}"
+                                    BorderThickness="1" CornerRadius="8"
+                                    Padding="20">
+                                <StackPanel>
+                                    <!-- Header -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Orientation="Horizontal">
+                                            <FontIcon Glyph="&#xE9D9;" FontSize="16" 
+                                                      Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                                            <TextBlock Text="2024 YTD Summary" FontWeight="Bold" />
+                                        </StackPanel>
+                                        <Border Grid.Column="1" 
+                                                Background="{ThemeResource AccentFillColorDefaultBrush}"
+                                                Opacity="0.2" CornerRadius="4" Padding="8,4">
+                                            <TextBlock Text="{x:Bind ViewModel.Editor.YtdAsOfDate, Mode=OneWay}"
+                                                       FontSize="10" FontWeight="Bold" />
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- YTD Values -->
+                                    <StackPanel>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Gross Earnings" Opacity="0.7" />
+                                            <TextBlock Grid.Column="1" 
+                                                       Text="{x:Bind ViewModel.Editor.YtdGross, Mode=OneWay, Converter={StaticResource CurrencyConverter}}"
+                                                       FontSize="20" FontWeight="Bold" />
+                                        </Grid>
+
+                                        <Border Height="1" Background="{ThemeResource CardStrokeColorDefaultBrush}" 
+                                                Opacity="0.2" />
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Total Taxes &amp; Deductions" Opacity="0.7" FontSize="13" />
+                                            <TextBlock Grid.Column="1" 
+                                                       Text="{x:Bind ViewModel.Editor.YtdTaxesDisplay, Mode=OneWay}"
+                                                       Foreground="{StaticResource WarningBrush}"
+                                                       FontWeight="SemiBold" />
+                                        </Grid>
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Benefit Contributions" Opacity="0.7" FontSize="13" />
+                                            <TextBlock Grid.Column="1" 
+                                                       Text="{x:Bind ViewModel.Editor.YtdBenefitsDisplay, Mode=OneWay}"
+                                                       Foreground="{StaticResource AccentBrush}"
+                                                       FontWeight="SemiBold" />
+                                        </Grid>
+
+                                        <Border Height="1" Background="{ThemeResource AccentFillColorDefaultBrush}" 
+                                                Opacity="0.3" Margin="0,4" />
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Net Pay" 
+                                                       Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                                       FontWeight="Bold" />
+                                            <TextBlock Grid.Column="1" 
+                                                       Text="{x:Bind ViewModel.Editor.YtdNet, Mode=OneWay, Converter={StaticResource CurrencyConverter}}"
+                                                       Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                                       FontSize="24" FontWeight="Bold" />
+                                        </Grid>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <!-- ═══════════════════════════════════════════════════ -->
+                        <!-- EMPLOYMENT DETAILS FORM                              -->
+                        <!-- ═══════════════════════════════════════════════════ -->
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1" CornerRadius="8"
+                                Padding="20">
+                            <StackPanel>
+                                <!-- Header -->
+                                <StackPanel Orientation="Horizontal">
+                                    <FontIcon Glyph="&#xE77B;" FontSize="16" 
+                                              Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                                    <TextBlock Text="Employment Details" FontWeight="Bold" />
+                                </StackPanel>
+
+                                <!-- Form Fields Grid -->
+                                <Grid ColumnSpacing="16" RowSpacing="16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <TextBox Grid.Row="0" Grid.Column="0" 
+                                             Header="Job Title"
+                                             Text="{x:Bind ViewModel.Editor.JobTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             PlaceholderText="Enter job title" />
+
+                                    <ComboBox Grid.Row="0" Grid.Column="1" 
+                                              Header="Manager"
+                                              HorizontalAlignment="Stretch"
+                                              ItemsSource="{x:Bind ViewModel.Managers, Mode=OneWay}"
+                                              SelectedItem="{x:Bind ViewModel.Editor.Manager, Mode=TwoWay}"
+                                              PlaceholderText="Select manager" />
+
+                                    <TextBox Grid.Row="0" Grid.Column="2" 
+                                             Header="Office Location"
+                                             Text="{x:Bind ViewModel.Editor.Location, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             PlaceholderText="Enter location" />
+
+                                    <TextBox Grid.Row="1" Grid.Column="0" 
+                                             Header="Work Email"
+                                             Text="{x:Bind ViewModel.Editor.WorkEmail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             PlaceholderText="email@company.com" />
+
+                                    <ComboBox Grid.Row="1" Grid.Column="1" 
+                                              Header="Employment Type"
+                                              HorizontalAlignment="Stretch"
+                                              SelectedIndex="{x:Bind ViewModel.Editor.EmploymentTypeIndex, Mode=TwoWay}">
+                                        <ComboBoxItem Content="Full-Time Regular" />
+                                        <ComboBoxItem Content="Part-Time" />
+                                        <ComboBoxItem Content="Contractor" />
+                                        <ComboBoxItem Content="Intern" />
+                                    </ComboBox>
+
+                                    <ComboBox Grid.Row="1" Grid.Column="2" 
+                                              Header="FLSA Status"
+                                              HorizontalAlignment="Stretch"
+                                              SelectedIndex="{x:Bind ViewModel.Editor.FlsaStatusIndex, Mode=TwoWay}">
+                                        <ComboBoxItem Content="Exempt" />
+                                        <ComboBoxItem Content="Non-Exempt" />
+                                    </ComboBox>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- STICKY ACTION FOOTER                                            -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <Border Grid.Row="2"
+                Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="24,16"
+                Visibility="{x:Bind ViewModel.HasSelectedEmployee, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Destructive Action -->
+                <Button Grid.Column="0"
+                        Command="{x:Bind ViewModel.DeleteEmployeeCommand}"
+                        Background="Transparent"
+                        Foreground="{ThemeResource SystemFillColorCriticalBrush}">
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon Glyph="&#xE74D;" FontSize="14" />
+                        <TextBlock Text="Delete Employee record" />
+                    </StackPanel>
+                </Button>
+
+                <!-- Save Actions -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                                  Width="20" Height="20" />
+
+                    <Button Content="Discard"
+                            Command="{x:Bind ViewModel.DiscardChangesCommand}" />
+
+                    <Button Style="{ThemeResource AccentButtonStyle}"
+                            Command="{x:Bind ViewModel.SaveEmployeeCommand}"
+                            IsEnabled="{x:Bind ViewModel.CanSave, Mode=OneWay}">
+                        <TextBlock Text="Save Changes" FontWeight="Bold" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Page>

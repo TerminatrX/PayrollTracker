@@ -7,9 +7,9 @@ C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\obj\
 C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\obj\Debug\net8.0\PayrollManager.Domain.AssemblyInfoInputs.cache
 C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\obj\Debug\net8.0\PayrollManager.Domain.AssemblyInfo.cs
 C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\obj\Debug\net8.0\PayrollManager.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\obj\Debug\net8.0\PayrollManager.Domain.sourcelink.json
 C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\obj\Debug\net8.0\PayrollManager.Domain.dll
 C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\obj\Debug\net8.0\refint\PayrollManager.Domain.dll
 C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\obj\Debug\net8.0\PayrollManager.Domain.pdb
 C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\obj\Debug\net8.0\PayrollManager.Domain.genruntimeconfig.cache
 C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\obj\Debug\net8.0\ref\PayrollManager.Domain.dll
-C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\obj\Debug\net8.0\PayrollManager.Domain.sourcelink.json

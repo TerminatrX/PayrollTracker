@@ -1,16 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using PayrollManager.Domain.Data;
 using PayrollManager.Domain.Models;
 using PayrollManager.Domain.Services;
+using PayrollManager.UI.ViewModels;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace PayrollManager.UI
 {
@@ -23,9 +21,11 @@ namespace PayrollManager.UI
             .CreateDefaultBuilder()
             .ConfigureServices((_, services) =>
             {
+                // Database
                 services.AddDbContext<AppDbContext>(options =>
                     options.UseSqlite($"Data Source={DbPaths.GetDatabasePath()}"));
 
+                // Company Settings
                 services.AddScoped<CompanySettings>(sp =>
                 {
                     var db = sp.GetRequiredService<AppDbContext>();
@@ -36,19 +36,37 @@ namespace PayrollManager.UI
                         db.CompanySettings.Add(settings);
                         db.SaveChanges();
                     }
-
                     return settings;
                 });
 
+                // Domain Services
                 services.AddScoped<PayrollService>();
+                services.AddScoped<AggregationService>();
+                services.AddScoped<ExportService>();
+
+                // ViewModels - Transient so each page gets a fresh instance
+                // ViewModels now use AppDbContext for EF Core data access
+                services.AddTransient<EmployeesViewModel>();
+                services.AddTransient<EmployeeViewModel>();
+                services.AddTransient<PayRunWizardViewModel>();
+                services.AddTransient<PayStubViewModel>();
+                services.AddTransient<ReportsViewModel>();
+                services.AddTransient<SettingsViewModel>();
             })
             .Build();
 
         public static IServiceProvider Services => Host.Services;
 
         /// <summary>
-        /// Initializes the singleton application object.  This is the first line of authored code
-        /// executed, and as such is the logical equivalent of main() or WinMain().
+        /// Gets a service of the specified type from the DI container.
+        /// </summary>
+        public static T GetService<T>() where T : class
+        {
+            return Host.Services.GetRequiredService<T>();
+        }
+
+        /// <summary>
+        /// Initializes the singleton application object.
         /// </summary>
         public App()
         {
@@ -58,7 +76,6 @@ namespace PayrollManager.UI
         /// <summary>
         /// Invoked when the application is launched.
         /// </summary>
-        /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             using (var scope = Services.CreateScope())

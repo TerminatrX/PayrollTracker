@@ -4,126 +4,115 @@ using Microsoft.EntityFrameworkCore;
 using PayrollManager.Domain.Data;
 using PayrollManager.Domain.Models;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 
 namespace PayrollManager.UI.ViewModels;
 
+/// <summary>
+/// ViewModel for the Employees page with master-detail layout.
+/// </summary>
 public partial class EmployeesViewModel : ObservableObject
 {
     private readonly AppDbContext _dbContext;
-    private EmployeeViewModel? _selectedEmployee;
-    private string _searchText = string.Empty;
-    private int _activeFilterIndex = 0; // 0=All, 1=Active, 2=Inactive
-    private int _payTypeFilterIndex = 0; // 0=All, 1=Salary, 2=Hourly
-    private bool _isLoading;
-    private string _statusMessage = string.Empty;
-    private DateTime _lastSaveTime;
 
     public EmployeesViewModel(AppDbContext dbContext)
     {
         _dbContext = dbContext;
         Editor = new EmployeeViewModel();
-        Editor.PropertyChanged += Editor_PropertyChanged;
+        
+        // Initialize collections
+        Departments = new ObservableCollection<string>
+        {
+            "All Departments",
+            "Engineering",
+            "Marketing",
+            "Sales",
+            "HR",
+            "Operations",
+            "Finance"
+        };
+        
+        Managers = new ObservableCollection<string>
+        {
+            "Sarah Johnson",
+            "Mark Stevens",
+            "Emily Chen"
+        };
+        
+        // Load employees on initialization
+        _ = LoadEmployeesAsync();
     }
+    // ═══════════════════════════════════════════════════════════════
+    // COLLECTIONS
+    // ═══════════════════════════════════════════════════════════════
 
     public ObservableCollection<Employee> AllEmployees { get; } = new();
     public ObservableCollection<Employee> FilteredEmployees { get; } = new();
-    public EmployeeViewModel Editor { get; }
+    public ObservableCollection<string> Departments { get; } = new();
+    public ObservableCollection<string> Managers { get; } = new();
 
-    public EmployeeViewModel? SelectedEmployee
-    {
-        get => _selectedEmployee;
-        set
-        {
-            if (SetProperty(ref _selectedEmployee, value))
-            {
-                OnPropertyChanged(nameof(HasSelection));
-                OnPropertyChanged(nameof(CanDelete));
-            }
-        }
-    }
+    // ═══════════════════════════════════════════════════════════════
+    // SELECTION
+    // ═══════════════════════════════════════════════════════════════
 
-    public bool HasSelection => SelectedEmployee != null;
-    public bool CanDelete => Editor.Id.HasValue;
+    [ObservableProperty]
+    private Employee? _selectedEmployee;
 
-    public string SearchText
-    {
-        get => _searchText;
-        set
-        {
-            if (SetProperty(ref _searchText, value))
-            {
-                ApplyFilters();
-            }
-        }
-    }
+    [ObservableProperty]
+    private EmployeeViewModel _editor = new();
 
-    public int ActiveFilterIndex
-    {
-        get => _activeFilterIndex;
-        set
-        {
-            if (SetProperty(ref _activeFilterIndex, value))
-            {
-                ApplyFilters();
-            }
-        }
-    }
+    public bool HasSelectedEmployee => SelectedEmployee != null;
 
-    public int PayTypeFilterIndex
-    {
-        get => _payTypeFilterIndex;
-        set
-        {
-            if (SetProperty(ref _payTypeFilterIndex, value))
-            {
-                ApplyFilters();
-            }
-        }
-    }
+    // ═══════════════════════════════════════════════════════════════
+    // SEARCH STATE
+    // ═══════════════════════════════════════════════════════════════
 
-    public bool IsLoading
-    {
-        get => _isLoading;
-        set => SetProperty(ref _isLoading, value);
-    }
+    [ObservableProperty]
+    private string _searchText = string.Empty;
 
-    public string StatusMessage
-    {
-        get => _statusMessage;
-        set => SetProperty(ref _statusMessage, value);
-    }
+    [ObservableProperty]
+    private bool _isSearchActive;
 
-    public DateTime LastSaveTime
-    {
-        get => _lastSaveTime;
-        set
-        {
-            if (SetProperty(ref _lastSaveTime, value))
-            {
-                OnPropertyChanged(nameof(LastSaveTimeDisplay));
-            }
-        }
-    }
+    // ═══════════════════════════════════════════════════════════════
+    // FILTERS
+    // ═══════════════════════════════════════════════════════════════
 
-    public string LastSaveTimeDisplay => LastSaveTime == default ? "Never" : LastSaveTime.ToString("g");
+    [ObservableProperty]
+    private int _statusFilterIndex = 0; // 0=All, 1=Active, 2=Inactive
 
-    public bool CanSave => !Editor.HasErrors && 
-                           !string.IsNullOrWhiteSpace(Editor.FirstName) && 
+    [ObservableProperty]
+    private int _payTypeFilterIndex = 0; // 0=All, 1=Salary, 2=Hourly
+
+    [ObservableProperty]
+    private string? _selectedDepartment;
+
+    [ObservableProperty]
+    private bool _isStatusFilterActive = true;
+
+    // ═══════════════════════════════════════════════════════════════
+    // STATE
+    // ═══════════════════════════════════════════════════════════════
+
+    [ObservableProperty]
+    private bool _isLoading;
+
+    [ObservableProperty]
+    private string _statusMessage = string.Empty;
+
+    [ObservableProperty]
+    private DateTime _lastSaveTime;
+
+    public bool CanSave => !Editor.HasErrors &&
+                           !string.IsNullOrWhiteSpace(Editor.FirstName) &&
                            !string.IsNullOrWhiteSpace(Editor.LastName);
 
-    private void Editor_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(EmployeeViewModel.HasErrors) ||
-            e.PropertyName == nameof(EmployeeViewModel.FirstName) ||
-            e.PropertyName == nameof(EmployeeViewModel.LastName))
-        {
-            OnPropertyChanged(nameof(CanSave));
-        }
-    }
+    public bool CanDelete => Editor.Id.HasValue;
+
+    // ═══════════════════════════════════════════════════════════════
+    // COMMANDS
+    // ═══════════════════════════════════════════════════════════════
 
     [RelayCommand]
-    public async Task LoadEmployeesAsync()
+    private async Task LoadEmployeesAsync()
     {
         IsLoading = true;
         StatusMessage = "Loading employees...";
@@ -141,7 +130,7 @@ public partial class EmployeesViewModel : ObservableObject
                 AllEmployees.Add(employee);
             }
 
-            ApplyFilters();
+            ApplyFiltersCommand.Execute(null);
             StatusMessage = $"Loaded {employees.Count} employees";
         }
         catch (Exception ex)
@@ -159,7 +148,6 @@ public partial class EmployeesViewModel : ObservableObject
     {
         Editor.Reset();
         SelectedEmployee = null;
-        OnPropertyChanged(nameof(CanDelete));
     }
 
     [RelayCommand(CanExecute = nameof(CanSave))]
@@ -207,7 +195,7 @@ public partial class EmployeesViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanDelete))]
     private async Task DeleteEmployeeAsync()
     {
         if (!Editor.Id.HasValue)
@@ -239,56 +227,32 @@ public partial class EmployeesViewModel : ObservableObject
         }
     }
 
-    public void SelectEmployee(Employee? employee)
+    [RelayCommand]
+    private void Import()
     {
-        if (employee == null)
+        // Placeholder - will be implemented
+    }
+
+    [RelayCommand]
+    private void DiscardChanges()
+    {
+        if (SelectedEmployee != null)
+        {
+            Editor.LoadFrom(SelectedEmployee);
+        }
+        else
         {
             Editor.Reset();
-            return;
         }
-
-        Editor.LoadFrom(employee);
-        LoadPaySummaryAsync(employee.Id).ConfigureAwait(false);
-        OnPropertyChanged(nameof(CanDelete));
     }
 
-    private async Task LoadPaySummaryAsync(int employeeId)
+    [RelayCommand]
+    private void EditCompensation()
     {
-        var year = DateTime.Today.Year;
-        
-        var lastStub = await _dbContext.PayStubs
-            .Include(ps => ps.PayRun)
-            .Where(ps => ps.EmployeeId == employeeId)
-            .OrderByDescending(ps => ps.PayRun!.PayDate)
-            .FirstOrDefaultAsync();
-
-        if (lastStub != null)
-        {
-            Editor.LastPayDate = lastStub.PayRun?.PayDate;
-            Editor.LastGross = lastStub.GrossPay;
-            Editor.LastNet = lastStub.NetPay;
-        }
-
-        var ytdTotals = await _dbContext.PayStubs
-            .Include(ps => ps.PayRun)
-            .Where(ps => ps.EmployeeId == employeeId && ps.PayRun!.PayDate.Year == year)
-            .GroupBy(ps => ps.EmployeeId)
-            .Select(g => new
-            {
-                Gross = g.Sum(x => x.GrossPay),
-                Taxes = g.Sum(x => x.TaxFederal + x.TaxState + x.TaxSocialSecurity + x.TaxMedicare),
-                Net = g.Sum(x => x.NetPay)
-            })
-            .FirstOrDefaultAsync();
-
-        if (ytdTotals != null)
-        {
-            Editor.YtdGross = ytdTotals.Gross;
-            Editor.YtdTaxes = ytdTotals.Taxes;
-            Editor.YtdNet = ytdTotals.Net;
-        }
+        // Placeholder - will be implemented
     }
 
+    [RelayCommand]
     private void ApplyFilters()
     {
         FilteredEmployees.Clear();
@@ -305,8 +269,8 @@ public partial class EmployeesViewModel : ObservableObject
                 e.Id.ToString().Contains(search));
         }
 
-        // Active filter
-        query = ActiveFilterIndex switch
+        // Status filter
+        query = StatusFilterIndex switch
         {
             1 => query.Where(e => e.IsActive),
             2 => query.Where(e => !e.IsActive),
@@ -321,9 +285,48 @@ public partial class EmployeesViewModel : ObservableObject
             _ => query
         };
 
+        // Department filter
+        if (!string.IsNullOrEmpty(SelectedDepartment) && SelectedDepartment != "All Departments")
+        {
+            // Placeholder - will filter by department when Employee model has Department property
+        }
+
         foreach (var employee in query)
         {
             FilteredEmployees.Add(employee);
+        }
+    }
+
+    partial void OnSearchTextChanged(string value)
+    {
+        IsSearchActive = !string.IsNullOrWhiteSpace(value);
+        ApplyFiltersCommand.Execute(null);
+    }
+
+    partial void OnStatusFilterIndexChanged(int value)
+    {
+        ApplyFiltersCommand.Execute(null);
+    }
+
+    partial void OnPayTypeFilterIndexChanged(int value)
+    {
+        ApplyFiltersCommand.Execute(null);
+    }
+
+    partial void OnSelectedDepartmentChanged(string? value)
+    {
+        ApplyFiltersCommand.Execute(null);
+    }
+
+    partial void OnSelectedEmployeeChanged(Employee? value)
+    {
+        if (value != null)
+        {
+            Editor.LoadFrom(value);
+        }
+        else
+        {
+            Editor.Reset();
         }
     }
 }

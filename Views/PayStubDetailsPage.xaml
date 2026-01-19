@@ -9,7 +9,7 @@
     mc:Ignorable="d">
 
     <ScrollViewer Padding="24">
-        <StackPanel Spacing="24" MaxWidth="800">
+        <StackPanel MaxWidth="800">
             <!-- Header -->
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -34,7 +34,7 @@
 
             <!-- Earnings Section with Earning Lines Table -->
             <Border Style="{StaticResource CardStyle}">
-                <StackPanel Spacing="12">
+                <StackPanel>
                     <TextBlock Text="EARNINGS" Style="{StaticResource SectionTitleStyle}" />
                     
                     <!-- Earnings Table -->
@@ -94,7 +94,7 @@
 
             <!-- Pre-Tax Deductions Section -->
             <Border Style="{StaticResource CardStyle}">
-                <StackPanel Spacing="12">
+                <StackPanel>
                     <TextBlock Text="PRE-TAX DEDUCTIONS" Style="{StaticResource SectionTitleStyle}" />
                     
                     <Grid>
@@ -112,7 +112,7 @@
 
             <!-- Taxes Section -->
             <Border Style="{StaticResource CardStyle}">
-                <StackPanel Spacing="12">
+                <StackPanel>
                     <TextBlock Text="TAXES" Style="{StaticResource SectionTitleStyle}" />
                     
                     <Grid RowSpacing="8">
@@ -153,7 +153,7 @@
 
             <!-- Post-Tax Deductions Section -->
             <Border Style="{StaticResource CardStyle}">
-                <StackPanel Spacing="12">
+                <StackPanel>
                     <TextBlock Text="POST-TAX DEDUCTIONS" Style="{StaticResource SectionTitleStyle}" />
                     
                     <Grid RowSpacing="8">
@@ -182,7 +182,7 @@
 
             <!-- Earnings Summary by Type -->
             <Border Style="{StaticResource CardStyle}">
-                <StackPanel Spacing="12">
+                <StackPanel>
                     <TextBlock Text="EARNINGS BREAKDOWN" Style="{StaticResource SectionTitleStyle}" />
                     
                     <Grid ColumnSpacing="32">
@@ -219,7 +219,7 @@
 
             <!-- YTD Summary -->
             <Border Style="{StaticResource CardStyle}" Background="{StaticResource SectionBackgroundBrush}">
-                <StackPanel Spacing="12">
+                <StackPanel>
                     <TextBlock Text="YEAR-TO-DATE SUMMARY" Style="{StaticResource SectionTitleStyle}" />
                     
                     <Grid ColumnSpacing="32">
@@ -250,7 +250,7 @@
             </Border>
 
             <!-- Export Buttons -->
-            <StackPanel Orientation="Horizontal" Spacing="12">
+            <StackPanel Orientation="Horizontal">
                 <Button Content="Export as CSV" Click="ExportCsv_Click" />
                 <Button Content="Export as PDF" Click="ExportPdf_Click" IsEnabled="False" />
                 <Button Content="Back" Click="Back_Click" />

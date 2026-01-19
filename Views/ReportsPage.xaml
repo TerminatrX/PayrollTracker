@@ -6,220 +6,535 @@
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid Padding="24">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="256" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-        <!-- Title -->
-        <TextBlock Text="Payroll Reports" Style="{StaticResource PageTitleStyle}" Grid.Row="0" />
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- LEFT SIDEBAR: REPORT NAVIGATION                                 -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <Border Grid.Column="0"
+                Background="{ThemeResource LayerFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="0,0,1,0"
+                Padding="16">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-        <!-- Filters -->
-        <Border Style="{StaticResource CardStyle}" Grid.Row="1">
-            <StackPanel Spacing="16">
-                <TextBlock Text="REPORT PARAMETERS" Style="{StaticResource SectionTitleStyle}" />
-                
-                <StackPanel Orientation="Horizontal" Spacing="16">
-                    <ComboBox Header="Year" Width="120"
-                              ItemsSource="{x:Bind ViewModel.AvailableYears}"
-                              SelectedItem="{x:Bind ViewModel.SelectedYear, Mode=TwoWay}" />
+                <StackPanel>
+                    <!-- Payroll Center Section -->
+                    <StackPanel>
+                        <TextBlock Text="PAYROLL CENTER" 
+                                   FontSize="10" FontWeight="Bold"
+                                   Opacity="0.4" CharacterSpacing="100"
+                                   Margin="12,0,0,8" />
 
-                    <ComboBox Header="Period" Width="180"
-                              SelectedIndex="{x:Bind ViewModel.PeriodIndex, Mode=TwoWay}">
-                        <ComboBoxItem Content="Q1 (Jan-Mar)" />
-                        <ComboBoxItem Content="Q2 (Apr-Jun)" />
-                        <ComboBoxItem Content="Q3 (Jul-Sep)" />
-                        <ComboBoxItem Content="Q4 (Oct-Dec)" />
-                        <ComboBoxItem Content="Full Year" />
-                        <ComboBoxItem Content="Custom Range" />
-                    </ComboBox>
+                        <!-- Payroll Run -->
+                        <Button HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Background="Transparent"
+                                Padding="12,10"
+                                Command="{x:Bind ViewModel.NavigateToPayrollRunCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon Glyph="&#xE8C7;" FontSize="16" Opacity="0.7" />
+                                <TextBlock Text="Payroll Run" />
+                            </StackPanel>
+                        </Button>
 
-                    <CalendarDatePicker Header="From"
-                                        Date="{x:Bind ViewModel.CustomStartDate, Mode=TwoWay}"
-                                        Visibility="{x:Bind ViewModel.IsCustomDateRange, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
-                                        MinWidth="150" />
+                        <!-- Summary Reports (Active) -->
+                        <Button HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Style="{ThemeResource AccentButtonStyle}"
+                                Padding="12,10">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon Glyph="&#xE8A1;" FontSize="16" />
+                                <TextBlock Text="Summary Reports" FontWeight="Bold" />
+                            </StackPanel>
+                        </Button>
 
-                    <CalendarDatePicker Header="To"
-                                        Date="{x:Bind ViewModel.CustomEndDate, Mode=TwoWay}"
-                                        Visibility="{x:Bind ViewModel.IsCustomDateRange, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
-                                        MinWidth="150" />
+                        <!-- Tax Forms -->
+                        <Button HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Background="Transparent"
+                                Padding="12,10"
+                                Command="{x:Bind ViewModel.NavigateToTaxFormsCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon Glyph="&#xE8E5;" FontSize="16" Opacity="0.7" />
+                                <TextBlock Text="Tax Forms" />
+                            </StackPanel>
+                        </Button>
 
-                    <Button Content="Run Report" 
-                            Style="{StaticResource PrimaryButtonStyle}"
-                            Command="{x:Bind ViewModel.RunReportCommand}"
-                            Margin="16,18,0,0" />
+                        <!-- Benefits Registry -->
+                        <Button HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Background="Transparent"
+                                Padding="12,10"
+                                Command="{x:Bind ViewModel.NavigateToBenefitsCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon Glyph="&#xEB51;" FontSize="16" Opacity="0.7" />
+                                <TextBlock Text="Benefits Registry" />
+                            </StackPanel>
+                        </Button>
 
-                    <Button Content="Export to CSV" 
-                            Command="{x:Bind ViewModel.ExportToCsvCommand}"
-                            Margin="0,18,0,0" />
-
-                    <ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}" 
-                                  Width="24" Height="24"
-                                  Margin="8,18,0,0" />
+                        <!-- Archive -->
+                        <Button HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Background="Transparent"
+                                Padding="12,10"
+                                Command="{x:Bind ViewModel.NavigateToArchiveCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon Glyph="&#xE81C;" FontSize="16" Opacity="0.7" />
+                                <TextBlock Text="Archive" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
+
+                <!-- System Version Info -->
+                <Border Grid.Row="1"
+                        Background="{ThemeResource AccentFillColorDefaultBrush}"
+                        Opacity="0.1"
+                        CornerRadius="8" />
+                <Border Grid.Row="1"
+                        BorderBrush="{ThemeResource AccentFillColorDefaultBrush}"
+                        BorderThickness="1" CornerRadius="8"
+                        Padding="16" Margin="0,16,0,0">
+                    <StackPanel>
+                        <TextBlock Text="System Version" 
+                                   FontSize="11" FontWeight="Bold"
+                                   Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                        <TextBlock Text="v4.2.0-Enterprise" FontSize="12" Opacity="0.6" />
+                        <Grid Margin="0,8,0,0">
+                            <TextBlock Text="HEALTH STATUS" 
+                                       FontSize="10" FontWeight="Bold" Opacity="0.4" />
+                            <Ellipse Width="8" Height="8" 
+                                     Fill="#22C55E"
+                                     HorizontalAlignment="Right" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </Grid>
         </Border>
 
-        <!-- Company Totals Summary -->
-        <Border Style="{StaticResource CardStyle}" Grid.Row="2">
-            <StackPanel Spacing="16">
-                <TextBlock Text="COMPANY TOTALS" Style="{StaticResource SectionTitleStyle}" />
-                
-                <Grid ColumnSpacing="32">
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- MAIN CONTENT AREA                                               -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Padding="32">
+
+                <!-- ─────────────────────────────────────────────────────────── -->
+                <!-- PAGE HEADER                                                 -->
+                <!-- ─────────────────────────────────────────────────────────── -->
+                <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel>
+                        <TextBlock Text="Payroll Summary Reports" 
+                                   Style="{ThemeResource TitleLargeTextBlockStyle}"
+                                   FontWeight="ExtraBold" />
+                        <StackPanel Orientation="Horizontal" Opacity="0.6">
+                            <FontIcon Glyph="&#xE823;" FontSize="12" />
+                            <TextBlock Text="{x:Bind ViewModel.LastUpdatedDisplay, Mode=OneWay}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button Command="{x:Bind ViewModel.ExportPdfCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon Glyph="&#xE896;" FontSize="14" />
+                                <TextBlock Text="Export PDF" />
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{ThemeResource AccentButtonStyle}"
+                                Command="{x:Bind ViewModel.RunReportCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon Glyph="&#xE768;" FontSize="14" />
+                                <TextBlock Text="Run Report" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+
+                <!-- ─────────────────────────────────────────────────────────── -->
+                <!-- FILTERS BAR                                                 -->
+                <!-- ─────────────────────────────────────────────────────────── -->
+                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1" CornerRadius="12"
+                        Padding="20">
+                    <Grid ColumnSpacing="20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Fiscal Year -->
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="FISCAL YEAR" 
+                                       FontSize="10" FontWeight="Bold" Opacity="0.5" />
+                            <ComboBox Width="120"
+                                      SelectedItem="{x:Bind ViewModel.SelectedYear, Mode=TwoWay}"
+                                      ItemsSource="{x:Bind ViewModel.AvailableYears, Mode=OneWay}" />
+                        </StackPanel>
+
+                        <!-- Period -->
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="PERIOD" 
+                                       FontSize="10" FontWeight="Bold" Opacity="0.5" />
+                            <ComboBox Width="150"
+                                      SelectedIndex="{x:Bind ViewModel.SelectedPeriodIndex, Mode=TwoWay}">
+                                <ComboBoxItem Content="Q1 (Jan - Mar)" />
+                                <ComboBoxItem Content="Q2 (Apr - Jun)" />
+                                <ComboBoxItem Content="Q3 (Jul - Sep)" />
+                                <ComboBoxItem Content="Q4 (Oct - Dec)" />
+                                <ComboBoxItem Content="Full Year" />
+                            </ComboBox>
+                        </StackPanel>
+
+                        <!-- Department -->
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="DEPARTMENT" 
+                                       FontSize="10" FontWeight="Bold" Opacity="0.5" />
+                            <ComboBox Width="160"
+                                      SelectedItem="{x:Bind ViewModel.SelectedDepartment, Mode=TwoWay}"
+                                      ItemsSource="{x:Bind ViewModel.Departments, Mode=OneWay}"
+                                      PlaceholderText="All Departments" />
+                        </StackPanel>
+
+                        <!-- Info Text -->
+                        <StackPanel Grid.Column="3" 
+                                    Orientation="Horizontal" Spacing="8"
+                                    VerticalAlignment="Bottom"
+                                    HorizontalAlignment="Right"
+                                    Opacity="0.5" Margin="0,0,0,8">
+                            <FontIcon Glyph="&#xE946;" FontSize="12" />
+                            <TextBlock Text="Data reflects finalized payroll runs only."
+                                       FontSize="12" FontStyle="Italic" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- ─────────────────────────────────────────────────────────── -->
+                <!-- STATS GRID (KPI TILES)                                      -->
+                <!-- ─────────────────────────────────────────────────────────── -->
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Text="Total Gross" Style="{StaticResource LabelStyle}" />
-                        <TextBlock Text="{x:Bind ViewModel.CompanyGross, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
-                                   Style="{StaticResource LargeValueStyle}" />
-                    </StackPanel>
+                    <!-- Total Gross -->
+                    <Border Grid.Column="0"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1" CornerRadius="12"
+                            Padding="20">
+                        <Grid>
+                            <FontIcon Glyph="&#xE8C7;" FontSize="48" 
+                                      HorizontalAlignment="Right" VerticalAlignment="Top"
+                                      Opacity="0.05" Margin="0,-8,-8,0" />
+                            <StackPanel>
+                                <TextBlock Text="TOTAL GROSS" 
+                                           FontSize="11" FontWeight="Bold" Opacity="0.5" />
+                                <TextBlock Text="{x:Bind ViewModel.TotalGross, Mode=OneWay, Converter={StaticResource CurrencyConverter}}"
+                                           FontSize="26" FontWeight="Black" />
+                                <StackPanel Orientation="Horizontal">
+                                    <FontIcon Glyph="&#xE74A;" FontSize="12" Foreground="#22C55E" />
+                                    <TextBlock Text="{x:Bind ViewModel.GrossTrend, Mode=OneWay}"
+                                               FontSize="12" FontWeight="Bold" Foreground="#22C55E" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
 
-                    <StackPanel Grid.Column="1">
-                        <TextBlock Text="Federal" Style="{StaticResource LabelStyle}" />
-                        <TextBlock Text="{x:Bind ViewModel.CompanyFederalTax, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
-                                   Style="{StaticResource ValueStyle}" Foreground="{StaticResource WarningBrush}" />
-                    </StackPanel>
+                    <!-- Total Taxes -->
+                    <Border Grid.Column="1"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1" CornerRadius="12"
+                            Padding="20">
+                        <Grid>
+                            <FontIcon Glyph="&#xE80F;" FontSize="48" 
+                                      HorizontalAlignment="Right" VerticalAlignment="Top"
+                                      Opacity="0.05" Margin="0,-8,-8,0" />
+                            <StackPanel>
+                                <TextBlock Text="TOTAL TAXES" 
+                                           FontSize="11" FontWeight="Bold" Opacity="0.5" />
+                                <TextBlock Text="{x:Bind ViewModel.TotalTaxes, Mode=OneWay, Converter={StaticResource CurrencyConverter}}"
+                                           FontSize="26" FontWeight="Black" />
+                                <StackPanel Orientation="Horizontal">
+                                    <FontIcon Glyph="&#xE74B;" FontSize="12" Foreground="#F97316" />
+                                    <TextBlock Text="{x:Bind ViewModel.TaxesTrend, Mode=OneWay}"
+                                               FontSize="12" FontWeight="Bold" Foreground="#F97316" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
 
-                    <StackPanel Grid.Column="2">
-                        <TextBlock Text="State" Style="{StaticResource LabelStyle}" />
-                        <TextBlock Text="{x:Bind ViewModel.CompanyStateTax, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
-                                   Style="{StaticResource ValueStyle}" Foreground="{StaticResource WarningBrush}" />
-                    </StackPanel>
+                    <!-- Total Benefits -->
+                    <Border Grid.Column="2"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1" CornerRadius="12"
+                            Padding="20">
+                        <Grid>
+                            <FontIcon Glyph="&#xEB51;" FontSize="48" 
+                                      HorizontalAlignment="Right" VerticalAlignment="Top"
+                                      Opacity="0.05" Margin="0,-8,-8,0" />
+                            <StackPanel>
+                                <TextBlock Text="TOTAL BENEFITS" 
+                                           FontSize="11" FontWeight="Bold" Opacity="0.5" />
+                                <TextBlock Text="{x:Bind ViewModel.TotalBenefits, Mode=OneWay, Converter={StaticResource CurrencyConverter}}"
+                                           FontSize="26" FontWeight="Black" />
+                                <StackPanel Orientation="Horizontal">
+                                    <FontIcon Glyph="&#xE74A;" FontSize="12" Foreground="#22C55E" />
+                                    <TextBlock Text="{x:Bind ViewModel.BenefitsTrend, Mode=OneWay}"
+                                               FontSize="12" FontWeight="Bold" Foreground="#22C55E" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
 
-                    <StackPanel Grid.Column="3">
-                        <TextBlock Text="Soc. Security" Style="{StaticResource LabelStyle}" />
-                        <TextBlock Text="{x:Bind ViewModel.CompanySocialSecurity, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
-                                   Style="{StaticResource ValueStyle}" Foreground="{StaticResource WarningBrush}" />
-                    </StackPanel>
-
-                    <StackPanel Grid.Column="4">
-                        <TextBlock Text="Medicare" Style="{StaticResource LabelStyle}" />
-                        <TextBlock Text="{x:Bind ViewModel.CompanyMedicare, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
-                                   Style="{StaticResource ValueStyle}" Foreground="{StaticResource WarningBrush}" />
-                    </StackPanel>
-
-                    <StackPanel Grid.Column="5">
-                        <TextBlock Text="Total Taxes" Style="{StaticResource LabelStyle}" />
-                        <TextBlock Text="{x:Bind ViewModel.CompanyTotalTaxes, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
-                                   Style="{StaticResource LargeValueStyle}" Foreground="{StaticResource WarningBrush}" />
-                    </StackPanel>
-
-                    <StackPanel Grid.Column="6">
-                        <TextBlock Text="Total Net" Style="{StaticResource LabelStyle}" />
-                        <TextBlock Text="{x:Bind ViewModel.CompanyNet, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
-                                   Style="{StaticResource LargeValueStyle}" Foreground="{StaticResource SuccessBrush}" />
-                    </StackPanel>
+                    <!-- Total Net (Highlighted) -->
+                    <Border Grid.Column="3"
+                            Background="{ThemeResource AccentFillColorDefaultBrush}"
+                            Opacity="0.1" CornerRadius="12" />
+                    <Border Grid.Column="3"
+                            BorderBrush="{ThemeResource AccentFillColorDefaultBrush}"
+                            BorderThickness="2" CornerRadius="12"
+                            Padding="20">
+                        <Grid>
+                            <FontIcon Glyph="&#xE8C8;" FontSize="48" 
+                                      HorizontalAlignment="Right" VerticalAlignment="Top"
+                                      Opacity="0.1" Margin="0,-8,-8,0"
+                                      Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                            <StackPanel>
+                                <TextBlock Text="TOTAL NET" 
+                                           FontSize="11" FontWeight="Bold"
+                                           Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                                <TextBlock Text="{x:Bind ViewModel.TotalNet, Mode=OneWay, Converter={StaticResource CurrencyConverter}}"
+                                           FontSize="26" FontWeight="Black" />
+                                <StackPanel Orientation="Horizontal">
+                                    <FontIcon Glyph="&#xE74A;" FontSize="12" 
+                                              Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                                    <TextBlock Text="{x:Bind ViewModel.NetTrend, Mode=OneWay}"
+                                               FontSize="12" FontWeight="Bold"
+                                               Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
                 </Grid>
+
+                <!-- ─────────────────────────────────────────────────────────── -->
+                <!-- DATA GRID CARD                                              -->
+                <!-- ─────────────────────────────────────────────────────────── -->
+                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1" CornerRadius="12">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <!-- Grid Header -->
+                        <Border Grid.Row="0" Padding="20,16"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="0,0,0,1">
+                            <Grid>
+                                <TextBlock Text="Employee Summary Breakdowns" 
+                                           FontWeight="Bold" FontSize="15" />
+                                <StackPanel Orientation="Horizontal"
+                                            HorizontalAlignment="Right">
+                                    <AutoSuggestBox PlaceholderText="Filter rows..."
+                                                    QueryIcon="Find"
+                                                    Width="200"
+                                                    Text="{x:Bind ViewModel.FilterText, Mode=TwoWay}" />
+                                    <Button ToolTipService.ToolTip="Advanced Filters">
+                                        <FontIcon Glyph="&#xE71C;" FontSize="14" />
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- Data Grid -->
+                        <controls:DataGrid Grid.Row="1"
+                                           x:Name="ReportsDataGrid"
+                                           AutoGenerateColumns="False"
+                                           ItemsSource="{x:Bind ViewModel.EmployeeSummaries, Mode=OneWay}"
+                                           IsReadOnly="True"
+                                           CanUserSortColumns="True"
+                                           CanUserReorderColumns="True"
+                                           CanUserResizeColumns="True"
+                                           GridLinesVisibility="Horizontal"
+                                           AlternatingRowBackground="{ThemeResource SubtleFillColorTertiaryBrush}"
+                                           MaxHeight="500">
+                            <controls:DataGrid.Columns>
+                                <!-- Employee Name with Avatar -->
+                                <controls:DataGridTemplateColumn Header="EMPLOYEE NAME" Width="220">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" Padding="12,8">
+                                                <Border Width="32" Height="32" CornerRadius="16"
+                                                        Background="{ThemeResource SubtleFillColorSecondaryBrush}">
+                                                    <TextBlock Text="{Binding Initials}"
+                                                               FontSize="11" FontWeight="Bold"
+                                                               HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center" />
+                                                </Border>
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding EmployeeName}"
+                                                               FontWeight="SemiBold" />
+                                                    <TextBlock Text="{Binding DepartmentType}"
+                                                               FontSize="10" Opacity="0.5" />
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+
+                                <!-- ID -->
+                                <controls:DataGridTextColumn Header="ID NO." 
+                                                              Binding="{Binding EmployeeId}" 
+                                                              Width="90" />
+
+                                <!-- Gross Pay -->
+                                <controls:DataGridTemplateColumn Header="GROSS PAY" Width="110">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding GrossPayDisplay}"
+                                                       FontWeight="Medium"
+                                                       HorizontalAlignment="Right"
+                                                       VerticalAlignment="Center"
+                                                       Padding="12,0" />
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+
+                                <!-- Fed Tax -->
+                                <controls:DataGridTemplateColumn Header="FED TAX" Width="100">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding FederalTaxDisplay}"
+                                                       Opacity="0.7"
+                                                       HorizontalAlignment="Right"
+                                                       VerticalAlignment="Center"
+                                                       Padding="12,0" />
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+
+                                <!-- State Tax -->
+                                <controls:DataGridTemplateColumn Header="STATE TAX" Width="100">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding StateTaxDisplay}"
+                                                       Opacity="0.7"
+                                                       HorizontalAlignment="Right"
+                                                       VerticalAlignment="Center"
+                                                       Padding="12,0" />
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+
+                                <!-- Benefits -->
+                                <controls:DataGridTemplateColumn Header="BENEFITS" Width="100">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding BenefitsDisplay}"
+                                                       Opacity="0.7"
+                                                       HorizontalAlignment="Right"
+                                                       VerticalAlignment="Center"
+                                                       Padding="12,0" />
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+
+                                <!-- Net Pay -->
+                                <controls:DataGridTemplateColumn Header="NET PAY" Width="110">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding NetPayDisplay}"
+                                                       FontWeight="Bold"
+                                                       HorizontalAlignment="Right"
+                                                       VerticalAlignment="Center"
+                                                       Padding="12,0" />
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+
+                                <!-- Status Badge -->
+                                <controls:DataGridTemplateColumn Header="STATUS" Width="100">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border CornerRadius="4" Padding="8,4"
+                                                    HorizontalAlignment="Center"
+                                                    Background="{Binding StatusBackground}">
+                                                <TextBlock Text="{Binding Status}"
+                                                           FontSize="10" FontWeight="Black"
+                                                           Foreground="{Binding StatusForeground}" />
+                                            </Border>
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+                            </controls:DataGrid.Columns>
+                        </controls:DataGrid>
+
+                        <!-- Pagination Footer -->
+                        <Border Grid.Row="2" Padding="20,12"
+                                Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                CornerRadius="0,0,12,12"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="0,1,0,0">
+                            <Grid>
+                                <TextBlock VerticalAlignment="Center" FontSize="12" Opacity="0.7">
+                                    <Run Text="Showing " />
+                                    <Run Text="{x:Bind ViewModel.CurrentPageRange, Mode=OneWay}" FontWeight="Bold" />
+                                    <Run Text=" of " />
+                                    <Run Text="{x:Bind ViewModel.TotalEmployeeCount, Mode=OneWay}" FontWeight="Bold" />
+                                    <Run Text=" employees" />
+                                </TextBlock>
+
+                                <StackPanel Orientation="Horizontal"
+                                            HorizontalAlignment="Right">
+                                    <Button Width="32" Height="32" Padding="0"
+                                            Command="{x:Bind ViewModel.PreviousPageCommand}">
+                                        <FontIcon Glyph="&#xE76B;" FontSize="12" />
+                                    </Button>
+                                    <Button Width="32" Height="32" Padding="0"
+                                            Style="{ThemeResource AccentButtonStyle}"
+                                            Content="1" />
+                                    <Button Width="32" Height="32" Padding="0"
+                                            Content="2" />
+                                    <Button Width="32" Height="32" Padding="0"
+                                            Content="3" />
+                                    <Button Width="32" Height="32" Padding="0"
+                                            Command="{x:Bind ViewModel.NextPageCommand}">
+                                        <FontIcon Glyph="&#xE76C;" FontSize="12" />
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Border>
             </StackPanel>
-        </Border>
-
-        <!-- Employee Details Grid -->
-        <controls:DataGrid Grid.Row="3"
-                           AutoGenerateColumns="False"
-                           ItemsSource="{x:Bind ViewModel.EmployeeTotals, Mode=OneWay}"
-                           IsReadOnly="True"
-                           CanUserSortColumns="True"
-                           CanUserReorderColumns="True"
-                           CanUserResizeColumns="True"
-                           Margin="0,16,0,0">
-            <controls:DataGrid.Columns>
-                <controls:DataGridTextColumn Header="Employee" Binding="{Binding EmployeeName}" Width="*" />
-                <controls:DataGridTemplateColumn Header="Gross" Width="120">
-                    <controls:DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding GrossPay, Converter={StaticResource CurrencyConverter}}" 
-                                       HorizontalAlignment="Right" VerticalAlignment="Center"
-                                       Style="{StaticResource CurrencyStyle}" />
-                        </DataTemplate>
-                    </controls:DataGridTemplateColumn.CellTemplate>
-                </controls:DataGridTemplateColumn>
-                <controls:DataGridTemplateColumn Header="Federal" Width="100">
-                    <controls:DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding FederalTax, Converter={StaticResource CurrencyConverter}}" 
-                                       HorizontalAlignment="Right" VerticalAlignment="Center"
-                                       Style="{StaticResource CurrencyStyle}" />
-                        </DataTemplate>
-                    </controls:DataGridTemplateColumn.CellTemplate>
-                </controls:DataGridTemplateColumn>
-                <controls:DataGridTemplateColumn Header="State" Width="100">
-                    <controls:DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding StateTax, Converter={StaticResource CurrencyConverter}}" 
-                                       HorizontalAlignment="Right" VerticalAlignment="Center"
-                                       Style="{StaticResource CurrencyStyle}" />
-                        </DataTemplate>
-                    </controls:DataGridTemplateColumn.CellTemplate>
-                </controls:DataGridTemplateColumn>
-                <controls:DataGridTemplateColumn Header="SS" Width="100">
-                    <controls:DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding SocialSecurity, Converter={StaticResource CurrencyConverter}}" 
-                                       HorizontalAlignment="Right" VerticalAlignment="Center"
-                                       Style="{StaticResource CurrencyStyle}" />
-                        </DataTemplate>
-                    </controls:DataGridTemplateColumn.CellTemplate>
-                </controls:DataGridTemplateColumn>
-                <controls:DataGridTemplateColumn Header="Medicare" Width="100">
-                    <controls:DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Medicare, Converter={StaticResource CurrencyConverter}}" 
-                                       HorizontalAlignment="Right" VerticalAlignment="Center"
-                                       Style="{StaticResource CurrencyStyle}" />
-                        </DataTemplate>
-                    </controls:DataGridTemplateColumn.CellTemplate>
-                </controls:DataGridTemplateColumn>
-                <controls:DataGridTemplateColumn Header="Total Taxes" Width="110">
-                    <controls:DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding TotalTaxes, Converter={StaticResource CurrencyConverter}}" 
-                                       HorizontalAlignment="Right" VerticalAlignment="Center"
-                                       Foreground="{StaticResource WarningBrush}"
-                                       Style="{StaticResource CurrencyStyle}" />
-                        </DataTemplate>
-                    </controls:DataGridTemplateColumn.CellTemplate>
-                </controls:DataGridTemplateColumn>
-                <controls:DataGridTemplateColumn Header="Net Pay" Width="120">
-                    <controls:DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding NetPay, Converter={StaticResource CurrencyConverter}}" 
-                                       HorizontalAlignment="Right" VerticalAlignment="Center"
-                                       Foreground="{StaticResource SuccessBrush}"
-                                       FontWeight="SemiBold"
-                                       Style="{StaticResource CurrencyStyle}" />
-                        </DataTemplate>
-                    </controls:DataGridTemplateColumn.CellTemplate>
-                </controls:DataGridTemplateColumn>
-            </controls:DataGrid.Columns>
-        </controls:DataGrid>
-
-        <!-- Status Bar -->
-        <Border Grid.Row="4" Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}" 
-                Padding="12,8" Margin="-24,16,-24,-24">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}" 
-                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" />
-                <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.LastExportPath, Mode=OneWay}"
-                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" />
-            </Grid>
-        </Border>
+        </ScrollViewer>
     </Grid>
 </Page>

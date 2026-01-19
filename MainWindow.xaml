@@ -7,19 +7,84 @@
     xmlns:views="using:PayrollManager.UI.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Title="PayrollManager">
 
     <Grid>
         <NavigationView x:Name="MainNav"
                         PaneDisplayMode="Left"
                         IsBackEnabled="False"
-                        SelectionChanged="MainNav_OnSelectionChanged">
+                        IsPaneOpen="True"
+                        OpenPaneLength="240"
+                        SelectionChanged="MainNav_OnSelectionChanged"
+                        IsSettingsVisible="False">
+            
+            <!-- Navigation Header -->
+            <NavigationView.PaneHeader>
+                <StackPanel Orientation="Horizontal" Margin="{StaticResource SpacingSM},{StaticResource SpacingXS}">
+                    <Border Width="32" Height="32" 
+                            CornerRadius="{StaticResource CornerRadiusMD}"
+                            Background="{StaticResource PrimaryBrush}">
+                        <FontIcon Glyph="&#xE8C7;" FontSize="16" Foreground="White"
+                                  HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel VerticalAlignment="Center" Margin="{StaticResource SpacingSM},0,0,0">
+                        <TextBlock Text="PayrollManager" 
+                                   Style="{StaticResource TypographyBodyStrong}" />
+                        <TextBlock Text="Enterprise" 
+                                   Style="{StaticResource TypographyCaption}"
+                                   Opacity="0.7" />
+                    </StackPanel>
+                </StackPanel>
+            </NavigationView.PaneHeader>
+
+            <!-- Main Navigation Items -->
             <NavigationView.MenuItems>
-                <NavigationViewItem Content="Employees" Tag="employees" Icon="People" />
-                <NavigationViewItem Content="Pay Runs" Tag="payruns" Icon="Calendar" />
-                <NavigationViewItem Content="Reports" Tag="reports" Icon="Document" />
-                <NavigationViewItem Content="Settings" Tag="settings" Icon="Setting" />
+                <NavigationViewItemHeader Content="MAIN" />
+                
+                <NavigationViewItem Content="Employees" Tag="employees">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE716;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                
+                <NavigationViewItem Content="Pay Runs" Tag="payruns">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8C7;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                
+                <NavigationViewItem Content="Pay Stubs" Tag="paystubs">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8A1;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                
+                <NavigationViewItem Content="Reports" Tag="reports">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE9D9;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItemHeader Content="CONFIGURATION" />
+                
+                <NavigationViewItem Content="Settings" Tag="settings">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE713;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
             </NavigationView.MenuItems>
+
+            <!-- Footer Items -->
+            <NavigationView.FooterMenuItems>
+                <NavigationViewItem Content="Help" Tag="help">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE897;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.FooterMenuItems>
+
+            <!-- Main Content Frame -->
             <Frame x:Name="ContentFrame" />
         </NavigationView>
     </Grid>

@@ -8,64 +8,143 @@ using System.Collections.ObjectModel;
 
 namespace PayrollManager.UI.ViewModels;
 
+/// <summary>
+/// ViewModel for the Pay Run Wizard page with stepper navigation.
+/// </summary>
 public partial class PayRunWizardViewModel : ObservableObject
 {
     private readonly AppDbContext _dbContext;
     private readonly PayrollService _payrollService;
-    
-    private int _currentStep = 0;
-    private DateTimeOffset _periodStart;
-    private DateTimeOffset _periodEnd;
-    private DateTimeOffset _payDate;
-    private bool _isLoading;
-    private string _statusMessage = string.Empty;
-    private bool _isRunComplete;
-
-    // Summary estimates
-    private decimal _estimatedGross;
-    private decimal _estimatedRegular;
-    private decimal _estimatedOvertime;
-    private decimal _estimatedBonus;
-    private decimal _estimatedTaxes;
-    private decimal _estimatedNet;
-    private int _includedCount;
 
     public PayRunWizardViewModel(AppDbContext dbContext, PayrollService payrollService)
     {
         _dbContext = dbContext;
         _payrollService = payrollService;
         
+        // Initialize default dates
         var today = DateTimeOffset.Now.Date;
-        _periodStart = today.AddDays(-13);
-        _periodEnd = today;
-        _payDate = today.AddDays(1);
+        PeriodStart = today.AddDays(-13);
+        PeriodEnd = today;
+        PayDate = today.AddDays(1);
+        
+        // Initialize on construction
+        _ = InitializeAsync();
     }
+    // ═══════════════════════════════════════════════════════════════
+    // COLLECTIONS
+    // ═══════════════════════════════════════════════════════════════
 
     public ObservableCollection<PayRunEmployeeRow> EmployeeRows { get; } = new();
     public ObservableCollection<PayStubResult> GeneratedStubs { get; } = new();
 
-    public int CurrentStep
-    {
-        get => _currentStep;
-        set
-        {
-            if (SetProperty(ref _currentStep, value))
-            {
-                OnPropertyChanged(nameof(IsStep1));
-                OnPropertyChanged(nameof(IsStep2));
-                OnPropertyChanged(nameof(IsStep3));
-                OnPropertyChanged(nameof(CanGoBack));
-                OnPropertyChanged(nameof(CanGoNext));
-                OnPropertyChanged(nameof(StepTitle));
-            }
-        }
-    }
+    // ═══════════════════════════════════════════════════════════════
+    // WIZARD PROGRESS STATE
+    // ═══════════════════════════════════════════════════════════════
+
+    [ObservableProperty]
+    private int _currentStep = 0;
+
+    [ObservableProperty]
+    private bool _isStep1Complete;
+
+    [ObservableProperty]
+    private bool _isStep2Complete;
+
+    [ObservableProperty]
+    private bool _isStep3Complete;
+
+    [ObservableProperty]
+    private bool _isRunComplete;
 
     public bool IsStep1 => CurrentStep == 0;
     public bool IsStep2 => CurrentStep == 1;
     public bool IsStep3 => CurrentStep == 2;
     public bool CanGoBack => CurrentStep > 0 && !IsRunComplete;
     public bool CanGoNext => CurrentStep < 2 && !IsRunComplete;
+
+    // ═══════════════════════════════════════════════════════════════
+    // PERIOD DATES
+    // ═══════════════════════════════════════════════════════════════
+
+    [ObservableProperty]
+    private DateTimeOffset _periodStart;
+
+    [ObservableProperty]
+    private DateTimeOffset _periodEnd;
+
+    [ObservableProperty]
+    private DateTimeOffset _payDate;
+
+    public string PeriodRangeDisplay => $"{PeriodStart:MMM dd} - {PeriodEnd:MMM dd, yyyy}";
+    public string PayDateDisplay => PayDate.ToString("MMM dd, yyyy");
+
+    // ═══════════════════════════════════════════════════════════════
+    // EMPLOYEE HOURS
+    // ═══════════════════════════════════════════════════════════════
+
+    [ObservableProperty]
+    private PayRunEmployeeRow? _selectedEmployeeRow;
+
+    // ═══════════════════════════════════════════════════════════════
+    // DRAFT STATE
+    // ═══════════════════════════════════════════════════════════════
+
+    [ObservableProperty]
+    private bool _isDraft;
+
+    [ObservableProperty]
+    private DateTime? _draftSavedAt;
+
+    [ObservableProperty]
+    private string _draftName = string.Empty;
+
+    // ═══════════════════════════════════════════════════════════════
+    // SUMMARY ESTIMATES
+    // ═══════════════════════════════════════════════════════════════
+
+    [ObservableProperty]
+    private decimal _estimatedGross;
+
+    [ObservableProperty]
+    private decimal _estimatedRegular;
+
+    [ObservableProperty]
+    private decimal _estimatedOvertime;
+
+    [ObservableProperty]
+    private decimal _estimatedBonus;
+
+    [ObservableProperty]
+    private decimal _estimatedTaxes;
+
+    [ObservableProperty]
+    private decimal _estimatedNet;
+
+    [ObservableProperty]
+    private int _includedCount;
+
+    // ═══════════════════════════════════════════════════════════════
+    // STATE
+    // ═══════════════════════════════════════════════════════════════
+
+    [ObservableProperty]
+    private bool _isLoading;
+
+    [ObservableProperty]
+    private string _statusMessage = string.Empty;
+
+    [ObservableProperty]
+    private string _searchText = string.Empty;
+
+    public int EmployeeCount => EmployeeRows.Count;
+    public string AutoSaveStatus => IsDraft && DraftSavedAt.HasValue 
+        ? $"Auto-saved {GetTimeAgo(DraftSavedAt.Value)}" 
+        : "Not saved";
+
+    public string TotalGrossDisplay => $"${EstimatedGross:N2}";
+    public string EstimatedTaxesDisplay => $"${EstimatedTaxes:N2}";
+    public string BenefitsDeductionsDisplay => "$0.00";
+    public string NetPayTotalDisplay => $"${EstimatedNet:N2}";
 
     public string StepTitle => CurrentStep switch
     {
@@ -75,94 +154,12 @@ public partial class PayRunWizardViewModel : ObservableObject
         _ => "Pay Run"
     };
 
-    public DateTimeOffset PeriodStart
-    {
-        get => _periodStart;
-        set => SetProperty(ref _periodStart, value);
-    }
-
-    public DateTimeOffset PeriodEnd
-    {
-        get => _periodEnd;
-        set => SetProperty(ref _periodEnd, value);
-    }
-
-    public DateTimeOffset PayDate
-    {
-        get => _payDate;
-        set => SetProperty(ref _payDate, value);
-    }
-
-    public bool IsLoading
-    {
-        get => _isLoading;
-        set => SetProperty(ref _isLoading, value);
-    }
-
-    public string StatusMessage
-    {
-        get => _statusMessage;
-        set => SetProperty(ref _statusMessage, value);
-    }
-
-    public bool IsRunComplete
-    {
-        get => _isRunComplete;
-        set
-        {
-            if (SetProperty(ref _isRunComplete, value))
-            {
-                OnPropertyChanged(nameof(CanGoBack));
-                OnPropertyChanged(nameof(CanGoNext));
-                OnPropertyChanged(nameof(StepTitle));
-            }
-        }
-    }
-
-    public decimal EstimatedGross
-    {
-        get => _estimatedGross;
-        set => SetProperty(ref _estimatedGross, value);
-    }
-
-    public decimal EstimatedRegular
-    {
-        get => _estimatedRegular;
-        set => SetProperty(ref _estimatedRegular, value);
-    }
-
-    public decimal EstimatedOvertime
-    {
-        get => _estimatedOvertime;
-        set => SetProperty(ref _estimatedOvertime, value);
-    }
-
-    public decimal EstimatedBonus
-    {
-        get => _estimatedBonus;
-        set => SetProperty(ref _estimatedBonus, value);
-    }
-
-    public decimal EstimatedTaxes
-    {
-        get => _estimatedTaxes;
-        set => SetProperty(ref _estimatedTaxes, value);
-    }
-
-    public decimal EstimatedNet
-    {
-        get => _estimatedNet;
-        set => SetProperty(ref _estimatedNet, value);
-    }
-
-    public int IncludedCount
-    {
-        get => _includedCount;
-        set => SetProperty(ref _includedCount, value);
-    }
+    // ═══════════════════════════════════════════════════════════════
+    // COMMANDS
+    // ═══════════════════════════════════════════════════════════════
 
     [RelayCommand]
-    public async Task InitializeAsync()
+    private async Task InitializeAsync()
     {
         IsLoading = true;
         StatusMessage = "Loading...";
@@ -210,12 +207,29 @@ public partial class PayRunWizardViewModel : ObservableObject
 
         foreach (var employee in employees)
         {
-            EmployeeRows.Add(new PayRunEmployeeRow(employee, defaultHours));
+            var row = new PayRunEmployeeRow
+            {
+                EmployeeId = employee.Id,
+                FullName = employee.FullName,
+                EmployeeIdDisplay = $"EMP{employee.Id:D3}",
+                Department = "Engineering", // Placeholder
+                IsHourly = employee.IsHourly,
+                PayType = employee.IsHourly ? "Hourly" : "Salary",
+                HourlyRate = employee.HourlyRate
+            };
+
+            if (employee.IsHourly)
+            {
+                row.RegularHours = Math.Min(defaultHours, 40);
+                row.OvertimeHours = Math.Max(0, defaultHours - 40);
+            }
+
+            EmployeeRows.Add(row);
         }
     }
 
     [RelayCommand]
-    public void GoBack()
+    private void GoBack()
     {
         if (CurrentStep > 0)
         {
@@ -223,90 +237,35 @@ public partial class PayRunWizardViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
-    public async Task GoNextAsync()
+    [RelayCommand(CanExecute = nameof(CanGoNext))]
+    private void GoNext()
     {
         if (CurrentStep < 2)
         {
             CurrentStep++;
             
-            if (CurrentStep == 2)
-            {
-                await CalculateEstimatesAsync();
-            }
+            // Mark steps as complete
+            if (CurrentStep == 1) IsStep1Complete = true;
+            if (CurrentStep == 2) IsStep2Complete = true;
         }
     }
 
-    private async Task CalculateEstimatesAsync()
+    [RelayCommand]
+    private async Task SaveDraftAsync()
     {
         IsLoading = true;
-        StatusMessage = "Calculating estimates...";
+        StatusMessage = "Saving draft...";
 
         try
         {
-            var settings = await _dbContext.CompanySettings.FirstOrDefaultAsync() ?? new CompanySettings();
-            var payPeriods = settings.PayPeriodsPerYear > 0 ? settings.PayPeriodsPerYear : 26;
-
-            decimal totalGross = 0;
-            decimal totalRegular = 0;
-            decimal totalOvertime = 0;
-            decimal totalBonus = 0;
-            decimal totalTaxes = 0;
-            int count = 0;
-
-            foreach (var row in EmployeeRows.Where(r => r.IsIncluded))
-            {
-                count++;
-                var employee = row.Employee;
-                decimal gross;
-
-                if (employee.IsHourly)
-                {
-                    // Regular earnings
-                    var regularAmount = (decimal)row.RegularHours * employee.HourlyRate;
-                    totalRegular += regularAmount;
-
-                    // Overtime at 1.5x
-                    var overtimeRate = employee.HourlyRate * 1.5m;
-                    var overtimeAmount = (decimal)row.OvertimeHours * overtimeRate;
-                    totalOvertime += overtimeAmount;
-
-                    gross = regularAmount + overtimeAmount;
-                }
-                else
-                {
-                    gross = employee.AnnualSalary / payPeriods;
-                    totalRegular += gross;
-                }
-
-                // Add bonus and commission
-                gross += (decimal)row.BonusAmount + (decimal)row.CommissionAmount;
-                totalBonus += (decimal)row.BonusAmount + (decimal)row.CommissionAmount;
-
-                var preTax401k = gross * (employee.PreTax401kPercent / 100m);
-                var taxable = gross - preTax401k;
-
-                var taxes = taxable * (settings.FederalTaxPercent / 100m) +
-                           taxable * (settings.StateTaxPercent / 100m) +
-                           taxable * (settings.SocialSecurityPercent / 100m) +
-                           taxable * (settings.MedicarePercent / 100m);
-
-                totalGross += gross;
-                totalTaxes += taxes;
-            }
-
-            EstimatedGross = totalGross;
-            EstimatedRegular = totalRegular;
-            EstimatedOvertime = totalOvertime;
-            EstimatedBonus = totalBonus;
-            EstimatedTaxes = totalTaxes;
-            EstimatedNet = totalGross - totalTaxes;
-            IncludedCount = count;
-            StatusMessage = "Estimates calculated";
+            // Placeholder - will save draft pay run to DB
+            IsDraft = true;
+            DraftSavedAt = DateTime.Now;
+            StatusMessage = "Draft saved successfully";
         }
         catch (Exception ex)
         {
-            StatusMessage = $"Error: {ex.Message}";
+            StatusMessage = $"Error saving draft: {ex.Message}";
         }
         finally
         {
@@ -315,13 +274,35 @@ public partial class PayRunWizardViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public async Task GeneratePayRunAsync()
+    private async Task LoadDraftAsync()
+    {
+        IsLoading = true;
+        StatusMessage = "Loading draft...";
+
+        try
+        {
+            // Placeholder - will load draft from DB
+            StatusMessage = "Draft loaded";
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Error loading draft: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task GeneratePayRunAsync()
     {
         IsLoading = true;
         StatusMessage = "Generating pay run...";
 
         try
         {
+            // Create the pay run
             var payRun = new PayRun
             {
                 PeriodStart = PeriodStart.DateTime,
@@ -332,66 +313,58 @@ public partial class PayRunWizardViewModel : ObservableObject
             _dbContext.PayRuns.Add(payRun);
             await _dbContext.SaveChangesAsync();
 
+            // Generate pay stubs for each included employee
             GeneratedStubs.Clear();
-            decimal totalGross = 0, totalTaxes = 0, totalNet = 0;
-
             var includedRows = EmployeeRows.Where(r => r.IsIncluded).ToList();
-            int processed = 0;
+            var totalEmployees = includedRows.Count;
+            var processedCount = 0;
 
             foreach (var row in includedRows)
             {
-                processed++;
-                StatusMessage = $"Processing {processed}/{includedRows.Count}: {row.Employee.FullName}";
+                var employee = await _dbContext.Employees.FindAsync(row.EmployeeId);
+                if (employee == null)
+                {
+                    StatusMessage = $"Employee {row.FullName} not found";
+                    continue;
+                }
 
+                // Create PayStubInput from row data
                 var input = new PayStubInput
                 {
                     RegularHours = (decimal)row.RegularHours,
                     OvertimeHours = (decimal)row.OvertimeHours,
                     BonusAmount = (decimal)row.BonusAmount,
                     CommissionAmount = (decimal)row.CommissionAmount,
-                    BonusDescription = !string.IsNullOrEmpty(row.BonusDescription) ? row.BonusDescription : null,
-                    CommissionDescription = !string.IsNullOrEmpty(row.CommissionDescription) ? row.CommissionDescription : null
+                    BonusDescription = row.BonusDescription,
+                    CommissionDescription = row.CommissionDescription
                 };
 
-                var payStub = await _payrollService.GeneratePayStubAsync(row.Employee, payRun, input);
+                // Generate pay stub using PayrollService
+                var payStub = await _payrollService.GeneratePayStubAsync(employee, payRun, input);
+                
+                // Add to context
                 _dbContext.PayStubs.Add(payStub);
-
-                var result = new PayStubResult
+                
+                // Add to generated stubs list for display
+                GeneratedStubs.Add(new PayStubResult
                 {
-                    EmployeeName = row.Employee.FullName,
-                    RegularPay = payStub.RegularEarnings,
-                    OvertimePay = payStub.OvertimeEarnings,
-                    BonusPay = payStub.BonusEarnings + payStub.CommissionEarnings,
+                    EmployeeName = employee.FullName,
+                    EmployeeId = employee.Id,
                     GrossPay = payStub.GrossPay,
-                    TotalTaxes = payStub.TotalTaxes,
                     NetPay = payStub.NetPay,
-                    YtdGross = payStub.YtdGross,
-                    YtdNet = payStub.YtdNet
-                };
+                    Taxes = payStub.TotalTaxes
+                });
 
-                GeneratedStubs.Add(result);
-                totalGross += payStub.GrossPay;
-                totalTaxes += payStub.TotalTaxes;
-                totalNet += payStub.NetPay;
+                processedCount++;
+                StatusMessage = $"Processing {processedCount} of {totalEmployees} employees...";
             }
 
+            // Save all pay stubs
             await _dbContext.SaveChangesAsync();
 
-            // Add totals row
-            GeneratedStubs.Add(new PayStubResult
-            {
-                EmployeeName = "TOTAL",
-                RegularPay = GeneratedStubs.Where(s => !s.IsTotalRow).Sum(s => s.RegularPay),
-                OvertimePay = GeneratedStubs.Where(s => !s.IsTotalRow).Sum(s => s.OvertimePay),
-                BonusPay = GeneratedStubs.Where(s => !s.IsTotalRow).Sum(s => s.BonusPay),
-                GrossPay = totalGross,
-                TotalTaxes = totalTaxes,
-                NetPay = totalNet,
-                IsTotalRow = true
-            });
-
+            IsStep3Complete = true;
             IsRunComplete = true;
-            StatusMessage = $"Pay run complete! Generated {includedRows.Count} pay stubs.";
+            StatusMessage = $"Pay run generated successfully: {processedCount} pay stubs created";
         }
         catch (Exception ex)
         {
@@ -404,96 +377,166 @@ public partial class PayRunWizardViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public void StartNewRun()
+    private void StartNewRun()
     {
         IsRunComplete = false;
+        IsDraft = false;
         CurrentStep = 0;
+        IsStep1Complete = false;
+        IsStep2Complete = false;
+        IsStep3Complete = false;
         GeneratedStubs.Clear();
-        _ = InitializeAsync();
+        InitializeCommand.Execute(null);
+    }
+
+    [RelayCommand]
+    private void CalculateEstimates()
+    {
+        // Calculate estimates based on employee hours
+        decimal totalGross = 0;
+        decimal totalRegular = 0;
+        decimal totalOvertime = 0;
+        decimal totalBonus = 0;
+        int count = 0;
+
+        foreach (var row in EmployeeRows.Where(r => r.IsIncluded))
+        {
+            count++;
+            if (row.IsHourly)
+            {
+                var regular = (decimal)row.RegularHours * row.HourlyRate;
+                var overtime = (decimal)row.OvertimeHours * row.HourlyRate * 1.5m;
+                totalRegular += regular;
+                totalOvertime += overtime;
+                totalGross += regular + overtime;
+            }
+            totalBonus += (decimal)row.BonusAmount + (decimal)row.CommissionAmount;
+            totalGross += (decimal)row.BonusAmount + (decimal)row.CommissionAmount;
+        }
+
+        EstimatedGross = totalGross;
+        EstimatedRegular = totalRegular;
+        EstimatedOvertime = totalOvertime;
+        EstimatedBonus = totalBonus;
+        EstimatedTaxes = totalGross * 0.25m; // Placeholder calculation
+        EstimatedNet = totalGross - EstimatedTaxes;
+        IncludedCount = count;
+    }
+
+    private string GetTimeAgo(DateTime dateTime)
+    {
+        var timeSpan = DateTime.Now - dateTime;
+        if (timeSpan.TotalMinutes < 1) return "just now";
+        if (timeSpan.TotalMinutes < 60) return $"{(int)timeSpan.TotalMinutes} min ago";
+        if (timeSpan.TotalHours < 24) return $"{(int)timeSpan.TotalHours} hour(s) ago";
+        return $"{(int)timeSpan.TotalDays} day(s) ago";
+    }
+
+    partial void OnCurrentStepChanged(int value)
+    {
+        OnPropertyChanged(nameof(IsStep1));
+        OnPropertyChanged(nameof(IsStep2));
+        OnPropertyChanged(nameof(IsStep3));
+        OnPropertyChanged(nameof(CanGoBack));
+        OnPropertyChanged(nameof(CanGoNext));
+        OnPropertyChanged(nameof(StepTitle));
+    }
+
+    partial void OnPeriodStartChanged(DateTimeOffset value)
+    {
+        OnPropertyChanged(nameof(PeriodRangeDisplay));
+    }
+
+    partial void OnPeriodEndChanged(DateTimeOffset value)
+    {
+        OnPropertyChanged(nameof(PeriodRangeDisplay));
+    }
+
+    partial void OnPayDateChanged(DateTimeOffset value)
+    {
+        OnPropertyChanged(nameof(PayDateDisplay));
     }
 }
 
+/// <summary>
+/// Row model for employee time tracking in the pay run wizard.
+/// </summary>
 public partial class PayRunEmployeeRow : ObservableObject
 {
+    [ObservableProperty]
     private bool _isIncluded = true;
+
+    [ObservableProperty]
     private double _regularHours;
+
+    [ObservableProperty]
     private double _overtimeHours;
+
+    [ObservableProperty]
     private double _bonusAmount;
+
+    [ObservableProperty]
     private double _commissionAmount;
+
+    [ObservableProperty]
     private string _bonusDescription = string.Empty;
+
+    [ObservableProperty]
     private string _commissionDescription = string.Empty;
 
-    public PayRunEmployeeRow(Employee employee, int defaultHours)
+    public int EmployeeId { get; set; }
+    public string FullName { get; set; } = string.Empty;
+    public string EmployeeIdDisplay { get; set; } = string.Empty;
+    public string Department { get; set; } = string.Empty;
+    public bool IsHourly { get; set; }
+    public string PayType { get; set; } = string.Empty;
+    public decimal HourlyRate { get; set; }
+    public string HourlyRateDisplay => $"${HourlyRate:N2}";
+    public string GrossPayDisplay => $"${CalculatedGross:N2}";
+    public double TotalHours => RegularHours + OvertimeHours;
+
+    private decimal CalculatedGross
     {
-        Employee = employee;
-        
-        if (employee.IsHourly)
+        get
         {
-            // Default: up to 40 regular, rest as overtime
-            _regularHours = Math.Min(defaultHours, 40);
-            _overtimeHours = Math.Max(0, defaultHours - 40);
+            if (IsHourly)
+            {
+                var regular = (decimal)RegularHours * HourlyRate;
+                var overtime = (decimal)OvertimeHours * HourlyRate * 1.5m;
+                return regular + overtime + (decimal)BonusAmount + (decimal)CommissionAmount;
+            }
+            else
+            {
+                // For salary employees, calculate based on period
+                return 0m; // Will be calculated based on annual salary / periods
+            }
         }
     }
 
-    public Employee Employee { get; }
-
-    public string FullName => Employee.FullName;
-    public bool IsHourly => Employee.IsHourly;
-    public string PayType => Employee.IsHourly ? "Hourly" : "Salary";
-    public string RateDisplay => Employee.IsHourly
-        ? $"{Employee.HourlyRate:C}/hr"
-        : $"{Employee.AnnualSalary:C}/yr";
-    
-    public string OvertimeRateDisplay => Employee.IsHourly
-        ? $"{Employee.HourlyRate * 1.5m:C}/hr (1.5x)"
-        : "N/A";
-
-    public bool IsIncluded
+    partial void OnRegularHoursChanged(double value)
     {
-        get => _isIncluded;
-        set => SetProperty(ref _isIncluded, value);
+        OnPropertyChanged(nameof(GrossPayDisplay));
     }
 
-    public double RegularHours
+    partial void OnOvertimeHoursChanged(double value)
     {
-        get => _regularHours;
-        set => SetProperty(ref _regularHours, value);
+        OnPropertyChanged(nameof(GrossPayDisplay));
     }
 
-    public double OvertimeHours
+    partial void OnBonusAmountChanged(double value)
     {
-        get => _overtimeHours;
-        set => SetProperty(ref _overtimeHours, value);
+        OnPropertyChanged(nameof(GrossPayDisplay));
     }
 
-    public double BonusAmount
+    partial void OnCommissionAmountChanged(double value)
     {
-        get => _bonusAmount;
-        set => SetProperty(ref _bonusAmount, value);
+        OnPropertyChanged(nameof(GrossPayDisplay));
     }
-
-    public double CommissionAmount
-    {
-        get => _commissionAmount;
-        set => SetProperty(ref _commissionAmount, value);
-    }
-
-    public string BonusDescription
-    {
-        get => _bonusDescription;
-        set => SetProperty(ref _bonusDescription, value);
-    }
-
-    public string CommissionDescription
-    {
-        get => _commissionDescription;
-        set => SetProperty(ref _commissionDescription, value);
-    }
-
-    // Computed total hours for display
-    public double TotalHours => RegularHours + OvertimeHours;
 }
 
+/// <summary>
+/// Result model for generated pay stubs.
+/// </summary>
 public class PayStubResult
 {
     public string EmployeeName { get; set; } = string.Empty;

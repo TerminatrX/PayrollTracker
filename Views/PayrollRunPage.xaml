@@ -24,7 +24,7 @@
         </StackPanel>
 
         <!-- Step Indicator Dots -->
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8" Margin="0,0,0,24">
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,24">
             <Ellipse Width="12" Height="12" 
                      Fill="{x:Bind ViewModel.IsStep1, Mode=OneWay, Converter={StaticResource StepIndicatorConverter}}" />
             <Rectangle Width="40" Height="2" Fill="{ThemeResource SystemFillColorNeutralBrush}" VerticalAlignment="Center" />
@@ -41,10 +41,10 @@
                 <!-- Step 1: Pay Period -->
                 <Border Style="{StaticResource CardStyle}" 
                         Visibility="{x:Bind ViewModel.IsStep1, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <StackPanel Spacing="24" MaxWidth="600">
+                    <StackPanel MaxWidth="600">
                         <TextBlock Text="SELECT PAY PERIOD" Style="{StaticResource SectionTitleStyle}" />
                         
-                        <StackPanel Spacing="16">
+                        <StackPanel>
                             <CalendarDatePicker Header="Period Start" 
                                                 Date="{x:Bind ViewModel.PeriodStart, Mode=TwoWay}"
                                                 MinWidth="200" />
@@ -141,7 +141,7 @@
                     <!-- Pre-generation Summary -->
                     <Border Style="{StaticResource CardStyle}"
                             Visibility="{x:Bind ViewModel.IsRunComplete, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                        <StackPanel Spacing="16">
+                        <StackPanel>
                             <TextBlock Text="PAY RUN SUMMARY" Style="{StaticResource SectionTitleStyle}" />
                             
                             <Grid ColumnSpacing="24" RowSpacing="16">
@@ -303,7 +303,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Orientation="Horizontal" Spacing="12">
+            <StackPanel Orientation="Horizontal">
                 <Button Content="← Back" 
                         Command="{x:Bind ViewModel.GoBackCommand}"
                         IsEnabled="{x:Bind ViewModel.CanGoBack, Mode=OneWay}" />
@@ -313,7 +313,7 @@
                         IsEnabled="{x:Bind ViewModel.CanGoNext, Mode=OneWay}" />
             </StackPanel>
 
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12">
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
                 <ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}" 
                               Width="24" Height="24" />
                 

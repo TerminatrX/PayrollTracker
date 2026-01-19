@@ -21,6 +21,20 @@ public partial class EmployeeViewModel : ObservableObject, INotifyDataErrorInfo
     private decimal _otherDeductionsPerPeriod;
     private DateTime? _hireDate;
 
+    // Employment details
+    private string _department = "Engineering";
+    private string _jobTitle = string.Empty;
+    private string _location = string.Empty;
+    private string _manager = string.Empty;
+    private string _workEmail = string.Empty;
+    private int _employmentTypeIndex = 0;
+    private int _flsaStatusIndex = 0;
+
+    // Benefits
+    private string _payFrequency = "Bi-Weekly";
+    private string _healthTier = "Gold PPO";
+    private string _retirementMatch = "4% Match";
+
     // Pay summary fields
     private DateTime? _lastPayDate;
     private decimal _lastGross;
@@ -28,6 +42,7 @@ public partial class EmployeeViewModel : ObservableObject, INotifyDataErrorInfo
     private decimal _ytdGross;
     private decimal _ytdTaxes;
     private decimal _ytdNet;
+    private decimal _ytdBenefits;
 
     public int? Id
     {
@@ -152,10 +167,92 @@ public partial class EmployeeViewModel : ObservableObject, INotifyDataErrorInfo
     public DateTime? HireDate
     {
         get => _hireDate;
-        set => SetProperty(ref _hireDate, value);
+        set
+        {
+            if (SetProperty(ref _hireDate, value))
+            {
+                OnPropertyChanged(nameof(HireDateDisplay));
+            }
+        }
     }
 
-    // Pay summary properties
+    public string HireDateDisplay => HireDate?.ToString("MMM dd, yyyy") ?? "Not set";
+
+    // ═══════════════════════════════════════════════════════════════
+    // EMPLOYMENT DETAILS
+    // ═══════════════════════════════════════════════════════════════
+
+    public string EmployeeId => Id.HasValue ? $"EMP{Id.Value:D3}" : "NEW";
+
+    public string Department
+    {
+        get => _department;
+        set => SetProperty(ref _department, value);
+    }
+
+    public string DepartmentCode => Department?.Length > 3 ? Department[..3] : Department ?? "";
+
+    public string JobTitle
+    {
+        get => _jobTitle;
+        set => SetProperty(ref _jobTitle, value);
+    }
+
+    public string Location
+    {
+        get => _location;
+        set => SetProperty(ref _location, value);
+    }
+
+    public string Manager
+    {
+        get => _manager;
+        set => SetProperty(ref _manager, value);
+    }
+
+    public string WorkEmail
+    {
+        get => _workEmail;
+        set => SetProperty(ref _workEmail, value);
+    }
+
+    public int EmploymentTypeIndex
+    {
+        get => _employmentTypeIndex;
+        set => SetProperty(ref _employmentTypeIndex, value);
+    }
+
+    public int FlsaStatusIndex
+    {
+        get => _flsaStatusIndex;
+        set => SetProperty(ref _flsaStatusIndex, value);
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // COMPENSATION & BENEFITS
+    // ═══════════════════════════════════════════════════════════════
+
+    public string PayFrequency
+    {
+        get => _payFrequency;
+        set => SetProperty(ref _payFrequency, value);
+    }
+
+    public string HealthTier
+    {
+        get => _healthTier;
+        set => SetProperty(ref _healthTier, value);
+    }
+
+    public string RetirementMatch
+    {
+        get => _retirementMatch;
+        set => SetProperty(ref _retirementMatch, value);
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // PAY SUMMARY
+    // ═══════════════════════════════════════════════════════════════
     public DateTime? LastPayDate
     {
         get => _lastPayDate;
@@ -192,7 +289,20 @@ public partial class EmployeeViewModel : ObservableObject, INotifyDataErrorInfo
         set => SetProperty(ref _ytdNet, value);
     }
 
-    // INotifyDataErrorInfo implementation
+    public decimal YtdBenefits
+    {
+        get => _ytdBenefits;
+        set => SetProperty(ref _ytdBenefits, value);
+    }
+
+    // YTD Display properties
+    public string YtdAsOfDate => $"AS OF {DateTime.Today:MMM dd}".ToUpper();
+    public string YtdTaxesDisplay => $"(${YtdTaxes:N2})";
+    public string YtdBenefitsDisplay => $"(${YtdBenefits:N2})";
+
+    // ═══════════════════════════════════════════════════════════════
+    // VALIDATION (INotifyDataErrorInfo)
+    // ═══════════════════════════════════════════════════════════════
     public bool HasErrors => _errors.Count > 0;
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
@@ -315,13 +425,33 @@ public partial class EmployeeViewModel : ObservableObject, INotifyDataErrorInfo
         HealthInsurancePerPeriod = 0;
         OtherDeductionsPerPeriod = 0;
         HireDate = null;
+        
+        // Employment details
+        Department = "Engineering";
+        JobTitle = string.Empty;
+        Location = string.Empty;
+        Manager = string.Empty;
+        WorkEmail = string.Empty;
+        EmploymentTypeIndex = 0;
+        FlsaStatusIndex = 0;
+        
+        // Benefits
+        PayFrequency = "Bi-Weekly";
+        HealthTier = "Gold PPO";
+        RetirementMatch = "4% Match";
+        
+        // Pay summary
         LastPayDate = null;
         LastGross = 0;
         LastNet = 0;
         YtdGross = 0;
         YtdTaxes = 0;
         YtdNet = 0;
+        YtdBenefits = 0;
+        
         _errors.Clear();
         OnPropertyChanged(nameof(HasErrors));
+        OnPropertyChanged(nameof(EmployeeId));
+        OnPropertyChanged(nameof(HireDateDisplay));
     }
 }

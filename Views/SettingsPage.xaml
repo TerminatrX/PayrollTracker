@@ -5,126 +5,525 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <ScrollViewer Padding="24">
-        <StackPanel Spacing="24" MaxWidth="800">
-            <TextBlock Text="Company Settings" Style="{StaticResource PageTitleStyle}" />
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="256" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-            <!-- Company Information -->
-            <Border Style="{StaticResource CardStyle}">
-                <StackPanel Spacing="16">
-                    <TextBlock Text="COMPANY INFORMATION" Style="{StaticResource SectionTitleStyle}" />
-                    
-                    <TextBox Header="Company Name" 
-                             Text="{x:Bind ViewModel.CompanyName, Mode=TwoWay}"
-                             Style="{StaticResource FormTextBoxStyle}"
-                             Width="400" />
-                    
-                    <TextBox Header="Company Address" 
-                             Text="{x:Bind ViewModel.CompanyAddress, Mode=TwoWay}"
-                             Style="{StaticResource FormTextBoxStyle}"
-                             Width="400"
-                             AcceptsReturn="True"
-                             TextWrapping="Wrap"
-                             Height="80" />
-                    
-                    <TextBox Header="Tax ID / EIN" 
-                             Text="{x:Bind ViewModel.TaxId, Mode=TwoWay}"
-                             Style="{StaticResource FormTextBoxStyle}"
-                             Width="200" />
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- LEFT SIDEBAR: SETTINGS NAVIGATION                              -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <Border Grid.Column="0"
+                Background="{ThemeResource LayerFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="0,0,1,0"
+                Padding="16">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Version Info -->
+                <StackPanel Grid.Row="0" Margin="12,8,12,24">
+                    <TextBlock Text="ENTERPRISE EDITION" 
+                               FontSize="10" FontWeight="Bold"
+                               Opacity="0.4" CharacterSpacing="100" />
+                    <TextBlock Text="v4.2.1-stable" 
+                               FontSize="13" Opacity="0.7" Margin="0,4,0,0" />
                 </StackPanel>
-            </Border>
 
-            <!-- Pay Configuration -->
-            <Border Style="{StaticResource CardStyle}">
-                <StackPanel Spacing="16">
-                    <TextBlock Text="PAY CONFIGURATION" Style="{StaticResource SectionTitleStyle}" />
-                    
-                    <StackPanel Orientation="Horizontal" Spacing="24">
-                        <NumberBox Header="Pay Periods Per Year" 
-                                   Value="{x:Bind ViewModel.PayPeriodsPerYear, Mode=TwoWay}"
-                                   Style="{StaticResource FormNumberBoxStyle}"
-                                   Minimum="1"
-                                   Maximum="52"
-                                   SpinButtonPlacementMode="Compact" />
-                        
-                        <NumberBox Header="Default Hours Per Period" 
-                                   Value="{x:Bind ViewModel.DefaultHoursPerPeriod, Mode=TwoWay}"
-                                   Style="{StaticResource FormNumberBoxStyle}"
-                                   Minimum="1"
-                                   Maximum="168"
-                                   SpinButtonPlacementMode="Compact" />
+                <!-- Settings Navigation -->
+                <StackPanel Grid.Row="1">
+                    <!-- Company Profile (Active) -->
+                    <Button x:Name="CompanyProfileNavItem"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Style="{ThemeResource AccentButtonStyle}"
+                            Padding="12,10"
+                            Click="SettingsNavItem_Click"
+                            Tag="CompanyProfileSection">
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon Glyph="&#xE80F;" FontSize="16" />
+                            <TextBlock Text="Company Profile" FontWeight="SemiBold" />
+                        </StackPanel>
+                    </Button>
+
+                    <!-- Tax Configuration -->
+                    <Button x:Name="TaxConfigNavItem"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Background="Transparent"
+                            Padding="12,10"
+                            Click="SettingsNavItem_Click"
+                            Tag="TaxConfigSection">
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon Glyph="&#xE80F;" FontSize="16" Opacity="0.7" />
+                            <TextBlock Text="Tax Configuration" />
+                        </StackPanel>
+                    </Button>
+
+                    <!-- Pay Periods -->
+                    <Button x:Name="PayPeriodsNavItem"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Background="Transparent"
+                            Padding="12,10"
+                            Click="SettingsNavItem_Click"
+                            Tag="PayPeriodsSection">
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon Glyph="&#xE787;" FontSize="16" Opacity="0.7" />
+                            <TextBlock Text="Pay Periods" />
+                        </StackPanel>
+                    </Button>
+
+                    <!-- Access Control -->
+                    <Button HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Background="Transparent"
+                            Padding="12,10"
+                            IsEnabled="False">
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon Glyph="&#xE8D7;" FontSize="16" Opacity="0.4" />
+                            <TextBlock Text="Access Control" Opacity="0.5" />
+                        </StackPanel>
+                    </Button>
+
+                    <!-- Integrations -->
+                    <Button HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Background="Transparent"
+                            Padding="12,10"
+                            IsEnabled="False">
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon Glyph="&#xE943;" FontSize="16" Opacity="0.4" />
+                            <TextBlock Text="Integrations" Opacity="0.5" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <!-- Sign Out -->
+                <Border Grid.Row="2"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="0,1,0,0"
+                        Padding="0,16,0,0">
+                    <Button HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Background="Transparent"
+                            Padding="12,10"
+                            Command="{x:Bind ViewModel.SignOutCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon Glyph="&#xE711;" FontSize="16" Opacity="0.7" />
+                            <TextBlock Text="Sign Out" />
+                        </StackPanel>
+                    </Button>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- MAIN CONTENT AREA                                               -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Padding="32" MaxWidth="1000">
+
+                <!-- ─────────────────────────────────────────────────────────── -->
+                <!-- PAGE HEADER                                                 -->
+                <!-- ─────────────────────────────────────────────────────────── -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel>
+                        <TextBlock Text="System Settings" 
+                                   Style="{ThemeResource TitleLargeTextBlockStyle}"
+                                   FontWeight="Black" />
+                        <TextBlock Text="Configure your organization's legal, tax, and payroll cycle parameters."
+                                   Opacity="0.6" />
                     </StackPanel>
-                </StackPanel>
-            </Border>
 
-            <!-- Tax Rates -->
-            <Border Style="{StaticResource CardStyle}">
-                <StackPanel Spacing="16">
-                    <TextBlock Text="TAX RATES (%)" Style="{StaticResource SectionTitleStyle}" />
-                    
-                    <Grid ColumnSpacing="24" RowSpacing="16">
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button Content="Discard Changes"
+                                Command="{x:Bind ViewModel.DiscardChangesCommand}"
+                                IsEnabled="{x:Bind ViewModel.HasChanges, Mode=OneWay}" />
+                        <Button Style="{ThemeResource AccentButtonStyle}"
+                                Command="{x:Bind ViewModel.SaveSettingsCommand}"
+                                IsEnabled="{x:Bind ViewModel.HasChanges, Mode=OneWay}">
+                            <TextBlock Text="Save Changes" FontWeight="Bold" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+
+                <!-- ═══════════════════════════════════════════════════════════ -->
+                <!-- COMPANY PROFILE SECTION                                      -->
+                <!-- ═══════════════════════════════════════════════════════════ -->
+                <StackPanel x:Name="CompanyProfileSection">
+                    <!-- Section Header -->
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon Glyph="&#xE80F;" FontSize="18" 
+                                  Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                        <TextBlock Text="Company Profile" 
+                                   FontSize="18" FontWeight="Bold" />
+                    </StackPanel>
+
+                    <!-- Section Card -->
+                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1" CornerRadius="12"
+                            Padding="24">
+                        <Grid ColumnSpacing="24">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Logo Upload Area -->
+                            <Border Grid.Column="0"
+                                    Width="160" Height="160"
+                                    CornerRadius="12"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="2"
+                                    BorderDashArray="4,4"
+                                    Background="{ThemeResource SubtleFillColorTertiaryBrush}">
+                                <Button HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        Background="Transparent"
+                                        Command="{x:Bind ViewModel.UploadLogoCommand}">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <Border Width="56" Height="56" CornerRadius="28"
+                                                Background="{ThemeResource AccentFillColorDefaultBrush}"
+                                                Opacity="0.15">
+                                            <FontIcon Glyph="&#xE898;" FontSize="24"
+                                                      Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                                      HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center" />
+                                        </Border>
+                                        <TextBlock Text="Upload Logo" 
+                                                   FontWeight="SemiBold"
+                                                   HorizontalAlignment="Center" />
+                                        <TextBlock Text="PNG, JPG up to 5MB"
+                                                   FontSize="11" Opacity="0.5"
+                                                   HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                            </Border>
+
+                            <!-- Company Info Fields -->
+                            <StackPanel Grid.Column="1">
+                                <Grid ColumnSpacing="16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="200" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBox Grid.Column="0"
+                                             Header="COMPANY LEGAL NAME"
+                                             Text="{x:Bind ViewModel.CompanyName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             PlaceholderText="Enter legal company name" />
+
+                                    <TextBox Grid.Column="1"
+                                             Header="EMPLOYER ID NUMBER (EIN)"
+                                             Text="{x:Bind ViewModel.TaxId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             PlaceholderText="XX-XXXXXXX" />
+                                </Grid>
+
+                                <TextBox Header="REGISTERED BUSINESS ADDRESS"
+                                         Text="{x:Bind ViewModel.CompanyAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         PlaceholderText="Street address, City, State ZIP"
+                                         AcceptsReturn="True"
+                                         TextWrapping="Wrap"
+                                         MinHeight="80" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+
+                <!-- ═══════════════════════════════════════════════════════════ -->
+                <!-- TAX CONFIGURATION SECTION                                    -->
+                <!-- ═══════════════════════════════════════════════════════════ -->
+                <StackPanel x:Name="TaxConfigSection">
+                    <!-- Section Header -->
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon Glyph="&#xE80F;" FontSize="18" 
+                                  Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                        <TextBlock Text="Tax Configuration" 
+                                   FontSize="18" FontWeight="Bold" />
+                    </StackPanel>
+
+                    <!-- Section Card -->
+                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1" CornerRadius="12"
+                            Padding="24">
+                        <Grid ColumnSpacing="48">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Federal Withholding -->
+                            <StackPanel Grid.Column="0">
+                                <Grid>
+                                    <TextBlock Text="Federal Withholding" FontWeight="Bold" />
+                                    <Border Background="{ThemeResource AccentFillColorDefaultBrush}"
+                                            Opacity="0.15" CornerRadius="4" Padding="8,4"
+                                            HorizontalAlignment="Right">
+                                        <TextBlock Text="ACTIVE" FontSize="10" FontWeight="Bold"
+                                                   Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                                    </Border>
+                                </Grid>
+
+                                <Border Height="1" 
+                                        Background="{ThemeResource CardStrokeColorDefaultBrush}" />
+
+                                <!-- Auto Filing Toggle -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="Automated Federal Filing" FontWeight="Medium" />
+                                        <TextBlock Text="Sync with IRS e-file services" 
+                                                   FontSize="12" Opacity="0.6" />
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1"
+                                                  IsOn="{x:Bind ViewModel.AutoFederalFiling, Mode=TwoWay}"
+                                                  OnContent="" OffContent="" />
+                                </Grid>
+
+                                <!-- Tax Rate Fields -->
+                                <Grid ColumnSpacing="16" Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <NumberBox Header="FUTA Rate (%)"
+                                               Value="{x:Bind ViewModel.FutaRate, Mode=TwoWay}"
+                                               Minimum="0" Maximum="10"
+                                               SmallChange="0.01"
+                                               SpinButtonPlacementMode="Compact" />
+
+                                    <NumberBox Grid.Column="1"
+                                               Header="Social Security (%)"
+                                               Value="{x:Bind ViewModel.SocialSecurityRate, Mode=TwoWay}"
+                                               Minimum="0" Maximum="20"
+                                               SmallChange="0.1"
+                                               SpinButtonPlacementMode="Compact" />
+                                </Grid>
+                            </StackPanel>
+
+                            <!-- State & Local -->
+                            <StackPanel Grid.Column="1">
+                                <Grid>
+                                    <TextBlock Text="State &amp; Local" FontWeight="Bold" />
+                                    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                            CornerRadius="4" Padding="8,4"
+                                            HorizontalAlignment="Right">
+                                        <TextBlock Text="{x:Bind ViewModel.StateCode, Mode=OneWay}" 
+                                                   FontSize="10" FontWeight="Bold" Opacity="0.7" />
+                                    </Border>
+                                </Grid>
+
+                                <Border Height="1" 
+                                        Background="{ThemeResource CardStrokeColorDefaultBrush}" />
+
+                                <!-- SUI Toggle -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="Enable SUI (Unemployment)" FontWeight="Medium" />
+                                        <TextBlock Text="Calculate based on experience rate" 
+                                                   FontSize="12" Opacity="0.6" />
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1"
+                                                  IsOn="{x:Bind ViewModel.SuiEnabled, Mode=TwoWay}"
+                                                  OnContent="" OffContent="" />
+                                </Grid>
+
+                                <!-- State Tax Rate Fields -->
+                                <Grid ColumnSpacing="16" Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel>
+                                        <NumberBox Header="SUI Rate (%)"
+                                                   Value="{x:Bind ViewModel.SuiRate, Mode=TwoWay}"
+                                                   Minimum="0" Maximum="10"
+                                                   SmallChange="0.01"
+                                                   SpinButtonPlacementMode="Compact" />
+                                        <!-- Validation Warning -->
+                                        <StackPanel Orientation="Horizontal"
+                                                    Visibility="{x:Bind ViewModel.ShowSuiWarning, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                    Margin="0,4,0,0">
+                                            <FontIcon Glyph="&#xE7BA;" FontSize="12" 
+                                                      Foreground="#EF4444" />
+                                            <TextBlock Text="Rate exceeds state average"
+                                                       FontSize="11" Foreground="#EF4444" />
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <NumberBox Grid.Column="1"
+                                               Header="ETT Rate (%)"
+                                               Value="{x:Bind ViewModel.EttRate, Mode=TwoWay}"
+                                               Minimum="0" Maximum="5"
+                                               SmallChange="0.01"
+                                               SpinButtonPlacementMode="Compact" />
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+
+                <!-- ═══════════════════════════════════════════════════════════ -->
+                <!-- PAY PERIOD CONFIGURATION SECTION                             -->
+                <!-- ═══════════════════════════════════════════════════════════ -->
+                <StackPanel x:Name="PayPeriodsSection">
+                    <!-- Section Header -->
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon Glyph="&#xE787;" FontSize="18" 
+                                  Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                        <TextBlock Text="Pay Period Configuration" 
+                                   FontSize="18" FontWeight="Bold" />
+                    </StackPanel>
+
+                    <!-- Section Card -->
+                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1" CornerRadius="12"
+                            Padding="24">
+                        <StackPanel>
+                            <Grid ColumnSpacing="24">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="200" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Frequency Radio Buttons -->
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="Frequency" FontWeight="SemiBold" 
+                                               Margin="0,0,0,8" />
+
+                                    <RadioButtons x:Name="FrequencyRadioButtons"
+                                                  SelectedIndex="{x:Bind ViewModel.PayFrequencyIndex, Mode=TwoWay}">
+                                        <RadioButton Content="Bi-weekly" />
+                                        <RadioButton Content="Monthly" />
+                                        <RadioButton Content="Semi-monthly" />
+                                    </RadioButtons>
+                                </StackPanel>
+
+                                <!-- Date Pickers & Info -->
+                                <StackPanel Grid.Column="1">
+                                    <Grid ColumnSpacing="16">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <CalendarDatePicker Grid.Column="0"
+                                                            Header="NEXT PERIOD START"
+                                                            Date="{x:Bind ViewModel.NextPeriodStart, Mode=TwoWay}"
+                                                            HorizontalAlignment="Stretch" />
+
+                                        <CalendarDatePicker Grid.Column="1"
+                                                            Header="ESTIMATED PAY DATE"
+                                                            Date="{x:Bind ViewModel.EstimatedPayDate, Mode=TwoWay}"
+                                                            HorizontalAlignment="Stretch" />
+                                    </Grid>
+
+                                    <!-- Processing Window Info -->
+                                    <InfoBar Title="Processing Window"
+                                             Message="{x:Bind ViewModel.ProcessingWindowMessage, Mode=OneWay}"
+                                             IsOpen="True"
+                                             IsClosable="False"
+                                             Severity="Informational" />
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Toggle Settings -->
+                            <Border Height="1" 
+                                    Background="{ThemeResource CardStrokeColorDefaultBrush}" />
+
+                            <StackPanel>
+                                <!-- Off-cycle Payments -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="Enable Off-cycle Payments" FontWeight="Medium" />
+                                        <TextBlock Text="Allow mid-period bonuses and reimbursements" 
+                                                   FontSize="12" Opacity="0.6" />
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1"
+                                                  IsOn="{x:Bind ViewModel.OffCycleEnabled, Mode=TwoWay}"
+                                                  OnContent="" OffContent="" />
+                                </Grid>
+
+                                <!-- Auto Approval -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="Automatic Approval Flow" FontWeight="Medium" />
+                                        <TextBlock Text="Authorize payments automatically if within 5% variance of previous cycle" 
+                                                   FontSize="12" Opacity="0.6" />
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1"
+                                                  IsOn="{x:Bind ViewModel.AutoApprovalEnabled, Mode=TwoWay}"
+                                                  OnContent="" OffContent="" />
+                                </Grid>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- ═══════════════════════════════════════════════════════════ -->
+                <!-- PAGE FOOTER                                                  -->
+                <!-- ═══════════════════════════════════════════════════════════ -->
+                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="0,1,0,0"
+                        Padding="0,24,0,0"
+                        Margin="0,16,0,0">
+                    <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        
-                        <NumberBox Grid.Row="0" Grid.Column="0"
-                                   Header="Federal Tax %" 
-                                   Value="{x:Bind ViewModel.FederalTaxPercent, Mode=TwoWay}"
-                                   Style="{StaticResource FormNumberBoxStyle}"
-                                   Minimum="0"
-                                   Maximum="50"
-                                   SmallChange="0.5"
-                                   LargeChange="1" />
-                        
-                        <NumberBox Grid.Row="0" Grid.Column="1"
-                                   Header="State Tax %" 
-                                   Value="{x:Bind ViewModel.StateTaxPercent, Mode=TwoWay}"
-                                   Style="{StaticResource FormNumberBoxStyle}"
-                                   Minimum="0"
-                                   Maximum="20"
-                                   SmallChange="0.5"
-                                   LargeChange="1" />
-                        
-                        <NumberBox Grid.Row="1" Grid.Column="0"
-                                   Header="Social Security %" 
-                                   Value="{x:Bind ViewModel.SocialSecurityPercent, Mode=TwoWay}"
-                                   Style="{StaticResource FormNumberBoxStyle}"
-                                   Minimum="0"
-                                   Maximum="15"
-                                   SmallChange="0.1"
-                                   LargeChange="0.5" />
-                        
-                        <NumberBox Grid.Row="1" Grid.Column="1"
-                                   Header="Medicare %" 
-                                   Value="{x:Bind ViewModel.MedicarePercent, Mode=TwoWay}"
-                                   Style="{StaticResource FormNumberBoxStyle}"
-                                   Minimum="0"
-                                   Maximum="10"
-                                   SmallChange="0.1"
-                                   LargeChange="0.5" />
+
+                        <TextBlock Text="© 2024 PayrollPro Enterprise. All rights reserved."
+                                   FontSize="12" Opacity="0.5" />
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <HyperlinkButton Content="Security Standards" FontSize="12" />
+                            <HyperlinkButton Content="Privacy Policy" FontSize="12" />
+                            <HyperlinkButton Content="Support Center" FontSize="12" />
+                        </StackPanel>
                     </Grid>
-                </StackPanel>
-            </Border>
+                </Border>
 
-            <!-- Actions -->
-            <StackPanel Orientation="Horizontal" Spacing="12">
-                <Button Content="Save Settings" 
-                        Style="{StaticResource PrimaryButtonStyle}"
-                        Command="{x:Bind ViewModel.SaveSettingsCommand}" />
-                
-                <ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}" 
-                              Width="24" Height="24" />
+                <!-- Loading Indicator -->
+                <ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                              Width="32" Height="32"
+                              HorizontalAlignment="Center"
+                              Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
             </StackPanel>
-
-            <TextBlock Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}" 
-                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-        </StackPanel>
-    </ScrollViewer>
+        </ScrollViewer>
+    </Grid>
 </Page>

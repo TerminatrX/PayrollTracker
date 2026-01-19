@@ -2,21 +2,23 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using PayrollManager.UI.Views;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace PayrollManager.UI
 {
     /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
+    /// Main application window with NavigationView for page navigation.
     /// </summary>
     public sealed partial class MainWindow : Window
     {
         public MainWindow()
         {
             this.InitializeComponent();
-            MainNav.SelectedItem = MainNav.MenuItems[0];
-            ContentFrame.Navigate(typeof(EmployeeManagementPage));
+            
+            // Set window title
+            Title = "PayrollManager - Enterprise Edition";
+            
+            // Select first nav item and navigate to Employees page
+            MainNav.SelectedItem = MainNav.MenuItems[1]; // Skip header, select Employees
+            ContentFrame.Navigate(typeof(EmployeesPage));
         }
 
         private void MainNav_OnSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
@@ -28,11 +30,13 @@ namespace PayrollManager.UI
 
             var targetType = tag switch
             {
-                "employees" => typeof(EmployeeManagementPage),
-                "payruns" => typeof(PayrollRunPage),
+                "employees" => typeof(EmployeesPage),
+                "payruns" => typeof(PayRunsPage),
+                "paystubs" => typeof(PayStubPage),
                 "reports" => typeof(ReportsPage),
                 "settings" => typeof(SettingsPage),
-                _ => typeof(EmployeeManagementPage)
+                "help" => typeof(SettingsPage), // Placeholder - could create HelpPage
+                _ => typeof(EmployeesPage)
             };
 
             if (ContentFrame.CurrentSourcePageType != targetType)

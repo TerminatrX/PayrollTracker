@@ -37,12 +37,24 @@ public class PayStub
 
     public decimal YtdNet { get; set; }
 
+    public decimal YtdTaxes { get; set; }
+
     public decimal TotalTaxes => TaxFederal + TaxState + TaxSocialSecurity + TaxMedicare;
 
     /// <summary>
     /// Collection of earning lines (Regular, Overtime, Bonus, Commission)
     /// </summary>
     public ICollection<EarningLine> EarningLines { get; set; } = new List<EarningLine>();
+
+    /// <summary>
+    /// Collection of deduction lines (401k, Health Insurance, etc.)
+    /// </summary>
+    public ICollection<DeductionLine> DeductionLines { get; set; } = new List<DeductionLine>();
+
+    /// <summary>
+    /// Collection of tax lines (Federal, State, Social Security, Medicare, etc.)
+    /// </summary>
+    public ICollection<TaxLine> TaxLines { get; set; } = new List<TaxLine>();
 
     /// <summary>
     /// Computed gross pay from earning lines. Use this when EarningLines are loaded.

@@ -136,10 +136,6 @@
         "net8.0-windows10.0.19041": {
           "targetAlias": "net8.0-windows10.0.19041.0",
           "dependencies": {
-            "AngleSharp": {
-              "target": "Package",
-              "version": "[1.1.2, )"
-            },
             "CommunityToolkit.Mvvm": {
               "target": "Package",
               "version": "[8.2.2, )"
@@ -148,13 +144,17 @@
               "target": "Package",
               "version": "[7.1.2, )"
             },
-            "LiteDB": {
-              "target": "Package",
-              "version": "[5.0.19, )"
-            },
             "Microsoft.EntityFrameworkCore.Sqlite": {
               "target": "Package",
               "version": "[8.0.7, )"
+            },
+            "Microsoft.Extensions.DependencyInjection": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.Extensions.Hosting": {
+              "target": "Package",
+              "version": "[8.0.0, )"
             },
             "Microsoft.Windows.SDK.BuildTools": {
               "target": "Package",
@@ -163,22 +163,6 @@
             "Microsoft.WindowsAppSDK": {
               "target": "Package",
               "version": "[1.6.250108002, )"
-            },
-            "MudBlazor": {
-              "target": "Package",
-              "version": "[6.19.1, )"
-            },
-            "Newtonsoft.Json": {
-              "target": "Package",
-              "version": "[13.0.3, )"
-            },
-            "System.Text.Encoding.CodePages": {
-              "target": "Package",
-              "version": "[8.0.0, )"
-            },
-            "UTF.Unknown": {
-              "target": "Package",
-              "version": "[2.5.1, )"
             }
           },
           "imports": [
@@ -235,9 +219,6 @@
             }
           ],
           "frameworkReferences": {
-            "Microsoft.AspNetCore.App": {
-              "privateAssets": "none"
-            },
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             },
