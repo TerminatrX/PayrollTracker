@@ -1,0 +1,226 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Page x:ConnectionId='1'
+    x:Class="PayrollManager.UI.Views.ReportsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Padding="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Title -->
+        <TextBlock Text="Payroll Reports" Style="{StaticResource PageTitleStyle}" Grid.Row="0" />
+
+        <!-- Filters -->
+        <Border Style="{StaticResource CardStyle}" Grid.Row="1">
+            <StackPanel Spacing="16">
+                <TextBlock Text="REPORT PARAMETERS" Style="{StaticResource SectionTitleStyle}" />
+                
+                <StackPanel Orientation="Horizontal" Spacing="16">
+                    <ComboBox x:ConnectionId='19' Header="Year" Width="120"
+                                                                             
+                                                                                          />
+
+                    <ComboBox x:ConnectionId='20' Header="Period" Width="180"
+                                                                                         >
+                        <ComboBoxItem Content="Q1 (Jan-Mar)" />
+                        <ComboBoxItem Content="Q2 (Apr-Jun)" />
+                        <ComboBoxItem Content="Q3 (Jul-Sep)" />
+                        <ComboBoxItem Content="Q4 (Oct-Dec)" />
+                        <ComboBoxItem Content="Full Year" />
+                        <ComboBoxItem Content="Custom Range" />
+                    </ComboBox>
+
+                    <CalendarDatePicker x:ConnectionId='21' Header="From"
+                                                                                              
+                                                                                                                                                            
+                                        MinWidth="150" />
+
+                    <CalendarDatePicker x:ConnectionId='22' Header="To"
+                                                                                            
+                                                                                                                                                            
+                                        MinWidth="150" />
+
+                    <Button x:ConnectionId='23' Content="Run Report" 
+                            Style="{StaticResource PrimaryButtonStyle}"
+                                                                         
+                            Margin="16,18,0,0" />
+
+                    <Button x:ConnectionId='24' Content="Export to CSV" 
+                                                                           
+                            Margin="0,18,0,0" />
+
+                    <ProgressRing x:ConnectionId='25'                                                      
+                                  Width="24" Height="24"
+                                  Margin="8,18,0,0" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Company Totals Summary -->
+        <Border Style="{StaticResource CardStyle}" Grid.Row="2">
+            <StackPanel Spacing="16">
+                <TextBlock Text="COMPANY TOTALS" Style="{StaticResource SectionTitleStyle}" />
+                
+                <Grid ColumnSpacing="32">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Total Gross" Style="{StaticResource LabelStyle}" />
+                        <TextBlock x:ConnectionId='18'                                                                                                   
+                                   Style="{StaticResource LargeValueStyle}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="Federal" Style="{StaticResource LabelStyle}" />
+                        <TextBlock x:ConnectionId='17'                                                                                                        
+                                   Style="{StaticResource ValueStyle}" Foreground="{StaticResource WarningBrush}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="State" Style="{StaticResource LabelStyle}" />
+                        <TextBlock x:ConnectionId='16'                                                                                                      
+                                   Style="{StaticResource ValueStyle}" Foreground="{StaticResource WarningBrush}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="3">
+                        <TextBlock Text="Soc. Security" Style="{StaticResource LabelStyle}" />
+                        <TextBlock x:ConnectionId='15'                                                                                                            
+                                   Style="{StaticResource ValueStyle}" Foreground="{StaticResource WarningBrush}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="4">
+                        <TextBlock Text="Medicare" Style="{StaticResource LabelStyle}" />
+                        <TextBlock x:ConnectionId='14'                                                                                                      
+                                   Style="{StaticResource ValueStyle}" Foreground="{StaticResource WarningBrush}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="5">
+                        <TextBlock Text="Total Taxes" Style="{StaticResource LabelStyle}" />
+                        <TextBlock x:ConnectionId='13'                                                                                                        
+                                   Style="{StaticResource LargeValueStyle}" Foreground="{StaticResource WarningBrush}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="6">
+                        <TextBlock Text="Total Net" Style="{StaticResource LabelStyle}" />
+                        <TextBlock x:ConnectionId='12'                                                                                                 
+                                   Style="{StaticResource LargeValueStyle}" Foreground="{StaticResource SuccessBrush}" />
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <!-- Employee Details Grid -->
+        <controls:DataGrid x:ConnectionId='2' Grid.Row="3"
+                           AutoGenerateColumns="False"
+                                                                                       
+                           IsReadOnly="True"
+                           CanUserSortColumns="True"
+                           CanUserReorderColumns="True"
+                           CanUserResizeColumns="True"
+                           Margin="0,16,0,0">
+            <controls:DataGrid.Columns>
+                <controls:DataGridTextColumn Header="Employee" Binding="{Binding EmployeeName}" Width="*" />
+                <controls:DataGridTemplateColumn Header="Gross" Width="120">
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding GrossPay, Converter={StaticResource CurrencyConverter}}" 
+                                       HorizontalAlignment="Right" VerticalAlignment="Center"
+                                       Style="{StaticResource CurrencyStyle}" />
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
+                <controls:DataGridTemplateColumn Header="Federal" Width="100">
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding FederalTax, Converter={StaticResource CurrencyConverter}}" 
+                                       HorizontalAlignment="Right" VerticalAlignment="Center"
+                                       Style="{StaticResource CurrencyStyle}" />
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
+                <controls:DataGridTemplateColumn Header="State" Width="100">
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding StateTax, Converter={StaticResource CurrencyConverter}}" 
+                                       HorizontalAlignment="Right" VerticalAlignment="Center"
+                                       Style="{StaticResource CurrencyStyle}" />
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
+                <controls:DataGridTemplateColumn Header="SS" Width="100">
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding SocialSecurity, Converter={StaticResource CurrencyConverter}}" 
+                                       HorizontalAlignment="Right" VerticalAlignment="Center"
+                                       Style="{StaticResource CurrencyStyle}" />
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
+                <controls:DataGridTemplateColumn Header="Medicare" Width="100">
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Medicare, Converter={StaticResource CurrencyConverter}}" 
+                                       HorizontalAlignment="Right" VerticalAlignment="Center"
+                                       Style="{StaticResource CurrencyStyle}" />
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
+                <controls:DataGridTemplateColumn Header="Total Taxes" Width="110">
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding TotalTaxes, Converter={StaticResource CurrencyConverter}}" 
+                                       HorizontalAlignment="Right" VerticalAlignment="Center"
+                                       Foreground="{StaticResource WarningBrush}"
+                                       Style="{StaticResource CurrencyStyle}" />
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
+                <controls:DataGridTemplateColumn Header="Net Pay" Width="120">
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding NetPay, Converter={StaticResource CurrencyConverter}}" 
+                                       HorizontalAlignment="Right" VerticalAlignment="Center"
+                                       Foreground="{StaticResource SuccessBrush}"
+                                       FontWeight="SemiBold"
+                                       Style="{StaticResource CurrencyStyle}" />
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
+            </controls:DataGrid.Columns>
+        </controls:DataGrid>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="4" Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}" 
+                Padding="12,8" Margin="-24,16,-24,-24">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock x:ConnectionId='3'                                                      
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" />
+                <TextBlock x:ConnectionId='4' Grid.Column="1"                                                      
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" />
+            </Grid>
+        </Border>
+    </Grid>
+</Page>
+

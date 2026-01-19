@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="PayrollManager.UI.Views.PayStubDetailsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <ScrollViewer Padding="24">
+        <StackPanel Spacing="24" MaxWidth="700">
+            <!-- Header -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel>
+                    <TextBlock Text="Pay Stub" Style="{StaticResource PageTitleStyle}" Margin="0" />
+                    <TextBlock x:Name="EmployeeNameText" FontSize="18" 
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                    <TextBlock x:Name="PayPeriodText" FontSize="14" 
+                               Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                    <TextBlock Text="NET PAY" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right" />
+                    <TextBlock x:Name="NetPayText" FontSize="36" FontWeight="Bold" 
+                               Foreground="{StaticResource SuccessBrush}" HorizontalAlignment="Right" />
+                </StackPanel>
+            </Grid>
+
+            <!-- Earnings Section -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="EARNINGS" Style="{StaticResource SectionTitleStyle}" />
+                    
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Hours Worked" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" x:Name="HoursWorkedText" HorizontalAlignment="Right" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Pay Rate" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" x:Name="PayRateText" HorizontalAlignment="Right" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Gross Pay" FontWeight="SemiBold" Margin="0,8,0,0" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" x:Name="GrossPayText" HorizontalAlignment="Right" 
+                                   FontWeight="SemiBold" Margin="0,8,0,0" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Pre-Tax Deductions Section -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="PRE-TAX DEDUCTIONS" Style="{StaticResource SectionTitleStyle}" />
+                    
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="401(k) Contribution" />
+                        <TextBlock Grid.Column="1" x:Name="PreTax401kText" HorizontalAlignment="Right" 
+                                   Foreground="{StaticResource WarningBrush}" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Taxes Section -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="TAXES" Style="{StaticResource SectionTitleStyle}" />
+                    
+                    <Grid RowSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Federal Income Tax" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" x:Name="FederalTaxText" HorizontalAlignment="Right" 
+                                   Foreground="{StaticResource WarningBrush}" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="State Income Tax" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" x:Name="StateTaxText" HorizontalAlignment="Right" 
+                                   Foreground="{StaticResource WarningBrush}" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Social Security" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" x:Name="SocialSecurityText" HorizontalAlignment="Right" 
+                                   Foreground="{StaticResource WarningBrush}" />
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Medicare" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" x:Name="MedicareText" HorizontalAlignment="Right" 
+                                   Foreground="{StaticResource WarningBrush}" />
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Total Taxes" FontWeight="SemiBold" Margin="0,8,0,0" />
+                        <TextBlock Grid.Row="4" Grid.Column="1" x:Name="TotalTaxesText" HorizontalAlignment="Right" 
+                                   FontWeight="SemiBold" Foreground="{StaticResource WarningBrush}" Margin="0,8,0,0" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Post-Tax Deductions Section -->
+            <Border Style="{StaticResource CardStyle}">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="POST-TAX DEDUCTIONS" Style="{StaticResource SectionTitleStyle}" />
+                    
+                    <Grid RowSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Health Insurance" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" x:Name="HealthInsuranceText" HorizontalAlignment="Right" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Other Deductions" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" x:Name="OtherDeductionsText" HorizontalAlignment="Right" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Total Deductions" FontWeight="SemiBold" Margin="0,8,0,0" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" x:Name="TotalDeductionsText" HorizontalAlignment="Right" 
+                                   FontWeight="SemiBold" Margin="0,8,0,0" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- YTD Summary -->
+            <Border Style="{StaticResource CardStyle}" Background="{StaticResource SectionBackgroundBrush}">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="YEAR-TO-DATE SUMMARY" Style="{StaticResource SectionTitleStyle}" />
+                    
+                    <Grid ColumnSpacing="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="YTD Gross" Style="{StaticResource LabelStyle}" />
+                            <TextBlock x:Name="YtdGrossText" Style="{StaticResource LargeValueStyle}" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="YTD Taxes" Style="{StaticResource LabelStyle}" />
+                            <TextBlock x:Name="YtdTaxesText" Style="{StaticResource LargeValueStyle}" 
+                                       Foreground="{StaticResource WarningBrush}" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="YTD Net" Style="{StaticResource LabelStyle}" />
+                            <TextBlock x:Name="YtdNetText" Style="{StaticResource LargeValueStyle}" 
+                                       Foreground="{StaticResource SuccessBrush}" />
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Export Buttons -->
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <Button Content="Export as CSV" Click="ExportCsv_Click" />
+                <Button Content="Export as PDF" Click="ExportPdf_Click" IsEnabled="False" />
+                <Button Content="Back" Click="Back_Click" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

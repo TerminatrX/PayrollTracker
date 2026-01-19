@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="PayrollManager.UI.Views.EmployeeManagementPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Padding="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Page Title -->
+        <TextBlock Text="Employees" Style="{StaticResource PageTitleStyle}" Grid.Row="0" />
+
+        <!-- Search and Filters -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="16" Margin="0,0,0,16">
+            <TextBox x:Name="SearchBox"
+                     PlaceholderText="Search by name or ID..."
+                     Width="280"
+                     Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     Style="{StaticResource FormTextBoxStyle}" />
+
+            <ComboBox Header="Status" Width="140"
+                      SelectedIndex="{x:Bind ViewModel.ActiveFilterIndex, Mode=TwoWay}">
+                <ComboBoxItem Content="All" />
+                <ComboBoxItem Content="Active" />
+                <ComboBoxItem Content="Inactive" />
+            </ComboBox>
+
+            <ComboBox Header="Pay Type" Width="140"
+                      SelectedIndex="{x:Bind ViewModel.PayTypeFilterIndex, Mode=TwoWay}">
+                <ComboBoxItem Content="All" />
+                <ComboBoxItem Content="Salary" />
+                <ComboBoxItem Content="Hourly" />
+            </ComboBox>
+
+            <Button Content="New Employee" 
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    Command="{x:Bind ViewModel.NewEmployeeCommand}"
+                    Margin="24,18,0,0" />
+        </StackPanel>
+
+        <!-- Main Content: Grid + Details Panel -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="500" />
+                <ColumnDefinition Width="380" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Employee DataGrid -->
+            <controls:DataGrid x:Name="EmployeesGrid"
+                               Grid.Column="0"
+                               AutoGenerateColumns="False"
+                               ItemsSource="{x:Bind ViewModel.FilteredEmployees, Mode=OneWay}"
+                               SelectionChanged="EmployeesGrid_SelectionChanged"
+                               CanUserSortColumns="True"
+                               CanUserReorderColumns="True"
+                               CanUserResizeColumns="True"
+                               IsReadOnly="True"
+                               Margin="0,0,16,0">
+                <controls:DataGrid.Columns>
+                    <controls:DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60" />
+                    <controls:DataGridTextColumn Header="First Name" Binding="{Binding FirstName}" Width="*" />
+                    <controls:DataGridTextColumn Header="Last Name" Binding="{Binding LastName}" Width="*" />
+                    <controls:DataGridTemplateColumn Header="Pay Type" Width="80">
+                        <controls:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding IsHourly, Converter={StaticResource PayTypeConverter}}" 
+                                           VerticalAlignment="Center" />
+                            </DataTemplate>
+                        </controls:DataGridTemplateColumn.CellTemplate>
+                    </controls:DataGridTemplateColumn>
+                    <controls:DataGridTemplateColumn Header="Annual Salary" Width="120">
+                        <controls:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding AnnualSalary, Converter={StaticResource CurrencyConverter}}" 
+                                           HorizontalAlignment="Right" VerticalAlignment="Center" 
+                                           Style="{StaticResource CurrencyStyle}" />
+                            </DataTemplate>
+                        </controls:DataGridTemplateColumn.CellTemplate>
+                    </controls:DataGridTemplateColumn>
+                    <controls:DataGridTemplateColumn Header="Hourly Rate" Width="100">
+                        <controls:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding HourlyRate, Converter={StaticResource CurrencyConverter}}" 
+                                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                                           Style="{StaticResource CurrencyStyle}" />
+                            </DataTemplate>
+                        </controls:DataGridTemplateColumn.CellTemplate>
+                    </controls:DataGridTemplateColumn>
+                    <controls:DataGridTemplateColumn Header="401k %" Width="80">
+                        <controls:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding PreTax401kPercent, Converter={StaticResource PercentConverter}}" 
+                                           HorizontalAlignment="Right" VerticalAlignment="Center" />
+                            </DataTemplate>
+                        </controls:DataGridTemplateColumn.CellTemplate>
+                    </controls:DataGridTemplateColumn>
+                    <controls:DataGridTemplateColumn Header="Status" Width="80">
+                        <controls:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border CornerRadius="10" Padding="8,2" 
+                                        HorizontalAlignment="Center"
+                                        Background="{Binding IsActive, Converter={StaticResource StatusColorConverter}}">
+                                    <TextBlock Text="{Binding IsActive, Converter={StaticResource StatusTextConverter}}" 
+                                               FontSize="11" Foreground="White" />
+                                </Border>
+                            </DataTemplate>
+                        </controls:DataGridTemplateColumn.CellTemplate>
+                    </controls:DataGridTemplateColumn>
+                </controls:DataGrid.Columns>
+            </controls:DataGrid>
+
+            <!-- Details Panel -->
+            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel Spacing="16">
+                    <!-- Profile Section -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="PROFILE" Style="{StaticResource SectionTitleStyle}" />
+                            
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <PersonPicture Width="64" Height="64" DisplayName="{x:Bind ViewModel.Editor.FullName, Mode=OneWay}" />
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="{x:Bind ViewModel.Editor.FullName, Mode=OneWay}" 
+                                               FontSize="18" FontWeight="SemiBold" />
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <Border CornerRadius="10" Padding="8,2"
+                                                Background="{x:Bind ViewModel.Editor.IsActive, Mode=OneWay, Converter={StaticResource StatusColorConverter}}">
+                                            <TextBlock Text="{x:Bind ViewModel.Editor.IsActive, Mode=OneWay, Converter={StaticResource StatusTextConverter}}" 
+                                                       FontSize="11" Foreground="White" />
+                                        </Border>
+                                        <TextBlock Text="{x:Bind ViewModel.Editor.PayTypeDisplay, Mode=OneWay}" 
+                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                   VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <Grid ColumnSpacing="12" RowSpacing="8" Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <TextBox Grid.Row="0" Grid.Column="0" Header="First Name"
+                                         Text="{x:Bind ViewModel.Editor.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBox Grid.Row="0" Grid.Column="1" Header="Last Name"
+                                         Text="{x:Bind ViewModel.Editor.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                <ComboBox Grid.Row="1" Grid.Column="0" Header="Pay Type" HorizontalAlignment="Stretch"
+                                          SelectedIndex="{x:Bind ViewModel.Editor.IsHourly, Mode=TwoWay, Converter={StaticResource BoolToIndexConverter}}">
+                                    <ComboBoxItem Content="Salary" />
+                                    <ComboBoxItem Content="Hourly" />
+                                </ComboBox>
+                                <CheckBox Grid.Row="1" Grid.Column="1" Content="Active" 
+                                          IsChecked="{x:Bind ViewModel.Editor.IsActive, Mode=TwoWay}"
+                                          VerticalAlignment="Bottom" Margin="0,0,0,4" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Compensation Section -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="COMPENSATION" Style="{StaticResource SectionTitleStyle}" />
+                            
+                            <Grid ColumnSpacing="12" RowSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Grid.Row="0" Grid.Column="0">
+                                    <TextBlock Text="Annualized Salary" Style="{StaticResource LabelStyle}" />
+                                    <TextBlock Text="{x:Bind ViewModel.Editor.AnnualizedSalary, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                               Style="{StaticResource LargeValueStyle}" />
+                                </StackPanel>
+
+                                <NumberBox Grid.Row="0" Grid.Column="1" Header="401k %"
+                                           Value="{x:Bind ViewModel.Editor.PreTax401kPercent, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}"
+                                           Minimum="0" Maximum="25" SmallChange="0.5" />
+
+                                <NumberBox Grid.Row="1" Grid.Column="0" Header="Annual Salary"
+                                           Value="{x:Bind ViewModel.Editor.AnnualSalary, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}"
+                                           IsEnabled="{x:Bind ViewModel.Editor.IsHourly, Mode=OneWay, Converter={StaticResource InverseBoolConverter}}"
+                                           Minimum="0" />
+
+                                <NumberBox Grid.Row="1" Grid.Column="1" Header="Hourly Rate"
+                                           Value="{x:Bind ViewModel.Editor.HourlyRate, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}"
+                                           IsEnabled="{x:Bind ViewModel.Editor.IsHourly, Mode=OneWay}"
+                                           Minimum="0" />
+
+                                <NumberBox Grid.Row="2" Grid.Column="0" Header="Health Ins/Period"
+                                           Value="{x:Bind ViewModel.Editor.HealthInsurancePerPeriod, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}"
+                                           Minimum="0" />
+
+                                <NumberBox Grid.Row="2" Grid.Column="1" Header="Other Deductions"
+                                           Value="{x:Bind ViewModel.Editor.OtherDeductionsPerPeriod, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}"
+                                           Minimum="0" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Pay Summary Section -->
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="PAY SUMMARY" Style="{StaticResource SectionTitleStyle}" />
+                            
+                            <Grid ColumnSpacing="16" RowSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Grid.Row="0" Grid.Column="0">
+                                    <TextBlock Text="Last Pay Date" Style="{StaticResource LabelStyle}" />
+                                    <TextBlock Text="{x:Bind ViewModel.Editor.LastPayDate, Mode=OneWay, Converter={StaticResource DateConverter}}" 
+                                               Style="{StaticResource ValueStyle}" />
+                                </StackPanel>
+                                <StackPanel Grid.Row="0" Grid.Column="1">
+                                    <TextBlock Text="Last Gross" Style="{StaticResource LabelStyle}" />
+                                    <TextBlock Text="{x:Bind ViewModel.Editor.LastGross, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                               Style="{StaticResource ValueStyle}" />
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="1" Grid.ColumnSpan="2">
+                                    <TextBlock Text="Last Net Pay" Style="{StaticResource LabelStyle}" />
+                                    <TextBlock Text="{x:Bind ViewModel.Editor.LastNet, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                               Style="{StaticResource LargeValueStyle}" Foreground="{StaticResource SuccessBrush}" />
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="2" Grid.Column="0">
+                                    <TextBlock Text="YTD Gross" Style="{StaticResource LabelStyle}" />
+                                    <TextBlock Text="{x:Bind ViewModel.Editor.YtdGross, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                               Style="{StaticResource ValueStyle}" />
+                                </StackPanel>
+                                <StackPanel Grid.Row="2" Grid.Column="1">
+                                    <TextBlock Text="YTD Taxes" Style="{StaticResource LabelStyle}" />
+                                    <TextBlock Text="{x:Bind ViewModel.Editor.YtdTaxes, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                               Style="{StaticResource ValueStyle}" />
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="3" Grid.ColumnSpan="2">
+                                    <TextBlock Text="YTD Net" Style="{StaticResource LabelStyle}" />
+                                    <TextBlock Text="{x:Bind ViewModel.Editor.YtdNet, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                               Style="{StaticResource LargeValueStyle}" Foreground="{StaticResource AccentBrush}" />
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Action Buttons -->
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <Button Content="Save" 
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                Command="{x:Bind ViewModel.SaveEmployeeCommand}"
+                                IsEnabled="{x:Bind ViewModel.CanSave, Mode=OneWay}" />
+                        <Button Content="Delete" 
+                                Style="{StaticResource DangerButtonStyle}"
+                                Command="{x:Bind ViewModel.DeleteEmployeeCommand}"
+                                IsEnabled="{x:Bind ViewModel.CanDelete, Mode=OneWay}" />
+                        <Button Content="Refresh" 
+                                Command="{x:Bind ViewModel.LoadEmployeesCommand}" />
+                        <ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}" 
+                                      Width="24" Height="24" />
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="3" Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}" 
+                Padding="12,8" Margin="-24,16,-24,-24">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}" 
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" />
+                <TextBlock Grid.Column="1" FontSize="12"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                    <Run Text="Last saved: " />
+                    <Run Text="{x:Bind ViewModel.LastSaveTimeDisplay, Mode=OneWay}" />
+                </TextBlock>
+            </Grid>
+        </Border>
+    </Grid>
+</Page>

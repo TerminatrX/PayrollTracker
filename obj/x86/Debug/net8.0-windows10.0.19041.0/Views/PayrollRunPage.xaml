@@ -1,0 +1,46 @@
+﻿<Page x:ConnectionId='1'
+    x:Class="PayrollManager.UI.Views.PayrollRunPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <ScrollViewer>
+        <StackPanel Padding="16" Spacing="16">
+            <TextBlock Text="Pay Run" FontSize="20" FontWeight="SemiBold" />
+
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <DatePicker x:ConnectionId='4' Header="Period Start"                                                 />
+                <DatePicker x:ConnectionId='5' Header="Period End"                                               />
+                <DatePicker x:ConnectionId='6' Header="Pay Date"                                             />
+                <Button x:ConnectionId='7' Content="Generate Pay Run"                              />
+                <Button x:ConnectionId='8' Content="Reload Employees"                               />
+            </StackPanel>
+
+            <TextBlock Text="Active Employees" FontSize="16" FontWeight="SemiBold" />
+            <controls:DataGrid x:ConnectionId='2' AutoGenerateColumns="False"                                           >
+                <controls:DataGrid.Columns>
+                    <controls:DataGridTextColumn Header="Employee" Binding="{Binding FullName}" />
+                    <controls:DataGridCheckBoxColumn Header="Hourly" Binding="{Binding IsHourly}" />
+                    <controls:DataGridTextColumn Header="Rate" Binding="{Binding RateDisplay}" />
+                    <controls:DataGridTextColumn Header="Hours Override" Binding="{Binding HoursOverride}" />
+                </controls:DataGrid.Columns>
+            </controls:DataGrid>
+
+            <TextBlock Text="Generated Pay Stubs" FontSize="16" FontWeight="SemiBold" />
+            <controls:DataGrid x:ConnectionId='3' AutoGenerateColumns="False"                                       >
+                <controls:DataGrid.Columns>
+                    <controls:DataGridTextColumn Header="Employee" Binding="{Binding EmployeeName}" />
+                    <controls:DataGridTextColumn Header="Gross" Binding="{Binding GrossPay}" />
+                    <controls:DataGridTextColumn Header="Taxes" Binding="{Binding TotalTaxes}" />
+                    <controls:DataGridTextColumn Header="Net" Binding="{Binding NetPay}" />
+                    <controls:DataGridTextColumn Header="YTD Gross" Binding="{Binding YtdGross}" />
+                    <controls:DataGridTextColumn Header="YTD Net" Binding="{Binding YtdNet}" />
+                </controls:DataGrid.Columns>
+            </controls:DataGrid>
+        </StackPanel>
+    </ScrollViewer>
+</Page>
+

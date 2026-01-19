@@ -1,0 +1,15 @@
+C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\bin\x64\Debug\net8.0\PayrollManager.Domain.deps.json
+C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\bin\x64\Debug\net8.0\PayrollManager.Domain.runtimeconfig.json
+C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\bin\x64\Debug\net8.0\PayrollManager.Domain.dll
+C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\bin\x64\Debug\net8.0\PayrollManager.Domain.pdb
+C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\obj\x64\Debug\net8.0\PayrollManager.Domain.csproj.AssemblyReference.cache
+C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\obj\x64\Debug\net8.0\PayrollManager.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\obj\x64\Debug\net8.0\PayrollManager.Domain.AssemblyInfoInputs.cache
+C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\obj\x64\Debug\net8.0\PayrollManager.Domain.AssemblyInfo.cs
+C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\obj\x64\Debug\net8.0\PayrollManager.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\obj\x64\Debug\net8.0\PayrollManager.Domain.dll
+C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\obj\x64\Debug\net8.0\refint\PayrollManager.Domain.dll
+C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\obj\x64\Debug\net8.0\PayrollManager.Domain.pdb
+C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\obj\x64\Debug\net8.0\PayrollManager.Domain.genruntimeconfig.cache
+C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\obj\x64\Debug\net8.0\ref\PayrollManager.Domain.dll
+C:\Users\Varun\Documents\CodingProject\PayrollManager\PayrollManager.Domain\obj\x64\Debug\net8.0\PayrollManager.Domain.sourcelink.json
