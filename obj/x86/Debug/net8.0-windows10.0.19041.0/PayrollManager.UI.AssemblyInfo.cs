@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PayrollManager.UI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e36ad0a831ed6ab827e8397463f2c9b46a8ea2c3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+07e070c2b4eb460ba2a297dffdb28b1a87a3b1ba")]
 [assembly: System.Reflection.AssemblyProductAttribute("PayrollManager.UI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PayrollManager.UI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -250,15 +250,34 @@
 
                                 <!-- Profile Info -->
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <Grid>
+                                    <!-- View Mode: Display Name -->
+                                    <TextBlock Text="{x:Bind ViewModel.Editor.FullName, Mode=OneWay}"
+                                               Style="{ThemeResource TitleLargeTextBlockStyle}"
+                                               FontWeight="Bold"
+                                               Visibility="{x:Bind ViewModel.IsEditMode, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+
+                                    <!-- Edit Mode: First Name and Last Name Inputs -->
+                                    <Grid Visibility="{x:Bind ViewModel.IsEditMode, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                                          ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox Grid.Column="0"
+                                                 Header="First Name"
+                                                 Text="{x:Bind ViewModel.Editor.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                 PlaceholderText="First Name" />
+                                        <TextBox Grid.Column="1"
+                                                 Header="Last Name"
+                                                 Text="{x:Bind ViewModel.Editor.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                 PlaceholderText="Last Name" />
+                                    </Grid>
+
+                                    <Grid Margin="0,8,0,0">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-
-                                        <TextBlock Text="{x:Bind ViewModel.Editor.FullName, Mode=OneWay}"
-                                                   Style="{ThemeResource TitleLargeTextBlockStyle}"
-                                                   FontWeight="Bold" />
 
                                         <!-- Department Badge -->
                                         <Border Grid.Column="1" 
@@ -270,18 +289,22 @@
                                         </Border>
                                     </Grid>
 
+                                    <!-- View Mode: Job Title Display -->
                                     <TextBlock Text="{x:Bind ViewModel.Editor.JobTitle, Mode=OneWay}"
                                                Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                               Opacity="0.7" />
+                                               Opacity="0.7"
+                                               Visibility="{x:Bind ViewModel.IsEditMode, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
 
-                                    <!-- Metadata Row -->
-                                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                                        <StackPanel Orientation="Horizontal">
+                                    <!-- Metadata Row (View Mode Only) -->
+                                    <StackPanel Orientation="Horizontal" 
+                                                Margin="0,8,0,0"
+                                                Visibility="{x:Bind ViewModel.IsEditMode, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,16,0">
                                             <FontIcon Glyph="&#xE8D7;" FontSize="12" Opacity="0.5" />
                                             <TextBlock Text="{x:Bind ViewModel.Editor.EmployeeId, Mode=OneWay}"
                                                        FontSize="12" Opacity="0.6" />
                                         </StackPanel>
-                                        <StackPanel Orientation="Horizontal">
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,16,0">
                                             <FontIcon Glyph="&#xE787;" FontSize="12" Opacity="0.5" />
                                             <TextBlock Text="{x:Bind ViewModel.Editor.HireDateDisplay, Mode=OneWay}"
                                                        FontSize="12" Opacity="0.6" />
@@ -320,8 +343,9 @@
                                                    FontWeight="Bold" />
                                     </StackPanel>
 
-                                    <!-- Data Grid -->
-                                    <Grid ColumnSpacing="16" RowSpacing="16">
+                                    <!-- VIEW MODE: Read-only Summary -->
+                                    <Grid ColumnSpacing="16" RowSpacing="16"
+                                          Visibility="{x:Bind ViewModel.IsEditMode, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="*" />
@@ -368,9 +392,60 @@
                                         </StackPanel>
                                     </Grid>
 
-                                    <!-- Edit Link -->
+                                    <!-- EDIT MODE: Editable Fields -->
+                                    <StackPanel Visibility="{x:Bind ViewModel.IsEditMode, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                Spacing="16">
+                                        <!-- Pay Type Selector -->
+                                        <ComboBox Header="Pay Type"
+                                                  SelectedIndex="{x:Bind ViewModel.Editor.IsHourly, Mode=TwoWay, Converter={StaticResource BoolToIndexConverter}}"
+                                                  HorizontalAlignment="Stretch">
+                                            <ComboBoxItem Content="Salary" />
+                                            <ComboBoxItem Content="Hourly" />
+                                        </ComboBox>
+
+                                        <!-- Salary Fields (shown when not hourly) -->
+                                        <NumberBox Header="Annual Salary"
+                                                   Value="{x:Bind ViewModel.Editor.AnnualSalary, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}"
+                                                   IsEnabled="{x:Bind ViewModel.Editor.IsSalary, Mode=OneWay}"
+                                                   Minimum="0"
+                                                   SpinButtonPlacementMode="Inline" />
+
+                                        <!-- Hourly Fields (shown when hourly) -->
+                                        <NumberBox Header="Hourly Rate"
+                                                   Value="{x:Bind ViewModel.Editor.HourlyRate, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}"
+                                                   IsEnabled="{x:Bind ViewModel.Editor.IsHourly, Mode=OneWay}"
+                                                   Minimum="0"
+                                                   SpinButtonPlacementMode="Inline" />
+
+                                        <NumberBox Header="Default Hours Per Period"
+                                                   Value="{x:Bind ViewModel.Editor.DefaultHoursPerPeriod, Mode=TwoWay}"
+                                                   IsEnabled="{x:Bind ViewModel.Editor.IsHourly, Mode=OneWay}"
+                                                   Minimum="0"
+                                                   SpinButtonPlacementMode="Inline" />
+
+                                        <!-- Benefits and Deductions -->
+                                        <NumberBox Header="401(k) Contribution %"
+                                                   Value="{x:Bind ViewModel.Editor.PreTax401kPercent, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}"
+                                                   Minimum="0"
+                                                   Maximum="0.25"
+                                                   SmallChange="0.01"
+                                                   SpinButtonPlacementMode="Inline" />
+
+                                        <NumberBox Header="Health Insurance Per Period"
+                                                   Value="{x:Bind ViewModel.Editor.HealthInsurancePerPeriod, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}"
+                                                   Minimum="0"
+                                                   SpinButtonPlacementMode="Inline" />
+
+                                        <NumberBox Header="Other Deductions Per Period"
+                                                   Value="{x:Bind ViewModel.Editor.OtherDeductionsPerPeriod, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}"
+                                                   Minimum="0"
+                                                   SpinButtonPlacementMode="Inline" />
+                                    </StackPanel>
+
+                                    <!-- Edit Link (only in view mode) -->
                                     <HyperlinkButton Content="Edit Compensation History →"
-                                                     Command="{x:Bind ViewModel.EditCompensationCommand}" />
+                                                     Command="{x:Bind ViewModel.EditCompensationCommand}"
+                                                     Visibility="{x:Bind ViewModel.IsEditMode, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                                 </StackPanel>
                             </Border>
 

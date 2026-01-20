@@ -87,7 +87,12 @@ public partial class EmployeesViewModel : ObservableObject
     [ObservableProperty]
     private bool _isNewEmployeeMode;
 
+    [ObservableProperty]
+    private bool _isEditing;
+
     public bool HasSelectedEmployee => SelectedEmployee != null || IsNewEmployeeMode;
+    
+    public bool IsEditMode => IsNewEmployeeMode || IsEditing;
 
     // ═══════════════════════════════════════════════════════════════
     // SEARCH STATE
@@ -214,7 +219,9 @@ public partial class EmployeesViewModel : ObservableObject
         Editor.Reset();
         SelectedEmployee = null;
         IsNewEmployeeMode = true;
+        IsEditing = true;
         OnPropertyChanged(nameof(HasSelectedEmployee));
+        OnPropertyChanged(nameof(IsEditMode));
     }
 
     [RelayCommand(CanExecute = nameof(CanSave))]
@@ -275,15 +282,18 @@ public partial class EmployeesViewModel : ObservableObject
                 Editor.LoadFrom(employeeToSelect);
                 SelectedEmployee = employeeToSelect;
                 IsNewEmployeeMode = false;
+                IsEditing = false; // Switch back to view mode after saving
             }
             else
             {
                 // This shouldn't happen, but handle it gracefully
                 Editor.Reset();
                 IsNewEmployeeMode = false;
+                IsEditing = false;
             }
             
             OnPropertyChanged(nameof(HasSelectedEmployee));
+            OnPropertyChanged(nameof(IsEditMode));
             
             SaveEmployeeCommand.NotifyCanExecuteChanged();
             OnPropertyChanged(nameof(CanSave));
@@ -344,13 +354,16 @@ public partial class EmployeesViewModel : ObservableObject
         {
             Editor.LoadFrom(SelectedEmployee);
             IsNewEmployeeMode = false;
+            IsEditing = false; // Exit edit mode
         }
         else
         {
             Editor.Reset();
             IsNewEmployeeMode = false;
+            IsEditing = false;
         }
         OnPropertyChanged(nameof(HasSelectedEmployee));
+        OnPropertyChanged(nameof(IsEditMode));
     }
 
     [RelayCommand]
@@ -431,13 +444,23 @@ public partial class EmployeesViewModel : ObservableObject
         {
             Editor.LoadFrom(value);
             IsNewEmployeeMode = false;
+            IsEditing = false; // View mode when selecting existing employee
         }
         else if (!IsNewEmployeeMode)
         {
             Editor.Reset();
+            IsEditing = false;
         }
         OnPropertyChanged(nameof(HasSelectedEmployee));
+        OnPropertyChanged(nameof(IsEditMode));
         SaveEmployeeCommand.NotifyCanExecuteChanged();
         OnPropertyChanged(nameof(CanSave));
+    }
+    
+    [RelayCommand]
+    private void StartEditing()
+    {
+        IsEditing = true;
+        OnPropertyChanged(nameof(IsEditMode));
     }
 }
