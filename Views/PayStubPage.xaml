@@ -9,24 +9,125 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Padding="32" MaxWidth="1200" 
-                    HorizontalAlignment="Center">
-
-            <!-- ═══════════════════════════════════════════════════════════════ -->
-            <!-- BREADCRUMBS                                                      -->
-            <!-- ═══════════════════════════════════════════════════════════════ -->
-            <StackPanel Orientation="Horizontal">
-                <HyperlinkButton Content="Home" Padding="0" 
-                                 Command="{x:Bind ViewModel.NavigateHomeCommand}" />
-                <FontIcon Glyph="&#xE76C;" FontSize="10" Opacity="0.5" VerticalAlignment="Center" />
-                <HyperlinkButton Content="Pay Stubs" Padding="0"
-                                 Command="{x:Bind ViewModel.NavigatePayStubsCommand}" />
-                <FontIcon Glyph="&#xE76C;" FontSize="10" Opacity="0.5" VerticalAlignment="Center" />
-                <TextBlock Text="{x:Bind ViewModel.StatementNumber, Mode=OneWay}"
-                           Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
-                           FontWeight="Bold" VerticalAlignment="Center" />
+    <Grid>
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- LIST VIEW: Show when no pay stub is selected                    -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      Visibility="{x:Bind ViewModel.HasSelectedPayStub, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+            <StackPanel Padding="32" MaxWidth="1200" HorizontalAlignment="Center">
+                <!-- Header -->
+                <Grid Margin="0,0,0,24">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBlock Text="Pay Stubs" 
+                               Style="{ThemeResource TitleLargeTextBlockStyle}"
+                               FontWeight="Black" />
+                    
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <TextBox x:Name="SearchBox"
+                                 PlaceholderText="Search pay stubs..."
+                                 Width="280"
+                                 Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,12,0" />
+                        
+                        <ComboBox Header="Year" Width="120"
+                                  SelectedItem="{x:Bind ViewModel.YearFilter, Mode=TwoWay}"
+                                  ItemsSource="{x:Bind ViewModel.AvailableYears, Mode=OneWay}"
+                                  Margin="0,0,12,0" />
+                        
+                        <ComboBox Header="Period" Width="140"
+                                  SelectedIndex="{x:Bind ViewModel.PeriodFilterIndex, Mode=TwoWay}">
+                            <ComboBoxItem Content="All" />
+                            <ComboBoxItem Content="Q1" />
+                            <ComboBoxItem Content="Q2" />
+                            <ComboBoxItem Content="Q3" />
+                            <ComboBoxItem Content="Q4" />
+                        </ComboBox>
+                    </StackPanel>
+                </Grid>
+                
+                <!-- Pay Stubs List -->
+                <controls:DataGrid AutoGenerateColumns="False"
+                                   ItemsSource="{x:Bind ViewModel.FilteredPayStubs, Mode=OneWay}"
+                                   SelectedItem="{x:Bind ViewModel.SelectedPayStub, Mode=TwoWay}"
+                                   CanUserReorderColumns="True"
+                                   CanUserResizeColumns="True"
+                                   CanUserSortColumns="True"
+                                   IsReadOnly="True">
+                    <controls:DataGrid.Columns>
+                        <controls:DataGridTextColumn Header="Statement #" 
+                                                      Binding="{Binding StatementNumber}" 
+                                                      Width="120" />
+                        <controls:DataGridTextColumn Header="Employee" 
+                                                      Binding="{Binding EmployeeName}" 
+                                                      Width="*" />
+                        <controls:DataGridTextColumn Header="Period" 
+                                                      Binding="{Binding PeriodRange}" 
+                                                      Width="200" />
+                        <controls:DataGridTemplateColumn Header="Pay Date" Width="120">
+                            <controls:DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding PayDate, Converter={StaticResource DateConverter}}" />
+                                </DataTemplate>
+                            </controls:DataGridTemplateColumn.CellTemplate>
+                        </controls:DataGridTemplateColumn>
+                        <controls:DataGridTemplateColumn Header="Gross Pay" Width="120">
+                            <controls:DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding GrossPay, Converter={StaticResource CurrencyConverter}}" 
+                                               HorizontalAlignment="Right" />
+                                </DataTemplate>
+                            </controls:DataGridTemplateColumn.CellTemplate>
+                        </controls:DataGridTemplateColumn>
+                        <controls:DataGridTemplateColumn Header="Net Pay" Width="120">
+                            <controls:DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding NetPay, Converter={StaticResource CurrencyConverter}}" 
+                                               HorizontalAlignment="Right"
+                                               FontWeight="SemiBold" />
+                                </DataTemplate>
+                            </controls:DataGridTemplateColumn.CellTemplate>
+                        </controls:DataGridTemplateColumn>
+                    </controls:DataGrid.Columns>
+                </controls:DataGrid>
+                
+                <!-- Empty State -->
+                <StackPanel HorizontalAlignment="Center" 
+                            VerticalAlignment="Center"
+                            Margin="0,100,0,0"
+                            Spacing="16">
+                    <FontIcon Glyph="&#xE8A1;" FontSize="64" Opacity="0.3" />
+                    <TextBlock Text="No pay stubs found"
+                               Style="{ThemeResource SubtitleTextBlockStyle}"
+                               Opacity="0.5"
+                               HorizontalAlignment="Center" />
+                </StackPanel>
             </StackPanel>
+        </ScrollViewer>
+
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <!-- DETAIL VIEW: Show when a pay stub is selected                    -->
+        <!-- ═══════════════════════════════════════════════════════════════ -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      Visibility="{x:Bind ViewModel.HasSelectedPayStub, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel Padding="32" MaxWidth="1200" 
+                        HorizontalAlignment="Center">
+
+                <!-- ═══════════════════════════════════════════════════════════════ -->
+                <!-- BREADCRUMBS                                                      -->
+                <!-- ═══════════════════════════════════════════════════════════════ -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                    <HyperlinkButton Content="Pay Stubs" Padding="0"
+                                     Command="{x:Bind ViewModel.NavigatePayStubsCommand}" />
+                    <FontIcon Glyph="&#xE76C;" FontSize="10" Opacity="0.5" VerticalAlignment="Center" />
+                    <TextBlock Text="{x:Bind ViewModel.StatementNumber, Mode=OneWay}"
+                               Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                               FontWeight="Bold" VerticalAlignment="Center" />
+                </StackPanel>
 
             <!-- ═══════════════════════════════════════════════════════════════ -->
             <!-- PAGE HEADER & ACTIONS                                           -->
@@ -500,5 +601,6 @@
                 </Grid>
             </Border>
         </StackPanel>
-    </ScrollViewer>
+        </ScrollViewer>
+    </Grid>
 </Page>

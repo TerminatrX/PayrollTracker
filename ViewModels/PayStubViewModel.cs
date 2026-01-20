@@ -27,6 +27,10 @@ public partial class PayStubViewModel : ObservableObject
             AvailableYears.Add(y);
         }
         
+        // Initialize to list mode (no pay stub selected)
+        PayStubId = 0;
+        SelectedPayStub = null;
+        
         // Load pay stubs on initialization
         _ = LoadPayStubsAsync();
     }
@@ -49,6 +53,8 @@ public partial class PayStubViewModel : ObservableObject
 
     [ObservableProperty]
     private int _payStubId;
+    
+    public bool HasSelectedPayStub => SelectedPayStub != null && PayStubId > 0;
 
     // ═══════════════════════════════════════════════════════════════
     // SEARCH STATE
@@ -156,7 +162,7 @@ public partial class PayStubViewModel : ObservableObject
     // ═══════════════════════════════════════════════════════════════
 
     [RelayCommand]
-    private async Task LoadPayStubsAsync()
+    public async Task LoadPayStubsAsync()
     {
         IsLoading = true;
         StatusMessage = "Loading pay stubs...";
@@ -187,7 +193,25 @@ public partial class PayStubViewModel : ObservableObject
             }
 
             ApplyFiltersCommand.Execute(null);
+            
+            // Update year filter to show the most recent year if current year has no pay stubs
+            if (payStubs.Count > 0 && FilteredPayStubs.Count == 0)
+            {
+                var mostRecentYear = payStubs.Max(ps => ps.PayRun?.PayDate.Year ?? 0);
+                if (mostRecentYear > 0 && mostRecentYear != YearFilter)
+                {
+                    // If the most recent pay stub is from a different year, update the filter
+                    YearFilter = mostRecentYear;
+                    ApplyFiltersCommand.Execute(null);
+                }
+            }
             StatusMessage = $"Loaded {payStubs.Count} pay stubs";
+            
+            // If no pay stub is selected, ensure we're in list mode
+            if (SelectedPayStub == null && PayStubId == 0)
+            {
+                OnPropertyChanged(nameof(HasSelectedPayStub));
+            }
         }
         catch (Exception ex)
         {
@@ -219,15 +243,20 @@ public partial class PayStubViewModel : ObservableObject
             if (payStub != null)
             {
                 PopulateFromPayStub(payStub);
+                OnPropertyChanged(nameof(HasSelectedPayStub));
             }
             else
             {
                 StatusMessage = "Pay stub not found";
+                PayStubId = 0;
+                OnPropertyChanged(nameof(HasSelectedPayStub));
             }
         }
         catch (Exception ex)
         {
             StatusMessage = $"Error loading pay stub: {ex.Message}";
+            PayStubId = 0;
+            OnPropertyChanged(nameof(HasSelectedPayStub));
         }
         finally
         {
@@ -427,6 +456,11 @@ public partial class PayStubViewModel : ObservableObject
     {
         FilteredPayStubs.Clear();
 
+        if (PayStubs.Count == 0)
+        {
+            return; // No pay stubs loaded yet
+        }
+
         var query = PayStubs.AsEnumerable();
 
         // Search filter
@@ -438,7 +472,7 @@ public partial class PayStubViewModel : ObservableObject
                 ps.StatementNumber.Contains(search, StringComparison.OrdinalIgnoreCase));
         }
 
-        // Year filter
+        // Year filter - filter by selected year
         query = query.Where(ps => ps.PayDate.Year == YearFilter);
 
         // Period filter
@@ -494,6 +528,34 @@ public partial class PayStubViewModel : ObservableObject
         {
             LoadPayStubCommand.Execute(value.Id);
         }
+        else
+        {
+            // Clear detail view when selection is cleared
+            PayStubId = 0;
+            StatementNumber = "#00000";
+            PeriodRange = "";
+            PayDate = "";
+            EmployeeName = "";
+            EmployeeId = "";
+            GrossPay = 0;
+            NetPay = 0;
+            TotalGross = 0;
+            TotalDeductions = 0;
+            TotalTaxes = 0;
+            YtdGross = 0;
+            YtdDeductions = 0;
+            YtdTaxes = 0;
+            YtdNetPay = 0;
+            EarningLines.Clear();
+            DeductionLines.Clear();
+            TaxLines.Clear();
+        }
+        OnPropertyChanged(nameof(HasSelectedPayStub));
+    }
+    
+    partial void OnPayStubIdChanged(int value)
+    {
+        OnPropertyChanged(nameof(HasSelectedPayStub));
     }
 }
 

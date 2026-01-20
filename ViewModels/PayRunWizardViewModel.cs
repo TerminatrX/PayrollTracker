@@ -560,14 +560,16 @@ public partial class PayRunWizardViewModel : ObservableObject
                 {
                     OnEmployeeSelectionChanged();
                 }
-                else if (CurrentStep == PayRunStep.Summary &&
-                         (e.PropertyName == nameof(PayRunEmployeeRow.RegularHours) ||
-                          e.PropertyName == nameof(PayRunEmployeeRow.OvertimeHours) ||
-                          e.PropertyName == nameof(PayRunEmployeeRow.BonusAmount) ||
-                          e.PropertyName == nameof(PayRunEmployeeRow.CommissionAmount)))
+                else if (e.PropertyName == nameof(PayRunEmployeeRow.RegularHours) ||
+                         e.PropertyName == nameof(PayRunEmployeeRow.OvertimeHours) ||
+                         e.PropertyName == nameof(PayRunEmployeeRow.BonusAmount) ||
+                         e.PropertyName == nameof(PayRunEmployeeRow.CommissionAmount))
                 {
-                    // Recalculate estimates when hours/earnings change on Summary step
-                    _ = CalculateEstimatesAsync();
+                    // Recalculate estimates when hours/earnings change on Step 2 or Step 3
+                    if (CurrentStep == PayRunStep.Employees || CurrentStep == PayRunStep.Summary)
+                    {
+                        _ = CalculateEstimatesAsync();
+                    }
                 }
             };
 
@@ -626,6 +628,7 @@ public partial class PayRunWizardViewModel : ObservableObject
             IsStep2Complete = true;
             CurrentStep = PayRunStep.Summary;
             // Recalculate estimates when entering Summary using PreviewPayStub
+            // This ensures totals are up-to-date when user reaches summary
             _ = CalculateEstimatesAsync();
         }
         
@@ -643,7 +646,7 @@ public partial class PayRunWizardViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private async Task SaveDraftAsync()
+    private Task SaveDraftAsync()
     {
         IsLoading = true;
         StatusMessage = "Saving draft...";
@@ -663,10 +666,12 @@ public partial class PayRunWizardViewModel : ObservableObject
         {
             IsLoading = false;
         }
+        
+        return Task.CompletedTask;
     }
 
     [RelayCommand]
-    private async Task LoadDraftAsync()
+    private Task LoadDraftAsync()
     {
         IsLoading = true;
         StatusMessage = "Loading draft...";
@@ -684,6 +689,8 @@ public partial class PayRunWizardViewModel : ObservableObject
         {
             IsLoading = false;
         }
+        
+        return Task.CompletedTask;
     }
 
     [RelayCommand]
@@ -710,6 +717,7 @@ public partial class PayRunWizardViewModel : ObservableObject
             };
 
             _dbContext.PayRuns.Add(payRun);
+            // Save PayRun first to get its ID (required for PayStub.PayRunId foreign key)
             await _dbContext.SaveChangesAsync();
 
             // Generate pay stubs for each included employee
@@ -741,25 +749,35 @@ public partial class PayRunWizardViewModel : ObservableObject
                 // Generate pay stub using PayrollService
                 var payStub = await _payrollService.GeneratePayStubAsync(employee, payRun, input);
                 
-                // Add to context
+                // Add to context (this will also add related EarningLines, DeductionLines, TaxLines)
                 _dbContext.PayStubs.Add(payStub);
                 
                 // Add to generated stubs list for display
+                // Calculate earnings breakdown from EarningLines (they're already added to payStub by PayrollService)
+                var regularPay = payStub.EarningLines.Where(e => e.Type == EarningType.Regular).Sum(e => e.Amount);
+                var overtimePay = payStub.EarningLines.Where(e => e.Type == EarningType.Overtime).Sum(e => e.Amount);
+                var bonusPay = payStub.EarningLines.Where(e => e.Type == EarningType.Bonus || e.Type == EarningType.Commission).Sum(e => e.Amount);
+                
                 GeneratedStubs.Add(new PayStubResult
                 {
                     EmployeeId = employee.Id,
                     EmployeeName = employee.FullName,
+                    RegularPay = regularPay,
+                    OvertimePay = overtimePay,
+                    BonusPay = bonusPay,
                     GrossPay = payStub.GrossPay,
                     NetPay = payStub.NetPay,
                     TotalTaxes = payStub.TotalTaxes,
-                    Taxes = payStub.TotalTaxes
+                    Taxes = payStub.TotalTaxes,
+                    YtdGross = payStub.YtdGross,
+                    YtdNet = payStub.YtdNet
                 });
 
                 processedCount++;
                 StatusMessage = $"Processing {processedCount} of {totalEmployees} employees...";
             }
 
-            // Save all pay stubs
+            // Save all pay stubs and their related entities in one transaction
             await _dbContext.SaveChangesAsync();
 
             IsStep3Complete = true;
@@ -828,6 +846,21 @@ public partial class PayRunWizardViewModel : ObservableObject
         decimal totalBonus = 0;
         int count = 0;
 
+        // Validate dates are set before calculating
+        if (PeriodStart == default || PeriodEnd == default || PayDate == default)
+        {
+            // If dates aren't set yet, just zero out the estimates
+            EstimatedGross = 0;
+            EstimatedRegular = 0;
+            EstimatedOvertime = 0;
+            EstimatedBonus = 0;
+            EstimatedTaxes = 0;
+            EstimatedDeductions = 0;
+            EstimatedNet = 0;
+            IncludedCount = 0;
+            return;
+        }
+
         // Create draft pay run from current period dates
         var draft = new PayRunDraft
         {
@@ -871,6 +904,12 @@ public partial class PayRunWizardViewModel : ObservableObject
                 totalRegular += regular;
                 totalOvertime += overtime;
             }
+            else
+            {
+                // For salary employees, get the period salary from preview
+                // The preview already calculates the correct period amount
+                totalRegular += preview.GrossPay - (decimal)row.BonusAmount - (decimal)row.CommissionAmount;
+            }
             totalBonus += (decimal)row.BonusAmount + (decimal)row.CommissionAmount;
         }
 
@@ -882,6 +921,12 @@ public partial class PayRunWizardViewModel : ObservableObject
         EstimatedDeductions = totalDeductions; // Now uses actual calculated deductions
         EstimatedNet = totalNet; // Now uses actual calculated net pay
         IncludedCount = count;
+        
+        // Notify display properties changed
+        OnPropertyChanged(nameof(TotalGrossDisplay));
+        OnPropertyChanged(nameof(EstimatedTaxesDisplay));
+        OnPropertyChanged(nameof(BenefitsDeductionsDisplay));
+        OnPropertyChanged(nameof(NetPayTotalDisplay));
     }
 
     private string GetTimeAgo(DateTime dateTime)
@@ -974,6 +1019,11 @@ public partial class PayRunWizardViewModel : ObservableObject
         OnPropertyChanged(nameof(IsCurrentStepValid));
         GoNextCommand.NotifyCanExecuteChanged();
         FinalizeCommand.NotifyCanExecuteChanged();
+        // Recalculate estimates if dates change and we're on Employees or Summary step
+        if (CurrentStep == PayRunStep.Employees || CurrentStep == PayRunStep.Summary)
+        {
+            _ = CalculateEstimatesAsync();
+        }
     }
 
     partial void OnPeriodEndChanged(DateTimeOffset value)
@@ -982,6 +1032,11 @@ public partial class PayRunWizardViewModel : ObservableObject
         OnPropertyChanged(nameof(IsCurrentStepValid));
         GoNextCommand.NotifyCanExecuteChanged();
         FinalizeCommand.NotifyCanExecuteChanged();
+        // Recalculate estimates if dates change and we're on Employees or Summary step
+        if (CurrentStep == PayRunStep.Employees || CurrentStep == PayRunStep.Summary)
+        {
+            _ = CalculateEstimatesAsync();
+        }
     }
 
     partial void OnPayDateChanged(DateTimeOffset value)
@@ -990,6 +1045,11 @@ public partial class PayRunWizardViewModel : ObservableObject
         OnPropertyChanged(nameof(IsCurrentStepValid));
         GoNextCommand.NotifyCanExecuteChanged();
         FinalizeCommand.NotifyCanExecuteChanged();
+        // Recalculate estimates if dates change and we're on Employees or Summary step
+        if (CurrentStep == PayRunStep.Employees || CurrentStep == PayRunStep.Summary)
+        {
+            _ = CalculateEstimatesAsync();
+        }
     }
 
     partial void OnIncludeInactiveChanged(bool value)
@@ -1007,8 +1067,8 @@ public partial class PayRunWizardViewModel : ObservableObject
         GoNextCommand.NotifyCanExecuteChanged();
         FinalizeCommand.NotifyCanExecuteChanged();
         
-        // Recalculate estimates if we're on Summary step
-        if (CurrentStep == PayRunStep.Summary)
+        // Recalculate estimates if we're on Employees or Summary step
+        if (CurrentStep == PayRunStep.Employees || CurrentStep == PayRunStep.Summary)
         {
             _ = CalculateEstimatesAsync();
         }
@@ -1115,24 +1175,40 @@ public partial class PayRunEmployeeRow : ObservableObject
         }
     }
 
+    partial void OnIsIncludedChanged(bool value)
+    {
+        // Notify that inclusion status changed - this will trigger recalculation in ViewModel
+        // The PropertyChanged event is already raised by ObservableProperty
+    }
+
     partial void OnRegularHoursChanged(double value)
     {
         OnPropertyChanged(nameof(GrossPayDisplay));
+        OnPropertyChanged(nameof(TotalHours));
+        // Notify parent ViewModel to recalculate totals
+        // This is handled by the PropertyChanged subscription in LoadEmployeesAsync
     }
 
     partial void OnOvertimeHoursChanged(double value)
     {
         OnPropertyChanged(nameof(GrossPayDisplay));
+        OnPropertyChanged(nameof(TotalHours));
+        // Notify parent ViewModel to recalculate totals
+        // This is handled by the PropertyChanged subscription in LoadEmployeesAsync
     }
 
     partial void OnBonusAmountChanged(double value)
     {
         OnPropertyChanged(nameof(GrossPayDisplay));
+        // Notify parent ViewModel to recalculate totals
+        // This is handled by the PropertyChanged subscription in LoadEmployeesAsync
     }
 
     partial void OnCommissionAmountChanged(double value)
     {
         OnPropertyChanged(nameof(GrossPayDisplay));
+        // Notify parent ViewModel to recalculate totals
+        // This is handled by the PropertyChanged subscription in LoadEmployeesAsync
     }
 }
 

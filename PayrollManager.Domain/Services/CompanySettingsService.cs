@@ -23,19 +23,19 @@ public class CompanySettingsService
     /// Gets the current company settings, using cache if available.
     /// Ensures exactly one active record exists.
     /// </summary>
-    public async Task<CompanySettings> GetSettingsAsync()
+    public Task<CompanySettings> GetSettingsAsync()
     {
         // Double-check locking pattern for thread safety
         if (_cachedSettings != null)
         {
-            return _cachedSettings;
+            return Task.FromResult(_cachedSettings);
         }
 
         lock (_lockObject)
         {
             if (_cachedSettings != null)
             {
-                return _cachedSettings;
+                return Task.FromResult(_cachedSettings);
             }
 
             // Load synchronously within lock to prevent multiple DB queries
@@ -80,7 +80,7 @@ public class CompanySettingsService
             }
 
             _cachedSettings = settings;
-            return _cachedSettings;
+            return Task.FromResult(_cachedSettings);
         }
     }
 
