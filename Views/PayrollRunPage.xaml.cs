@@ -18,7 +18,8 @@ public sealed partial class PayrollRunPage : Page
         _scope = App.Services.CreateScope();
         var dbContext = _scope.ServiceProvider.GetRequiredService<AppDbContext>();
         var payrollService = _scope.ServiceProvider.GetRequiredService<PayrollService>();
-        ViewModel = new PayRunWizardViewModel(dbContext, payrollService);
+        var companySettingsService = _scope.ServiceProvider.GetRequiredService<CompanySettingsService>();
+        ViewModel = new PayRunWizardViewModel(dbContext, payrollService, companySettingsService);
         this.InitializeComponent();
         this.DataContext = ViewModel;
         _ = ViewModel.InitializeAsync();

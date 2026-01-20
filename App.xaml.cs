@@ -25,21 +25,8 @@ namespace PayrollManager.UI
                 services.AddDbContext<AppDbContext>(options =>
                     options.UseSqlite($"Data Source={DbPaths.GetDatabasePath()}"));
 
-                // Company Settings
-                services.AddScoped<CompanySettings>(sp =>
-                {
-                    var db = sp.GetRequiredService<AppDbContext>();
-                    var settings = db.CompanySettings.FirstOrDefault();
-                    if (settings == null)
-                    {
-                        settings = new CompanySettings();
-                        db.CompanySettings.Add(settings);
-                        db.SaveChanges();
-                    }
-                    return settings;
-                });
-
                 // Domain Services
+                services.AddScoped<CompanySettingsService>();
                 services.AddScoped<PayrollService>();
                 services.AddScoped<AggregationService>();
                 services.AddScoped<ExportService>();
@@ -50,6 +37,7 @@ namespace PayrollManager.UI
                 services.AddTransient<EmployeeViewModel>();
                 services.AddTransient<PayRunWizardViewModel>();
                 services.AddTransient<PayStubViewModel>();
+                services.AddTransient<PayStubDetailsViewModel>();
                 services.AddTransient<ReportsViewModel>();
                 services.AddTransient<SettingsViewModel>();
             })
@@ -95,25 +83,25 @@ namespace PayrollManager.UI
         private static async Task SeedSampleDataAsync(IServiceProvider services)
         {
             var db = services.GetRequiredService<AppDbContext>();
+            var settingsService = services.GetRequiredService<CompanySettingsService>();
 
             if (db.Employees.Any())
             {
                 return;
             }
 
-            var settings = await db.CompanySettings.FirstOrDefaultAsync();
-            if (settings == null)
+            // Use CompanySettingsService to ensure single record exists
+            var settings = await settingsService.GetSettingsAsync();
+            
+            // Update seed values if needed (only if using defaults)
+            if (settings.CompanyName == "My Company" && settings.FederalTaxPercent == 12m)
             {
-                settings = new CompanySettings
-                {
-                    FederalTaxPercent = 10m,
-                    StateTaxPercent = 5m,
-                    SocialSecurityPercent = 6.2m,
-                    MedicarePercent = 1.45m,
-                    PayPeriodsPerYear = 26
-                };
-                db.CompanySettings.Add(settings);
-                await db.SaveChangesAsync();
+                settings.FederalTaxPercent = 10m;
+                settings.StateTaxPercent = 5m;
+                settings.SocialSecurityPercent = 6.2m;
+                settings.MedicarePercent = 1.45m;
+                settings.PayPeriodsPerYear = 26;
+                await settingsService.SaveSettingsAsync(settings);
             }
 
             var employees = new[]

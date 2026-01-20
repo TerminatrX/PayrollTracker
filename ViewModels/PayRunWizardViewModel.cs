@@ -14,17 +14,30 @@ using Windows.UI.Text;
 namespace PayrollManager.UI.ViewModels;
 
 /// <summary>
+/// Represents the steps in the Pay Run Wizard.
+/// </summary>
+public enum PayRunStep
+{
+    Dates,      // Step 1: Set pay period dates
+    Employees,  // Step 2: Enter employee hours and earnings
+    Summary,    // Step 3: Review and finalize
+    Complete    // Step 4: Pay run completed
+}
+
+/// <summary>
 /// ViewModel for the Pay Run Wizard page with stepper navigation.
 /// </summary>
 public partial class PayRunWizardViewModel : ObservableObject
 {
     private readonly AppDbContext _dbContext;
     private readonly PayrollService _payrollService;
+    private readonly CompanySettingsService _companySettingsService;
 
-    public PayRunWizardViewModel(AppDbContext dbContext, PayrollService payrollService)
+    public PayRunWizardViewModel(AppDbContext dbContext, PayrollService payrollService, CompanySettingsService companySettingsService)
     {
         _dbContext = dbContext;
         _payrollService = payrollService;
+        _companySettingsService = companySettingsService;
         
         // Initialize default dates
         var today = DateTimeOffset.Now.Date;
@@ -47,7 +60,7 @@ public partial class PayRunWizardViewModel : ObservableObject
     // ═══════════════════════════════════════════════════════════════
 
     [ObservableProperty]
-    private int _currentStep = 0;
+    private PayRunStep _currentStep = PayRunStep.Dates;
 
     [ObservableProperty]
     private bool _isStep1Complete;
@@ -61,11 +74,81 @@ public partial class PayRunWizardViewModel : ObservableObject
     [ObservableProperty]
     private bool _isRunComplete;
 
-    public bool IsStep1 => CurrentStep == 0;
-    public bool IsStep2 => CurrentStep == 1;
-    public bool IsStep3 => CurrentStep == 2;
-    public bool CanGoBack => CurrentStep > 0 && !IsRunComplete;
-    public bool CanGoNext => CurrentStep < 2 && !IsRunComplete;
+    public bool IsStep1 => CurrentStep == PayRunStep.Dates;
+    public bool IsStep2 => CurrentStep == PayRunStep.Employees;
+    public bool IsStep3 => CurrentStep == PayRunStep.Summary;
+    public bool IsComplete => CurrentStep == PayRunStep.Complete;
+
+    /// <summary>
+    /// Can go back if not on Dates step and not complete.
+    /// </summary>
+    public bool CanGoBack => CurrentStep != PayRunStep.Dates && CurrentStep != PayRunStep.Complete;
+
+    /// <summary>
+    /// Can go next if current step is valid and not on Summary or Complete.
+    /// </summary>
+    public bool CanGoNext => IsCurrentStepValid && CurrentStep != PayRunStep.Summary && CurrentStep != PayRunStep.Complete;
+
+    /// <summary>
+    /// Can finalize if on Summary step and all data is valid.
+    /// </summary>
+    public bool CanFinalize => CurrentStep == PayRunStep.Summary && IsCurrentStepValid;
+
+    /// <summary>
+    /// Validates the current step's data.
+    /// </summary>
+    public bool IsCurrentStepValid => CurrentStep switch
+    {
+        PayRunStep.Dates => IsDatesStepValid,
+        PayRunStep.Employees => IsEmployeesStepValid,
+        PayRunStep.Summary => IsSummaryStepValid,
+        PayRunStep.Complete => true,
+        _ => false
+    };
+
+    /// <summary>
+    /// Validates Dates step: PeriodStart, PeriodEnd, and PayDate must be set and valid.
+    /// </summary>
+    private bool IsDatesStepValid
+    {
+        get
+        {
+            if (PeriodStart == default || PeriodEnd == default || PayDate == default)
+                return false;
+
+            // PeriodEnd must be after PeriodStart
+            if (PeriodEnd <= PeriodStart)
+                return false;
+
+            // PayDate should be after PeriodEnd
+            if (PayDate <= PeriodEnd)
+                return false;
+
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Validates Employees step: At least one employee must be selected.
+    /// </summary>
+    private bool IsEmployeesStepValid
+    {
+        get
+        {
+            return EmployeeRows.Any(r => r.IsIncluded);
+        }
+    }
+
+    /// <summary>
+    /// Validates Summary step: All previous steps must be valid.
+    /// </summary>
+    private bool IsSummaryStepValid
+    {
+        get
+        {
+            return IsDatesStepValid && IsEmployeesStepValid;
+        }
+    }
 
     // ═══════════════════════════════════════════════════════════════
     // PERIOD DATES
@@ -126,6 +209,9 @@ public partial class PayRunWizardViewModel : ObservableObject
     private decimal _estimatedNet;
 
     [ObservableProperty]
+    private decimal _estimatedDeductions;
+
+    [ObservableProperty]
     private int _includedCount;
 
     // ═══════════════════════════════════════════════════════════════
@@ -141,6 +227,9 @@ public partial class PayRunWizardViewModel : ObservableObject
     [ObservableProperty]
     private string _searchText = string.Empty;
 
+    [ObservableProperty]
+    private bool _includeInactive = false;
+
     public int EmployeeCount => EmployeeRows.Count;
     public string AutoSaveStatus => IsDraft && DraftSavedAt.HasValue 
         ? $"Auto-saved {GetTimeAgo(DraftSavedAt.Value)}" 
@@ -148,14 +237,15 @@ public partial class PayRunWizardViewModel : ObservableObject
 
     public string TotalGrossDisplay => $"${EstimatedGross:N2}";
     public string EstimatedTaxesDisplay => $"${EstimatedTaxes:N2}";
-    public string BenefitsDeductionsDisplay => "$0.00";
+    public string BenefitsDeductionsDisplay => $"${EstimatedDeductions:N2}";
     public string NetPayTotalDisplay => $"${EstimatedNet:N2}";
 
     public string StepTitle => CurrentStep switch
     {
-        0 => "Step 1: Select Pay Period",
-        1 => "Step 2: Review Employees & Earnings",
-        2 => IsRunComplete ? "Pay Run Complete" : "Step 3: Summary & Generate",
+        PayRunStep.Dates => "Step 1: Select Pay Period",
+        PayRunStep.Employees => "Step 2: Review Employees & Earnings",
+        PayRunStep.Summary => IsRunComplete ? "Pay Run Complete" : "Step 3: Summary & Generate",
+        PayRunStep.Complete => "Pay Run Complete",
         _ => "Pay Run"
     };
 
@@ -203,13 +293,22 @@ public partial class PayRunWizardViewModel : ObservableObject
 
     private SolidColorBrush GetStepBackground(int stepIndex)
     {
-        if (stepIndex < CurrentStep || (stepIndex == 0 && IsStep1Complete) || 
-            (stepIndex == 1 && IsStep2Complete) || (stepIndex == 2 && IsStep3Complete))
+        var step = (PayRunStep)stepIndex;
+        var isComplete = step switch
+        {
+            PayRunStep.Dates => IsStep1Complete,
+            PayRunStep.Employees => IsStep2Complete,
+            PayRunStep.Summary => IsStep3Complete,
+            PayRunStep.Complete => IsRunComplete,
+            _ => false
+        };
+
+        if (isComplete || (int)step < (int)CurrentStep)
         {
             // Complete - green background
             return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 34, 197, 94)); // Success green
         }
-        else if (stepIndex == CurrentStep)
+        else if (step == CurrentStep)
         {
             // Current - accent/primary background
             return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 43, 140, 238)); // Primary blue
@@ -223,12 +322,21 @@ public partial class PayRunWizardViewModel : ObservableObject
 
     private SolidColorBrush GetStepBorderBrush(int stepIndex)
     {
-        if (stepIndex < CurrentStep || (stepIndex == 0 && IsStep1Complete) || 
-            (stepIndex == 1 && IsStep2Complete) || (stepIndex == 2 && IsStep3Complete))
+        var step = (PayRunStep)stepIndex;
+        var isComplete = step switch
+        {
+            PayRunStep.Dates => IsStep1Complete,
+            PayRunStep.Employees => IsStep2Complete,
+            PayRunStep.Summary => IsStep3Complete,
+            PayRunStep.Complete => IsRunComplete,
+            _ => false
+        };
+
+        if (isComplete || (int)step < (int)CurrentStep)
         {
             return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 22, 163, 74)); // Darker green
         }
-        else if (stepIndex == CurrentStep)
+        else if (step == CurrentStep)
         {
             return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 26, 123, 214)); // Darker blue
         }
@@ -240,18 +348,28 @@ public partial class PayRunWizardViewModel : ObservableObject
 
     private string GetStepIcon(int stepIndex)
     {
-        if (stepIndex < CurrentStep || (stepIndex == 0 && IsStep1Complete) || 
-            (stepIndex == 1 && IsStep2Complete) || (stepIndex == 2 && IsStep3Complete))
+        var step = (PayRunStep)stepIndex;
+        var isComplete = step switch
+        {
+            PayRunStep.Dates => IsStep1Complete,
+            PayRunStep.Employees => IsStep2Complete,
+            PayRunStep.Summary => IsStep3Complete,
+            PayRunStep.Complete => IsRunComplete,
+            _ => false
+        };
+
+        if (isComplete || (int)step < (int)CurrentStep)
         {
             return "\uE73E"; // Checkmark icon
         }
-        else if (stepIndex == CurrentStep)
+        else if (step == CurrentStep)
         {
-            return stepIndex switch
+            return step switch
             {
-                0 => "\uE787", // Calendar icon
-                1 => "\uE8A5", // Edit icon
-                2 => "\uE8B8", // Review icon
+                PayRunStep.Dates => "\uE787", // Calendar icon
+                PayRunStep.Employees => "\uE8A5", // Edit icon
+                PayRunStep.Summary => "\uE8B8", // Review icon
+                PayRunStep.Complete => "\uE73E", // Checkmark icon
                 _ => "\uE713"  // Circle icon
             };
         }
@@ -270,16 +388,18 @@ public partial class PayRunWizardViewModel : ObservableObject
     private SolidColorBrush GetStepConnectorColor(int stepIndex)
     {
         // Connector shows progress - green if next step is complete or current
-        if (stepIndex == 0)
+        var step = (PayRunStep)stepIndex;
+        
+        if (step == PayRunStep.Dates)
         {
-            // Step1 connector - green if step1 is complete or we're on step2+
-            if (IsStep1Complete || CurrentStep >= 1)
+            // Dates connector - green if Dates step is complete or we're past it
+            if (IsStep1Complete || CurrentStep != PayRunStep.Dates)
                 return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 34, 197, 94));
         }
-        else if (stepIndex == 1)
+        else if (step == PayRunStep.Employees)
         {
-            // Step2 connector - green if step2 is complete or we're on step3
-            if (IsStep2Complete || CurrentStep >= 2)
+            // Employees connector - green if Employees step is complete or we're past it
+            if (IsStep2Complete || (int)CurrentStep > (int)PayRunStep.Employees)
                 return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 34, 197, 94));
         }
         
@@ -289,7 +409,8 @@ public partial class PayRunWizardViewModel : ObservableObject
 
     private FontWeight GetStepFontWeight(int stepIndex)
     {
-        if (stepIndex == CurrentStep)
+        var step = (PayRunStep)stepIndex;
+        if (step == CurrentStep)
         {
             return FontWeights.Bold;
         }
@@ -298,13 +419,22 @@ public partial class PayRunWizardViewModel : ObservableObject
 
     private SolidColorBrush GetStepTextColor(int stepIndex)
     {
-        if (stepIndex < CurrentStep || (stepIndex == 0 && IsStep1Complete) || 
-            (stepIndex == 1 && IsStep2Complete) || (stepIndex == 2 && IsStep3Complete))
+        var step = (PayRunStep)stepIndex;
+        var isComplete = step switch
+        {
+            PayRunStep.Dates => IsStep1Complete,
+            PayRunStep.Employees => IsStep2Complete,
+            PayRunStep.Summary => IsStep3Complete,
+            PayRunStep.Complete => IsRunComplete,
+            _ => false
+        };
+
+        if (isComplete || (int)step < (int)CurrentStep)
         {
             // Complete - success green text
             return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 34, 197, 94));
         }
-        else if (stepIndex == CurrentStep)
+        else if (step == CurrentStep)
         {
             // Current - primary/accent text
             return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 43, 140, 238));
@@ -318,12 +448,21 @@ public partial class PayRunWizardViewModel : ObservableObject
 
     private string GetStepStatus(int stepIndex)
     {
-        if (stepIndex < CurrentStep || (stepIndex == 0 && IsStep1Complete) || 
-            (stepIndex == 1 && IsStep2Complete) || (stepIndex == 2 && IsStep3Complete))
+        var step = (PayRunStep)stepIndex;
+        var isComplete = step switch
+        {
+            PayRunStep.Dates => IsStep1Complete,
+            PayRunStep.Employees => IsStep2Complete,
+            PayRunStep.Summary => IsStep3Complete,
+            PayRunStep.Complete => IsRunComplete,
+            _ => false
+        };
+
+        if (isComplete || (int)step < (int)CurrentStep)
         {
             return "Complete";
         }
-        else if (stepIndex == CurrentStep)
+        else if (step == CurrentStep)
         {
             return "In progress";
         }
@@ -345,18 +484,21 @@ public partial class PayRunWizardViewModel : ObservableObject
 
         try
         {
-            // Load default dates from last pay run
+            // Load default dates from last pay run using PayPeriodCalculator
             var lastPayRun = await _dbContext.PayRuns
                 .OrderByDescending(p => p.PayDate)
                 .FirstOrDefaultAsync();
 
-            if (lastPayRun != null)
-            {
-                var nextStart = lastPayRun.PeriodEnd.AddDays(1);
-                PeriodStart = new DateTimeOffset(nextStart);
-                PeriodEnd = new DateTimeOffset(nextStart.AddDays(13));
-                PayDate = new DateTimeOffset(nextStart.AddDays(14));
-            }
+            // Get company settings to determine pay frequency
+            var companySettings = await _companySettingsService.GetSettingsAsync();
+            var payFrequency = PayPeriodCalculator.GetPayFrequency(companySettings.PayPeriodsPerYear);
+
+            // Calculate next period using PayPeriodCalculator
+            var nextPeriod = PayPeriodCalculator.CalculateNextPeriod(lastPayRun, payFrequency);
+
+            PeriodStart = new DateTimeOffset(nextPeriod.PeriodStart);
+            PeriodEnd = new DateTimeOffset(nextPeriod.PeriodEnd);
+            PayDate = new DateTimeOffset(nextPeriod.PayDate);
 
             await LoadEmployeesAsync();
             StatusMessage = "Ready";
@@ -375,11 +517,18 @@ public partial class PayRunWizardViewModel : ObservableObject
     {
         EmployeeRows.Clear();
         
-        var settings = await _dbContext.CompanySettings.FirstOrDefaultAsync();
-        var defaultHours = settings?.DefaultHoursPerPeriod ?? 80;
+        var settings = await _companySettingsService.GetSettingsAsync();
+        var defaultHours = settings.DefaultHoursPerPeriod;
 
-        var employees = await _dbContext.Employees
-            .Where(e => e.IsActive)
+        // Filter by IsActive unless IncludeInactive is true
+        var employeesQuery = _dbContext.Employees.AsQueryable();
+        
+        if (!IncludeInactive)
+        {
+            employeesQuery = employeesQuery.Where(e => e.IsActive);
+        }
+
+        var employees = await employeesQuery
             .OrderBy(e => e.LastName)
             .ThenBy(e => e.FirstName)
             .ToListAsync();
@@ -394,7 +543,8 @@ public partial class PayRunWizardViewModel : ObservableObject
                 Department = "Engineering", // Placeholder
                 IsHourly = employee.IsHourly,
                 PayType = employee.IsHourly ? "Hourly" : "Salary",
-                HourlyRate = employee.HourlyRate
+                HourlyRate = employee.HourlyRate,
+                IsActive = employee.IsActive
             };
 
             if (employee.IsHourly)
@@ -403,30 +553,93 @@ public partial class PayRunWizardViewModel : ObservableObject
                 row.OvertimeHours = Math.Max(0, defaultHours - 40);
             }
 
+            // Subscribe to property changes to update validation and estimates
+            row.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(PayRunEmployeeRow.IsIncluded))
+                {
+                    OnEmployeeSelectionChanged();
+                }
+                else if (CurrentStep == PayRunStep.Summary &&
+                         (e.PropertyName == nameof(PayRunEmployeeRow.RegularHours) ||
+                          e.PropertyName == nameof(PayRunEmployeeRow.OvertimeHours) ||
+                          e.PropertyName == nameof(PayRunEmployeeRow.BonusAmount) ||
+                          e.PropertyName == nameof(PayRunEmployeeRow.CommissionAmount)))
+                {
+                    // Recalculate estimates when hours/earnings change on Summary step
+                    _ = CalculateEstimatesAsync();
+                }
+            };
+
             EmployeeRows.Add(row);
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanGoBack))]
     private void GoBack()
     {
-        if (CurrentStep > 0)
+        // Clear any validation messages
+        StatusMessage = string.Empty;
+
+        // Never go before Dates step - state is preserved in properties
+        if (CurrentStep == PayRunStep.Employees)
         {
-            CurrentStep--;
+            CurrentStep = PayRunStep.Dates;
         }
+        else if (CurrentStep == PayRunStep.Summary)
+        {
+            CurrentStep = PayRunStep.Employees;
+        }
+        
+        // Update command states
+        GoBackCommand.NotifyCanExecuteChanged();
+        GoNextCommand.NotifyCanExecuteChanged();
+        FinalizeCommand.NotifyCanExecuteChanged();
     }
 
     [RelayCommand(CanExecute = nameof(CanGoNext))]
     private void GoNext()
     {
-        if (CurrentStep < 2)
+        // Validate current step before proceeding
+        if (!IsCurrentStepValid)
         {
-            CurrentStep++;
-            
-            // Mark steps as complete
-            if (CurrentStep == 1) IsStep1Complete = true;
-            if (CurrentStep == 2) IsStep2Complete = true;
+            StatusMessage = GetValidationErrorMessage();
+            return;
         }
+
+        // Clear any previous validation messages
+        StatusMessage = string.Empty;
+
+        // Mark current step as complete
+        if (CurrentStep == PayRunStep.Dates)
+        {
+            IsStep1Complete = true;
+            CurrentStep = PayRunStep.Employees;
+            // Load employees only if not already loaded (preserve state when navigating back)
+            if (EmployeeRows.Count == 0)
+            {
+                _ = LoadEmployeesAsync();
+            }
+        }
+        else if (CurrentStep == PayRunStep.Employees)
+        {
+            IsStep2Complete = true;
+            CurrentStep = PayRunStep.Summary;
+            // Recalculate estimates when entering Summary using PreviewPayStub
+            _ = CalculateEstimatesAsync();
+        }
+        
+        // Update command states
+        GoBackCommand.NotifyCanExecuteChanged();
+        GoNextCommand.NotifyCanExecuteChanged();
+        FinalizeCommand.NotifyCanExecuteChanged();
+    }
+
+    [RelayCommand(CanExecute = nameof(CanFinalize))]
+    private async Task FinalizeAsync()
+    {
+        // Finalize is the same as GeneratePayRun, but only enabled on Summary step
+        await GeneratePayRunAsync();
     }
 
     [RelayCommand]
@@ -476,6 +689,13 @@ public partial class PayRunWizardViewModel : ObservableObject
     [RelayCommand]
     private async Task GeneratePayRunAsync()
     {
+        // Validate all steps before generating
+        if (!IsSummaryStepValid)
+        {
+            StatusMessage = GetValidationErrorMessage();
+            return;
+        }
+
         IsLoading = true;
         StatusMessage = "Generating pay run...";
 
@@ -544,7 +764,13 @@ public partial class PayRunWizardViewModel : ObservableObject
 
             IsStep3Complete = true;
             IsRunComplete = true;
+            CurrentStep = PayRunStep.Complete;
             StatusMessage = $"Pay run generated successfully: {processedCount} pay stubs created";
+            
+            // Update command states
+            GoBackCommand.NotifyCanExecuteChanged();
+            GoNextCommand.NotifyCanExecuteChanged();
+            FinalizeCommand.NotifyCanExecuteChanged();
         }
         catch (Exception ex)
         {
@@ -556,50 +782,105 @@ public partial class PayRunWizardViewModel : ObservableObject
         }
     }
 
+    /// <summary>
+    /// Gets a validation error message for the current step.
+    /// </summary>
+    private string GetValidationErrorMessage()
+    {
+        return CurrentStep switch
+        {
+            PayRunStep.Dates => "Please set valid Period Start, Period End, and Pay Date before continuing.",
+            PayRunStep.Employees => "Please select at least one employee to include in the pay run.",
+            PayRunStep.Summary => "Please ensure all required information is complete.",
+            _ => "Please complete the current step before continuing."
+        };
+    }
+
     [RelayCommand]
     private void StartNewRun()
     {
         IsRunComplete = false;
         IsDraft = false;
-        CurrentStep = 0;
+        CurrentStep = PayRunStep.Dates;
         IsStep1Complete = false;
         IsStep2Complete = false;
         IsStep3Complete = false;
         GeneratedStubs.Clear();
+        
+        // Update command states
+        GoBackCommand.NotifyCanExecuteChanged();
+        GoNextCommand.NotifyCanExecuteChanged();
+        FinalizeCommand.NotifyCanExecuteChanged();
+        
         InitializeCommand.Execute(null);
     }
 
     [RelayCommand]
-    private void CalculateEstimates()
+    public async Task CalculateEstimatesAsync()
     {
-        // Calculate estimates based on employee hours
+        // Use PreviewPayStub to get accurate calculations matching final pay stubs
         decimal totalGross = 0;
+        decimal totalTaxes = 0;
+        decimal totalNet = 0;
+        decimal totalDeductions = 0;
         decimal totalRegular = 0;
         decimal totalOvertime = 0;
         decimal totalBonus = 0;
         int count = 0;
 
+        // Create draft pay run from current period dates
+        var draft = new PayRunDraft
+        {
+            PeriodStart = PeriodStart.DateTime,
+            PeriodEnd = PeriodEnd.DateTime,
+            PayDate = PayDate.DateTime
+        };
+
         foreach (var row in EmployeeRows.Where(r => r.IsIncluded))
         {
+            var employee = await _dbContext.Employees.FindAsync(row.EmployeeId);
+            if (employee == null)
+                continue;
+
             count++;
+
+            // Create PayStubInput from row data
+            var input = new PayStubInput
+            {
+                RegularHours = (decimal)row.RegularHours,
+                OvertimeHours = (decimal)row.OvertimeHours,
+                BonusAmount = (decimal)row.BonusAmount,
+                CommissionAmount = (decimal)row.CommissionAmount,
+                BonusDescription = row.BonusDescription,
+                CommissionDescription = row.CommissionDescription
+            };
+
+            // Use PreviewPayStub to get accurate calculations
+            var preview = await _payrollService.PreviewPayStubAsync(employee, draft, input);
+
+            totalGross += preview.GrossPay;
+            totalTaxes += preview.TotalTaxes;
+            totalNet += preview.NetPay;
+            totalDeductions += preview.PreTax401kDeduction + preview.PostTaxDeductions;
+
+            // Calculate breakdown for display
             if (row.IsHourly)
             {
                 var regular = (decimal)row.RegularHours * row.HourlyRate;
                 var overtime = (decimal)row.OvertimeHours * row.HourlyRate * 1.5m;
                 totalRegular += regular;
                 totalOvertime += overtime;
-                totalGross += regular + overtime;
             }
             totalBonus += (decimal)row.BonusAmount + (decimal)row.CommissionAmount;
-            totalGross += (decimal)row.BonusAmount + (decimal)row.CommissionAmount;
         }
 
         EstimatedGross = totalGross;
         EstimatedRegular = totalRegular;
         EstimatedOvertime = totalOvertime;
         EstimatedBonus = totalBonus;
-        EstimatedTaxes = totalGross * 0.25m; // Placeholder calculation
-        EstimatedNet = totalGross - EstimatedTaxes;
+        EstimatedTaxes = totalTaxes; // Now uses actual calculated taxes
+        EstimatedDeductions = totalDeductions; // Now uses actual calculated deductions
+        EstimatedNet = totalNet; // Now uses actual calculated net pay
         IncludedCount = count;
     }
 
@@ -612,14 +893,22 @@ public partial class PayRunWizardViewModel : ObservableObject
         return $"{(int)timeSpan.TotalDays} day(s) ago";
     }
 
-    partial void OnCurrentStepChanged(int value)
+    partial void OnCurrentStepChanged(PayRunStep value)
     {
         OnPropertyChanged(nameof(IsStep1));
         OnPropertyChanged(nameof(IsStep2));
         OnPropertyChanged(nameof(IsStep3));
+        OnPropertyChanged(nameof(IsComplete));
         OnPropertyChanged(nameof(CanGoBack));
         OnPropertyChanged(nameof(CanGoNext));
+        OnPropertyChanged(nameof(CanFinalize));
+        OnPropertyChanged(nameof(IsCurrentStepValid));
         OnPropertyChanged(nameof(StepTitle));
+        
+        // Notify commands to update their CanExecute state
+        GoBackCommand.NotifyCanExecuteChanged();
+        GoNextCommand.NotifyCanExecuteChanged();
+        FinalizeCommand.NotifyCanExecuteChanged();
         
         // Update step styling properties
         OnPropertyChanged(nameof(Step1Background));
@@ -682,16 +971,47 @@ public partial class PayRunWizardViewModel : ObservableObject
     partial void OnPeriodStartChanged(DateTimeOffset value)
     {
         OnPropertyChanged(nameof(PeriodRangeDisplay));
+        OnPropertyChanged(nameof(IsCurrentStepValid));
+        GoNextCommand.NotifyCanExecuteChanged();
+        FinalizeCommand.NotifyCanExecuteChanged();
     }
 
     partial void OnPeriodEndChanged(DateTimeOffset value)
     {
         OnPropertyChanged(nameof(PeriodRangeDisplay));
+        OnPropertyChanged(nameof(IsCurrentStepValid));
+        GoNextCommand.NotifyCanExecuteChanged();
+        FinalizeCommand.NotifyCanExecuteChanged();
     }
 
     partial void OnPayDateChanged(DateTimeOffset value)
     {
         OnPropertyChanged(nameof(PayDateDisplay));
+        OnPropertyChanged(nameof(IsCurrentStepValid));
+        GoNextCommand.NotifyCanExecuteChanged();
+        FinalizeCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnIncludeInactiveChanged(bool value)
+    {
+        // Reload employees when toggle changes
+        _ = LoadEmployeesAsync();
+    }
+
+    /// <summary>
+    /// Called when employee selection changes to update validation.
+    /// </summary>
+    private void OnEmployeeSelectionChanged()
+    {
+        OnPropertyChanged(nameof(IsCurrentStepValid));
+        GoNextCommand.NotifyCanExecuteChanged();
+        FinalizeCommand.NotifyCanExecuteChanged();
+        
+        // Recalculate estimates if we're on Summary step
+        if (CurrentStep == PayRunStep.Summary)
+        {
+            _ = CalculateEstimatesAsync();
+        }
     }
 }
 
@@ -728,6 +1048,7 @@ public partial class PayRunEmployeeRow : ObservableObject
     public bool IsHourly { get; set; }
     public string PayType { get; set; } = string.Empty;
     public decimal HourlyRate { get; set; }
+    public bool IsActive { get; set; } = true;
     public string HourlyRateDisplay => $"${HourlyRate:N2}";
     public string GrossPayDisplay => $"${CalculatedGross:N2}";
     public double TotalHours => RegularHours + OvertimeHours;

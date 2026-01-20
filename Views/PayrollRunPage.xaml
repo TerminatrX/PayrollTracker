@@ -69,7 +69,17 @@
                 <!-- Step 2: Review Employees with Earnings Input -->
                 <StackPanel Visibility="{x:Bind ViewModel.IsStep2, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                             Spacing="16">
-                    <TextBlock Text="REVIEW EMPLOYEES &amp; EARNINGS" Style="{StaticResource SectionTitleStyle}" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="REVIEW EMPLOYEES &amp; EARNINGS" Style="{StaticResource SectionTitleStyle}" />
+                        <CheckBox Grid.Column="1" 
+                                  Content="Include inactive employees"
+                                  IsChecked="{x:Bind ViewModel.IncludeInactive, Mode=TwoWay}"
+                                  VerticalAlignment="Center" />
+                    </Grid>
                     
                     <InfoBar Title="Overtime Calculation" 
                              Message="For hourly employees, overtime is paid at 1.5× the regular rate. Enter regular and overtime hours separately."
@@ -85,6 +95,19 @@
                         <controls:DataGrid.Columns>
                             <controls:DataGridCheckBoxColumn Header="Include" Binding="{Binding IsIncluded, Mode=TwoWay}" Width="60" />
                             <controls:DataGridTextColumn Header="Employee" Binding="{Binding FullName}" Width="150" IsReadOnly="True" />
+                            <controls:DataGridTemplateColumn Header="Status" Width="80">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border CornerRadius="4" Padding="6,2" 
+                                                Background="{Binding IsActive, Converter={StaticResource StatusColorConverter}}"
+                                                HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding IsActive, Converter={StaticResource StatusTextConverter}}" 
+                                                       FontSize="10" FontWeight="Bold"
+                                                       Foreground="White" />
+                                        </Border>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
                             <controls:DataGridTextColumn Header="Type" Binding="{Binding PayType}" Width="70" IsReadOnly="True" />
                             <controls:DataGridTextColumn Header="Rate" Binding="{Binding RateDisplay}" Width="100" IsReadOnly="True" />
                             <controls:DataGridTemplateColumn Header="Regular Hrs" Width="90">

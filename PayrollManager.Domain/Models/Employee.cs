@@ -20,6 +20,8 @@ public class Employee
 
     public decimal HourlyRate { get; set; }
 
+    public int DefaultHoursPerPeriod { get; set; } = 80;
+
     public decimal PreTax401kPercent { get; set; }
 
     public decimal HealthInsurancePerPeriod { get; set; }

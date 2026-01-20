@@ -226,7 +226,7 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
         
         private void InitTypeTables()
         {
-            _typeNameTable = new string[120];
+            _typeNameTable = new string[118];
             _typeNameTable[0] = "Microsoft.UI.Xaml.Controls.XamlControlsResources";
             _typeNameTable[1] = "Microsoft.UI.Xaml.ResourceDictionary";
             _typeNameTable[2] = "Object";
@@ -247,108 +247,106 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
             _typeNameTable[17] = "PayrollManager.UI.Converters.InverseBoolToVisibilityConverter";
             _typeNameTable[18] = "PayrollManager.UI.Converters.StepIndicatorConverter";
             _typeNameTable[19] = "PayrollManager.UI.Converters.BoolToFontWeightConverter";
-            _typeNameTable[20] = "Microsoft.UI.Xaml.Controls.NumberBox";
-            _typeNameTable[21] = "Microsoft.UI.Xaml.Controls.Control";
-            _typeNameTable[22] = "Microsoft.UI.Xaml.DataTemplate";
-            _typeNameTable[23] = "Double";
-            _typeNameTable[24] = "Windows.Globalization.NumberFormatting.INumberFormatter2";
-            _typeNameTable[25] = "String";
-            _typeNameTable[26] = "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase";
-            _typeNameTable[27] = "Microsoft.UI.Xaml.Media.SolidColorBrush";
-            _typeNameTable[28] = "Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode";
-            _typeNameTable[29] = "System.Enum";
-            _typeNameTable[30] = "Microsoft.UI.Xaml.TextReadingOrder";
-            _typeNameTable[31] = "Microsoft.UI.Xaml.Controls.NumberBoxValidationMode";
-            _typeNameTable[32] = "Microsoft.UI.Xaml.Controls.NavigationView";
-            _typeNameTable[33] = "Microsoft.UI.Xaml.Controls.ContentControl";
-            _typeNameTable[34] = "Microsoft.UI.Xaml.Controls.NavigationViewPaneDisplayMode";
-            _typeNameTable[35] = "Microsoft.UI.Xaml.UIElement";
-            _typeNameTable[36] = "System.Collections.Generic.IList`1<Object>";
-            _typeNameTable[37] = "Microsoft.UI.Xaml.Controls.AutoSuggestBox";
-            _typeNameTable[38] = "Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode";
-            _typeNameTable[39] = "Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible";
-            _typeNameTable[40] = "Microsoft.UI.Xaml.Style";
-            _typeNameTable[41] = "Microsoft.UI.Xaml.Controls.StyleSelector";
-            _typeNameTable[42] = "Microsoft.UI.Xaml.Controls.DataTemplateSelector";
-            _typeNameTable[43] = "Microsoft.UI.Xaml.Controls.NavigationViewOverflowLabelMode";
-            _typeNameTable[44] = "Microsoft.UI.Xaml.Controls.NavigationViewSelectionFollowsFocus";
-            _typeNameTable[45] = "Microsoft.UI.Xaml.Controls.NavigationViewShoulderNavigationEnabled";
-            _typeNameTable[46] = "Microsoft.UI.Xaml.Controls.NavigationViewTemplateSettings";
-            _typeNameTable[47] = "Microsoft.UI.Xaml.DependencyObject";
-            _typeNameTable[48] = "Microsoft.UI.Xaml.Controls.NavigationViewItemHeader";
-            _typeNameTable[49] = "Microsoft.UI.Xaml.Controls.NavigationViewItemBase";
-            _typeNameTable[50] = "Microsoft.UI.Xaml.Controls.NavigationViewItem";
-            _typeNameTable[51] = "Microsoft.UI.Xaml.Controls.IconElement";
-            _typeNameTable[52] = "Microsoft.UI.Xaml.Controls.InfoBadge";
-            _typeNameTable[53] = "PayrollManager.UI.MainWindow";
-            _typeNameTable[54] = "Microsoft.UI.Xaml.Window";
-            _typeNameTable[55] = "Microsoft.UI.Xaml.CornerRadius";
-            _typeNameTable[56] = "CommunityToolkit.WinUI.UI.Controls.DataGrid";
-            _typeNameTable[57] = "System.Collections.IEnumerable";
-            _typeNameTable[58] = "System.Collections.ObjectModel.ObservableCollection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>";
-            _typeNameTable[59] = "System.Collections.ObjectModel.Collection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>";
-            _typeNameTable[60] = "CommunityToolkit.WinUI.UI.Controls.DataGridColumn";
-            _typeNameTable[61] = "Microsoft.UI.Xaml.Data.Binding";
-            _typeNameTable[62] = "Int32";
-            _typeNameTable[63] = "System.Nullable`1<CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>";
-            _typeNameTable[64] = "CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection";
-            _typeNameTable[65] = "Microsoft.UI.Xaml.Visibility";
-            _typeNameTable[66] = "CommunityToolkit.WinUI.UI.Controls.DataGridLength";
-            _typeNameTable[67] = "Microsoft.UI.Xaml.Media.Brush";
-            _typeNameTable[68] = "CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode";
-            _typeNameTable[69] = "CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility";
-            _typeNameTable[70] = "CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility";
-            _typeNameTable[71] = "Microsoft.UI.Xaml.Controls.ScrollBarVisibility";
-            _typeNameTable[72] = "Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger";
-            _typeNameTable[73] = "CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode";
-            _typeNameTable[74] = "CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode";
-            _typeNameTable[75] = "System.Collections.ObjectModel.ObservableCollection`1<Microsoft.UI.Xaml.Style>";
-            _typeNameTable[76] = "System.Collections.ObjectModel.Collection`1<Microsoft.UI.Xaml.Style>";
-            _typeNameTable[77] = "System.Collections.IList";
-            _typeNameTable[78] = "Microsoft.UI.Xaml.Controls.ProgressRing";
-            _typeNameTable[79] = "Microsoft.UI.Xaml.Controls.ProgressRingTemplateSettings";
-            _typeNameTable[80] = "Microsoft.UI.Xaml.Controls.PersonPicture";
-            _typeNameTable[81] = "Microsoft.UI.Xaml.Media.ImageSource";
-            _typeNameTable[82] = "Windows.ApplicationModel.Contacts.Contact";
-            _typeNameTable[83] = "Microsoft.UI.Xaml.Controls.PersonPictureTemplateSettings";
-            _typeNameTable[84] = "CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn";
-            _typeNameTable[85] = "CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn";
-            _typeNameTable[86] = "Microsoft.UI.Xaml.Media.FontFamily";
-            _typeNameTable[87] = "Windows.UI.Text.FontStyle";
-            _typeNameTable[88] = "Windows.UI.Text.FontWeight";
-            _typeNameTable[89] = "CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn";
-            _typeNameTable[90] = "PayrollManager.UI.Views.EmployeeManagementPage";
-            _typeNameTable[91] = "Microsoft.UI.Xaml.Controls.Page";
-            _typeNameTable[92] = "Microsoft.UI.Xaml.Controls.UserControl";
-            _typeNameTable[93] = "PayrollManager.UI.ViewModels.EmployeesViewModel";
-            _typeNameTable[94] = "CommunityToolkit.Mvvm.ComponentModel.ObservableObject";
-            _typeNameTable[95] = "PayrollManager.UI.Views.EmployeesPage";
-            _typeNameTable[96] = "Microsoft.UI.Xaml.Controls.InfoBar";
-            _typeNameTable[97] = "Microsoft.UI.Xaml.Controls.InfoBarSeverity";
-            _typeNameTable[98] = "Microsoft.UI.Xaml.Controls.Primitives.ButtonBase";
-            _typeNameTable[99] = "System.Windows.Input.ICommand";
-            _typeNameTable[100] = "Microsoft.UI.Xaml.Controls.IconSource";
-            _typeNameTable[101] = "Microsoft.UI.Xaml.Controls.InfoBarTemplateSettings";
-            _typeNameTable[102] = "CommunityToolkit.WinUI.UI.Controls.DataGridCheckBoxColumn";
-            _typeNameTable[103] = "PayrollManager.UI.Views.PayrollRunPage";
-            _typeNameTable[104] = "PayrollManager.UI.ViewModels.PayRunWizardViewModel";
-            _typeNameTable[105] = "PayrollManager.UI.Views.PayRunsPage";
-            _typeNameTable[106] = "PayrollManager.UI.Views.PayStubDetailsPage";
-            _typeNameTable[107] = "PayrollManager.UI.ViewModels.PayStubViewModel";
-            _typeNameTable[108] = "System.Collections.ObjectModel.ObservableCollection`1<PayrollManager.UI.Views.EarningLineDisplay>";
-            _typeNameTable[109] = "System.Collections.ObjectModel.Collection`1<PayrollManager.UI.Views.EarningLineDisplay>";
-            _typeNameTable[110] = "PayrollManager.UI.Views.EarningLineDisplay";
-            _typeNameTable[111] = "System.Decimal";
-            _typeNameTable[112] = "PayrollManager.UI.Views.PayStubPage";
-            _typeNameTable[113] = "PayrollManager.UI.Views.ReportsPage";
-            _typeNameTable[114] = "PayrollManager.UI.ViewModels.ReportsViewModel";
-            _typeNameTable[115] = "Microsoft.UI.Xaml.Controls.RadioButtons";
-            _typeNameTable[116] = "PayrollManager.UI.Views.SettingsPage";
-            _typeNameTable[117] = "PayrollManager.UI.ViewModels.SettingsViewModel";
-            _typeNameTable[118] = "Microsoft.UI.Xaml.Controls.TreeViewNode";
-            _typeNameTable[119] = "System.Collections.Generic.IList`1<Microsoft.UI.Xaml.Controls.TreeViewNode>";
+            _typeNameTable[20] = "PayrollManager.UI.Converters.StringToVisibilityConverter";
+            _typeNameTable[21] = "Microsoft.UI.Xaml.Controls.NumberBox";
+            _typeNameTable[22] = "Microsoft.UI.Xaml.Controls.Control";
+            _typeNameTable[23] = "Microsoft.UI.Xaml.DataTemplate";
+            _typeNameTable[24] = "Double";
+            _typeNameTable[25] = "Windows.Globalization.NumberFormatting.INumberFormatter2";
+            _typeNameTable[26] = "String";
+            _typeNameTable[27] = "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase";
+            _typeNameTable[28] = "Microsoft.UI.Xaml.Media.SolidColorBrush";
+            _typeNameTable[29] = "Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode";
+            _typeNameTable[30] = "System.Enum";
+            _typeNameTable[31] = "Microsoft.UI.Xaml.TextReadingOrder";
+            _typeNameTable[32] = "Microsoft.UI.Xaml.Controls.NumberBoxValidationMode";
+            _typeNameTable[33] = "Microsoft.UI.Xaml.Controls.NavigationView";
+            _typeNameTable[34] = "Microsoft.UI.Xaml.Controls.ContentControl";
+            _typeNameTable[35] = "Microsoft.UI.Xaml.Controls.NavigationViewPaneDisplayMode";
+            _typeNameTable[36] = "Microsoft.UI.Xaml.UIElement";
+            _typeNameTable[37] = "System.Collections.Generic.IList`1<Object>";
+            _typeNameTable[38] = "Microsoft.UI.Xaml.Controls.AutoSuggestBox";
+            _typeNameTable[39] = "Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode";
+            _typeNameTable[40] = "Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible";
+            _typeNameTable[41] = "Microsoft.UI.Xaml.Style";
+            _typeNameTable[42] = "Microsoft.UI.Xaml.Controls.StyleSelector";
+            _typeNameTable[43] = "Microsoft.UI.Xaml.Controls.DataTemplateSelector";
+            _typeNameTable[44] = "Microsoft.UI.Xaml.Controls.NavigationViewOverflowLabelMode";
+            _typeNameTable[45] = "Microsoft.UI.Xaml.Controls.NavigationViewSelectionFollowsFocus";
+            _typeNameTable[46] = "Microsoft.UI.Xaml.Controls.NavigationViewShoulderNavigationEnabled";
+            _typeNameTable[47] = "Microsoft.UI.Xaml.Controls.NavigationViewTemplateSettings";
+            _typeNameTable[48] = "Microsoft.UI.Xaml.DependencyObject";
+            _typeNameTable[49] = "Microsoft.UI.Xaml.Controls.NavigationViewItemHeader";
+            _typeNameTable[50] = "Microsoft.UI.Xaml.Controls.NavigationViewItemBase";
+            _typeNameTable[51] = "Microsoft.UI.Xaml.Controls.NavigationViewItem";
+            _typeNameTable[52] = "Microsoft.UI.Xaml.Controls.IconElement";
+            _typeNameTable[53] = "Microsoft.UI.Xaml.Controls.InfoBadge";
+            _typeNameTable[54] = "PayrollManager.UI.MainWindow";
+            _typeNameTable[55] = "Microsoft.UI.Xaml.Window";
+            _typeNameTable[56] = "Microsoft.UI.Xaml.CornerRadius";
+            _typeNameTable[57] = "CommunityToolkit.WinUI.UI.Controls.DataGrid";
+            _typeNameTable[58] = "System.Collections.IEnumerable";
+            _typeNameTable[59] = "System.Collections.ObjectModel.ObservableCollection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>";
+            _typeNameTable[60] = "System.Collections.ObjectModel.Collection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>";
+            _typeNameTable[61] = "CommunityToolkit.WinUI.UI.Controls.DataGridColumn";
+            _typeNameTable[62] = "Microsoft.UI.Xaml.Data.Binding";
+            _typeNameTable[63] = "Int32";
+            _typeNameTable[64] = "System.Nullable`1<CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>";
+            _typeNameTable[65] = "CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection";
+            _typeNameTable[66] = "Microsoft.UI.Xaml.Visibility";
+            _typeNameTable[67] = "CommunityToolkit.WinUI.UI.Controls.DataGridLength";
+            _typeNameTable[68] = "Microsoft.UI.Xaml.Media.Brush";
+            _typeNameTable[69] = "CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode";
+            _typeNameTable[70] = "CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility";
+            _typeNameTable[71] = "CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility";
+            _typeNameTable[72] = "Microsoft.UI.Xaml.Controls.ScrollBarVisibility";
+            _typeNameTable[73] = "Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger";
+            _typeNameTable[74] = "CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode";
+            _typeNameTable[75] = "CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode";
+            _typeNameTable[76] = "System.Collections.ObjectModel.ObservableCollection`1<Microsoft.UI.Xaml.Style>";
+            _typeNameTable[77] = "System.Collections.ObjectModel.Collection`1<Microsoft.UI.Xaml.Style>";
+            _typeNameTable[78] = "System.Collections.IList";
+            _typeNameTable[79] = "Microsoft.UI.Xaml.Controls.ProgressRing";
+            _typeNameTable[80] = "Microsoft.UI.Xaml.Controls.ProgressRingTemplateSettings";
+            _typeNameTable[81] = "Microsoft.UI.Xaml.Controls.PersonPicture";
+            _typeNameTable[82] = "Microsoft.UI.Xaml.Media.ImageSource";
+            _typeNameTable[83] = "Windows.ApplicationModel.Contacts.Contact";
+            _typeNameTable[84] = "Microsoft.UI.Xaml.Controls.PersonPictureTemplateSettings";
+            _typeNameTable[85] = "CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn";
+            _typeNameTable[86] = "CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn";
+            _typeNameTable[87] = "Microsoft.UI.Xaml.Media.FontFamily";
+            _typeNameTable[88] = "Windows.UI.Text.FontStyle";
+            _typeNameTable[89] = "Windows.UI.Text.FontWeight";
+            _typeNameTable[90] = "CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn";
+            _typeNameTable[91] = "PayrollManager.UI.Views.EmployeeManagementPage";
+            _typeNameTable[92] = "Microsoft.UI.Xaml.Controls.Page";
+            _typeNameTable[93] = "Microsoft.UI.Xaml.Controls.UserControl";
+            _typeNameTable[94] = "PayrollManager.UI.ViewModels.EmployeesViewModel";
+            _typeNameTable[95] = "CommunityToolkit.Mvvm.ComponentModel.ObservableObject";
+            _typeNameTable[96] = "PayrollManager.UI.Views.EmployeesPage";
+            _typeNameTable[97] = "Microsoft.UI.Xaml.Controls.InfoBar";
+            _typeNameTable[98] = "Microsoft.UI.Xaml.Controls.InfoBarSeverity";
+            _typeNameTable[99] = "Microsoft.UI.Xaml.Controls.Primitives.ButtonBase";
+            _typeNameTable[100] = "System.Windows.Input.ICommand";
+            _typeNameTable[101] = "Microsoft.UI.Xaml.Controls.IconSource";
+            _typeNameTable[102] = "Microsoft.UI.Xaml.Controls.InfoBarTemplateSettings";
+            _typeNameTable[103] = "CommunityToolkit.WinUI.UI.Controls.DataGridCheckBoxColumn";
+            _typeNameTable[104] = "PayrollManager.UI.Views.PayrollRunPage";
+            _typeNameTable[105] = "PayrollManager.UI.ViewModels.PayRunWizardViewModel";
+            _typeNameTable[106] = "PayrollManager.UI.Views.PayRunsPage";
+            _typeNameTable[107] = "PayrollManager.UI.Views.PayStubDetailsPage";
+            _typeNameTable[108] = "PayrollManager.UI.ViewModels.PayStubDetailsViewModel";
+            _typeNameTable[109] = "PayrollManager.UI.Views.PayStubPage";
+            _typeNameTable[110] = "PayrollManager.UI.ViewModels.PayStubViewModel";
+            _typeNameTable[111] = "PayrollManager.UI.Views.ReportsPage";
+            _typeNameTable[112] = "PayrollManager.UI.ViewModels.ReportsViewModel";
+            _typeNameTable[113] = "Microsoft.UI.Xaml.Controls.RadioButtons";
+            _typeNameTable[114] = "PayrollManager.UI.Views.SettingsPage";
+            _typeNameTable[115] = "PayrollManager.UI.ViewModels.SettingsViewModel";
+            _typeNameTable[116] = "Microsoft.UI.Xaml.Controls.TreeViewNode";
+            _typeNameTable[117] = "System.Collections.Generic.IList`1<Microsoft.UI.Xaml.Controls.TreeViewNode>";
 
-            _typeTable = new global::System.Type[120];
+            _typeTable = new global::System.Type[118];
             _typeTable[0] = typeof(global::Microsoft.UI.Xaml.Controls.XamlControlsResources);
             _typeTable[1] = typeof(global::Microsoft.UI.Xaml.ResourceDictionary);
             _typeTable[2] = typeof(global::System.Object);
@@ -369,106 +367,104 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
             _typeTable[17] = typeof(global::PayrollManager.UI.Converters.InverseBoolToVisibilityConverter);
             _typeTable[18] = typeof(global::PayrollManager.UI.Converters.StepIndicatorConverter);
             _typeTable[19] = typeof(global::PayrollManager.UI.Converters.BoolToFontWeightConverter);
-            _typeTable[20] = typeof(global::Microsoft.UI.Xaml.Controls.NumberBox);
-            _typeTable[21] = typeof(global::Microsoft.UI.Xaml.Controls.Control);
-            _typeTable[22] = typeof(global::Microsoft.UI.Xaml.DataTemplate);
-            _typeTable[23] = typeof(global::System.Double);
-            _typeTable[24] = typeof(global::Windows.Globalization.NumberFormatting.INumberFormatter2);
-            _typeTable[25] = typeof(global::System.String);
-            _typeTable[26] = typeof(global::Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase);
-            _typeTable[27] = typeof(global::Microsoft.UI.Xaml.Media.SolidColorBrush);
-            _typeTable[28] = typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode);
-            _typeTable[29] = typeof(global::System.Enum);
-            _typeTable[30] = typeof(global::Microsoft.UI.Xaml.TextReadingOrder);
-            _typeTable[31] = typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxValidationMode);
-            _typeTable[32] = typeof(global::Microsoft.UI.Xaml.Controls.NavigationView);
-            _typeTable[33] = typeof(global::Microsoft.UI.Xaml.Controls.ContentControl);
-            _typeTable[34] = typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewPaneDisplayMode);
-            _typeTable[35] = typeof(global::Microsoft.UI.Xaml.UIElement);
-            _typeTable[36] = typeof(global::System.Collections.Generic.IList<global::System.Object>);
-            _typeTable[37] = typeof(global::Microsoft.UI.Xaml.Controls.AutoSuggestBox);
-            _typeTable[38] = typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode);
-            _typeTable[39] = typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible);
-            _typeTable[40] = typeof(global::Microsoft.UI.Xaml.Style);
-            _typeTable[41] = typeof(global::Microsoft.UI.Xaml.Controls.StyleSelector);
-            _typeTable[42] = typeof(global::Microsoft.UI.Xaml.Controls.DataTemplateSelector);
-            _typeTable[43] = typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewOverflowLabelMode);
-            _typeTable[44] = typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewSelectionFollowsFocus);
-            _typeTable[45] = typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewShoulderNavigationEnabled);
-            _typeTable[46] = typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewTemplateSettings);
-            _typeTable[47] = typeof(global::Microsoft.UI.Xaml.DependencyObject);
-            _typeTable[48] = typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewItemHeader);
-            _typeTable[49] = typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewItemBase);
-            _typeTable[50] = typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewItem);
-            _typeTable[51] = typeof(global::Microsoft.UI.Xaml.Controls.IconElement);
-            _typeTable[52] = typeof(global::Microsoft.UI.Xaml.Controls.InfoBadge);
-            _typeTable[53] = typeof(global::PayrollManager.UI.MainWindow);
-            _typeTable[54] = typeof(global::Microsoft.UI.Xaml.Window);
-            _typeTable[55] = typeof(global::Microsoft.UI.Xaml.CornerRadius);
-            _typeTable[56] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGrid);
-            _typeTable[57] = typeof(global::System.Collections.IEnumerable);
-            _typeTable[58] = typeof(global::System.Collections.ObjectModel.ObservableCollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>);
-            _typeTable[59] = typeof(global::System.Collections.ObjectModel.Collection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>);
-            _typeTable[60] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn);
-            _typeTable[61] = typeof(global::Microsoft.UI.Xaml.Data.Binding);
-            _typeTable[62] = typeof(global::System.Int32);
-            _typeTable[63] = typeof(global::System.Nullable<global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>);
-            _typeTable[64] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection);
-            _typeTable[65] = typeof(global::Microsoft.UI.Xaml.Visibility);
-            _typeTable[66] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridLength);
-            _typeTable[67] = typeof(global::Microsoft.UI.Xaml.Media.Brush);
-            _typeTable[68] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode);
-            _typeTable[69] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility);
-            _typeTable[70] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility);
-            _typeTable[71] = typeof(global::Microsoft.UI.Xaml.Controls.ScrollBarVisibility);
-            _typeTable[72] = typeof(global::Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger);
-            _typeTable[73] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode);
-            _typeTable[74] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode);
-            _typeTable[75] = typeof(global::System.Collections.ObjectModel.ObservableCollection<global::Microsoft.UI.Xaml.Style>);
-            _typeTable[76] = typeof(global::System.Collections.ObjectModel.Collection<global::Microsoft.UI.Xaml.Style>);
-            _typeTable[77] = typeof(global::System.Collections.IList);
-            _typeTable[78] = typeof(global::Microsoft.UI.Xaml.Controls.ProgressRing);
-            _typeTable[79] = typeof(global::Microsoft.UI.Xaml.Controls.ProgressRingTemplateSettings);
-            _typeTable[80] = typeof(global::Microsoft.UI.Xaml.Controls.PersonPicture);
-            _typeTable[81] = typeof(global::Microsoft.UI.Xaml.Media.ImageSource);
-            _typeTable[82] = typeof(global::Windows.ApplicationModel.Contacts.Contact);
-            _typeTable[83] = typeof(global::Microsoft.UI.Xaml.Controls.PersonPictureTemplateSettings);
-            _typeTable[84] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn);
-            _typeTable[85] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn);
-            _typeTable[86] = typeof(global::Microsoft.UI.Xaml.Media.FontFamily);
-            _typeTable[87] = typeof(global::Windows.UI.Text.FontStyle);
-            _typeTable[88] = typeof(global::Windows.UI.Text.FontWeight);
-            _typeTable[89] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn);
-            _typeTable[90] = typeof(global::PayrollManager.UI.Views.EmployeeManagementPage);
-            _typeTable[91] = typeof(global::Microsoft.UI.Xaml.Controls.Page);
-            _typeTable[92] = typeof(global::Microsoft.UI.Xaml.Controls.UserControl);
-            _typeTable[93] = typeof(global::PayrollManager.UI.ViewModels.EmployeesViewModel);
-            _typeTable[94] = typeof(global::CommunityToolkit.Mvvm.ComponentModel.ObservableObject);
-            _typeTable[95] = typeof(global::PayrollManager.UI.Views.EmployeesPage);
-            _typeTable[96] = typeof(global::Microsoft.UI.Xaml.Controls.InfoBar);
-            _typeTable[97] = typeof(global::Microsoft.UI.Xaml.Controls.InfoBarSeverity);
-            _typeTable[98] = typeof(global::Microsoft.UI.Xaml.Controls.Primitives.ButtonBase);
-            _typeTable[99] = typeof(global::System.Windows.Input.ICommand);
-            _typeTable[100] = typeof(global::Microsoft.UI.Xaml.Controls.IconSource);
-            _typeTable[101] = typeof(global::Microsoft.UI.Xaml.Controls.InfoBarTemplateSettings);
-            _typeTable[102] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridCheckBoxColumn);
-            _typeTable[103] = typeof(global::PayrollManager.UI.Views.PayrollRunPage);
-            _typeTable[104] = typeof(global::PayrollManager.UI.ViewModels.PayRunWizardViewModel);
-            _typeTable[105] = typeof(global::PayrollManager.UI.Views.PayRunsPage);
-            _typeTable[106] = typeof(global::PayrollManager.UI.Views.PayStubDetailsPage);
-            _typeTable[107] = typeof(global::PayrollManager.UI.ViewModels.PayStubViewModel);
-            _typeTable[108] = typeof(global::System.Collections.ObjectModel.ObservableCollection<global::PayrollManager.UI.Views.EarningLineDisplay>);
-            _typeTable[109] = typeof(global::System.Collections.ObjectModel.Collection<global::PayrollManager.UI.Views.EarningLineDisplay>);
-            _typeTable[110] = typeof(global::PayrollManager.UI.Views.EarningLineDisplay);
-            _typeTable[111] = typeof(global::System.Decimal);
-            _typeTable[112] = typeof(global::PayrollManager.UI.Views.PayStubPage);
-            _typeTable[113] = typeof(global::PayrollManager.UI.Views.ReportsPage);
-            _typeTable[114] = typeof(global::PayrollManager.UI.ViewModels.ReportsViewModel);
-            _typeTable[115] = typeof(global::Microsoft.UI.Xaml.Controls.RadioButtons);
-            _typeTable[116] = typeof(global::PayrollManager.UI.Views.SettingsPage);
-            _typeTable[117] = typeof(global::PayrollManager.UI.ViewModels.SettingsViewModel);
-            _typeTable[118] = typeof(global::Microsoft.UI.Xaml.Controls.TreeViewNode);
-            _typeTable[119] = typeof(global::System.Collections.Generic.IList<global::Microsoft.UI.Xaml.Controls.TreeViewNode>);
+            _typeTable[20] = typeof(global::PayrollManager.UI.Converters.StringToVisibilityConverter);
+            _typeTable[21] = typeof(global::Microsoft.UI.Xaml.Controls.NumberBox);
+            _typeTable[22] = typeof(global::Microsoft.UI.Xaml.Controls.Control);
+            _typeTable[23] = typeof(global::Microsoft.UI.Xaml.DataTemplate);
+            _typeTable[24] = typeof(global::System.Double);
+            _typeTable[25] = typeof(global::Windows.Globalization.NumberFormatting.INumberFormatter2);
+            _typeTable[26] = typeof(global::System.String);
+            _typeTable[27] = typeof(global::Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase);
+            _typeTable[28] = typeof(global::Microsoft.UI.Xaml.Media.SolidColorBrush);
+            _typeTable[29] = typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode);
+            _typeTable[30] = typeof(global::System.Enum);
+            _typeTable[31] = typeof(global::Microsoft.UI.Xaml.TextReadingOrder);
+            _typeTable[32] = typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxValidationMode);
+            _typeTable[33] = typeof(global::Microsoft.UI.Xaml.Controls.NavigationView);
+            _typeTable[34] = typeof(global::Microsoft.UI.Xaml.Controls.ContentControl);
+            _typeTable[35] = typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewPaneDisplayMode);
+            _typeTable[36] = typeof(global::Microsoft.UI.Xaml.UIElement);
+            _typeTable[37] = typeof(global::System.Collections.Generic.IList<global::System.Object>);
+            _typeTable[38] = typeof(global::Microsoft.UI.Xaml.Controls.AutoSuggestBox);
+            _typeTable[39] = typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode);
+            _typeTable[40] = typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible);
+            _typeTable[41] = typeof(global::Microsoft.UI.Xaml.Style);
+            _typeTable[42] = typeof(global::Microsoft.UI.Xaml.Controls.StyleSelector);
+            _typeTable[43] = typeof(global::Microsoft.UI.Xaml.Controls.DataTemplateSelector);
+            _typeTable[44] = typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewOverflowLabelMode);
+            _typeTable[45] = typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewSelectionFollowsFocus);
+            _typeTable[46] = typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewShoulderNavigationEnabled);
+            _typeTable[47] = typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewTemplateSettings);
+            _typeTable[48] = typeof(global::Microsoft.UI.Xaml.DependencyObject);
+            _typeTable[49] = typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewItemHeader);
+            _typeTable[50] = typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewItemBase);
+            _typeTable[51] = typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewItem);
+            _typeTable[52] = typeof(global::Microsoft.UI.Xaml.Controls.IconElement);
+            _typeTable[53] = typeof(global::Microsoft.UI.Xaml.Controls.InfoBadge);
+            _typeTable[54] = typeof(global::PayrollManager.UI.MainWindow);
+            _typeTable[55] = typeof(global::Microsoft.UI.Xaml.Window);
+            _typeTable[56] = typeof(global::Microsoft.UI.Xaml.CornerRadius);
+            _typeTable[57] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGrid);
+            _typeTable[58] = typeof(global::System.Collections.IEnumerable);
+            _typeTable[59] = typeof(global::System.Collections.ObjectModel.ObservableCollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>);
+            _typeTable[60] = typeof(global::System.Collections.ObjectModel.Collection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>);
+            _typeTable[61] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn);
+            _typeTable[62] = typeof(global::Microsoft.UI.Xaml.Data.Binding);
+            _typeTable[63] = typeof(global::System.Int32);
+            _typeTable[64] = typeof(global::System.Nullable<global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>);
+            _typeTable[65] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection);
+            _typeTable[66] = typeof(global::Microsoft.UI.Xaml.Visibility);
+            _typeTable[67] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridLength);
+            _typeTable[68] = typeof(global::Microsoft.UI.Xaml.Media.Brush);
+            _typeTable[69] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode);
+            _typeTable[70] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility);
+            _typeTable[71] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility);
+            _typeTable[72] = typeof(global::Microsoft.UI.Xaml.Controls.ScrollBarVisibility);
+            _typeTable[73] = typeof(global::Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger);
+            _typeTable[74] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode);
+            _typeTable[75] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode);
+            _typeTable[76] = typeof(global::System.Collections.ObjectModel.ObservableCollection<global::Microsoft.UI.Xaml.Style>);
+            _typeTable[77] = typeof(global::System.Collections.ObjectModel.Collection<global::Microsoft.UI.Xaml.Style>);
+            _typeTable[78] = typeof(global::System.Collections.IList);
+            _typeTable[79] = typeof(global::Microsoft.UI.Xaml.Controls.ProgressRing);
+            _typeTable[80] = typeof(global::Microsoft.UI.Xaml.Controls.ProgressRingTemplateSettings);
+            _typeTable[81] = typeof(global::Microsoft.UI.Xaml.Controls.PersonPicture);
+            _typeTable[82] = typeof(global::Microsoft.UI.Xaml.Media.ImageSource);
+            _typeTable[83] = typeof(global::Windows.ApplicationModel.Contacts.Contact);
+            _typeTable[84] = typeof(global::Microsoft.UI.Xaml.Controls.PersonPictureTemplateSettings);
+            _typeTable[85] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn);
+            _typeTable[86] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn);
+            _typeTable[87] = typeof(global::Microsoft.UI.Xaml.Media.FontFamily);
+            _typeTable[88] = typeof(global::Windows.UI.Text.FontStyle);
+            _typeTable[89] = typeof(global::Windows.UI.Text.FontWeight);
+            _typeTable[90] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn);
+            _typeTable[91] = typeof(global::PayrollManager.UI.Views.EmployeeManagementPage);
+            _typeTable[92] = typeof(global::Microsoft.UI.Xaml.Controls.Page);
+            _typeTable[93] = typeof(global::Microsoft.UI.Xaml.Controls.UserControl);
+            _typeTable[94] = typeof(global::PayrollManager.UI.ViewModels.EmployeesViewModel);
+            _typeTable[95] = typeof(global::CommunityToolkit.Mvvm.ComponentModel.ObservableObject);
+            _typeTable[96] = typeof(global::PayrollManager.UI.Views.EmployeesPage);
+            _typeTable[97] = typeof(global::Microsoft.UI.Xaml.Controls.InfoBar);
+            _typeTable[98] = typeof(global::Microsoft.UI.Xaml.Controls.InfoBarSeverity);
+            _typeTable[99] = typeof(global::Microsoft.UI.Xaml.Controls.Primitives.ButtonBase);
+            _typeTable[100] = typeof(global::System.Windows.Input.ICommand);
+            _typeTable[101] = typeof(global::Microsoft.UI.Xaml.Controls.IconSource);
+            _typeTable[102] = typeof(global::Microsoft.UI.Xaml.Controls.InfoBarTemplateSettings);
+            _typeTable[103] = typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridCheckBoxColumn);
+            _typeTable[104] = typeof(global::PayrollManager.UI.Views.PayrollRunPage);
+            _typeTable[105] = typeof(global::PayrollManager.UI.ViewModels.PayRunWizardViewModel);
+            _typeTable[106] = typeof(global::PayrollManager.UI.Views.PayRunsPage);
+            _typeTable[107] = typeof(global::PayrollManager.UI.Views.PayStubDetailsPage);
+            _typeTable[108] = typeof(global::PayrollManager.UI.ViewModels.PayStubDetailsViewModel);
+            _typeTable[109] = typeof(global::PayrollManager.UI.Views.PayStubPage);
+            _typeTable[110] = typeof(global::PayrollManager.UI.ViewModels.PayStubViewModel);
+            _typeTable[111] = typeof(global::PayrollManager.UI.Views.ReportsPage);
+            _typeTable[112] = typeof(global::PayrollManager.UI.ViewModels.ReportsViewModel);
+            _typeTable[113] = typeof(global::Microsoft.UI.Xaml.Controls.RadioButtons);
+            _typeTable[114] = typeof(global::PayrollManager.UI.Views.SettingsPage);
+            _typeTable[115] = typeof(global::PayrollManager.UI.ViewModels.SettingsViewModel);
+            _typeTable[116] = typeof(global::Microsoft.UI.Xaml.Controls.TreeViewNode);
+            _typeTable[117] = typeof(global::System.Collections.Generic.IList<global::Microsoft.UI.Xaml.Controls.TreeViewNode>);
         }
 
         private int LookupTypeIndexByName(string typeName)
@@ -517,39 +513,37 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
         private object Activate_17_InverseBoolToVisibilityConverter() { return new global::PayrollManager.UI.Converters.InverseBoolToVisibilityConverter(); }
         private object Activate_18_StepIndicatorConverter() { return new global::PayrollManager.UI.Converters.StepIndicatorConverter(); }
         private object Activate_19_BoolToFontWeightConverter() { return new global::PayrollManager.UI.Converters.BoolToFontWeightConverter(); }
-        private object Activate_20_NumberBox() { return new global::Microsoft.UI.Xaml.Controls.NumberBox(); }
-        private object Activate_32_NavigationView() { return new global::Microsoft.UI.Xaml.Controls.NavigationView(); }
-        private object Activate_46_NavigationViewTemplateSettings() { return new global::Microsoft.UI.Xaml.Controls.NavigationViewTemplateSettings(); }
-        private object Activate_48_NavigationViewItemHeader() { return new global::Microsoft.UI.Xaml.Controls.NavigationViewItemHeader(); }
-        private object Activate_50_NavigationViewItem() { return new global::Microsoft.UI.Xaml.Controls.NavigationViewItem(); }
-        private object Activate_52_InfoBadge() { return new global::Microsoft.UI.Xaml.Controls.InfoBadge(); }
-        private object Activate_53_MainWindow() { return new global::PayrollManager.UI.MainWindow(); }
-        private object Activate_56_DataGrid() { return new global::CommunityToolkit.WinUI.UI.Controls.DataGrid(); }
-        private object Activate_58_ObservableCollection() { return new global::System.Collections.ObjectModel.ObservableCollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>(); }
-        private object Activate_59_Collection() { return new global::System.Collections.ObjectModel.Collection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>(); }
-        private object Activate_75_ObservableCollection() { return new global::System.Collections.ObjectModel.ObservableCollection<global::Microsoft.UI.Xaml.Style>(); }
-        private object Activate_76_Collection() { return new global::System.Collections.ObjectModel.Collection<global::Microsoft.UI.Xaml.Style>(); }
-        private object Activate_78_ProgressRing() { return new global::Microsoft.UI.Xaml.Controls.ProgressRing(); }
-        private object Activate_80_PersonPicture() { return new global::Microsoft.UI.Xaml.Controls.PersonPicture(); }
-        private object Activate_82_Contact() { return new global::Windows.ApplicationModel.Contacts.Contact(); }
-        private object Activate_84_DataGridTextColumn() { return new global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn(); }
-        private object Activate_89_DataGridTemplateColumn() { return new global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn(); }
-        private object Activate_90_EmployeeManagementPage() { return new global::PayrollManager.UI.Views.EmployeeManagementPage(); }
-        private object Activate_95_EmployeesPage() { return new global::PayrollManager.UI.Views.EmployeesPage(); }
-        private object Activate_96_InfoBar() { return new global::Microsoft.UI.Xaml.Controls.InfoBar(); }
-        private object Activate_101_InfoBarTemplateSettings() { return new global::Microsoft.UI.Xaml.Controls.InfoBarTemplateSettings(); }
-        private object Activate_102_DataGridCheckBoxColumn() { return new global::CommunityToolkit.WinUI.UI.Controls.DataGridCheckBoxColumn(); }
-        private object Activate_103_PayrollRunPage() { return new global::PayrollManager.UI.Views.PayrollRunPage(); }
-        private object Activate_105_PayRunsPage() { return new global::PayrollManager.UI.Views.PayRunsPage(); }
-        private object Activate_106_PayStubDetailsPage() { return new global::PayrollManager.UI.Views.PayStubDetailsPage(); }
-        private object Activate_108_ObservableCollection() { return new global::System.Collections.ObjectModel.ObservableCollection<global::PayrollManager.UI.Views.EarningLineDisplay>(); }
-        private object Activate_109_Collection() { return new global::System.Collections.ObjectModel.Collection<global::PayrollManager.UI.Views.EarningLineDisplay>(); }
-        private object Activate_110_EarningLineDisplay() { return new global::PayrollManager.UI.Views.EarningLineDisplay(); }
-        private object Activate_112_PayStubPage() { return new global::PayrollManager.UI.Views.PayStubPage(); }
-        private object Activate_113_ReportsPage() { return new global::PayrollManager.UI.Views.ReportsPage(); }
-        private object Activate_115_RadioButtons() { return new global::Microsoft.UI.Xaml.Controls.RadioButtons(); }
-        private object Activate_116_SettingsPage() { return new global::PayrollManager.UI.Views.SettingsPage(); }
-        private object Activate_118_TreeViewNode() { return new global::Microsoft.UI.Xaml.Controls.TreeViewNode(); }
+        private object Activate_20_StringToVisibilityConverter() { return new global::PayrollManager.UI.Converters.StringToVisibilityConverter(); }
+        private object Activate_21_NumberBox() { return new global::Microsoft.UI.Xaml.Controls.NumberBox(); }
+        private object Activate_33_NavigationView() { return new global::Microsoft.UI.Xaml.Controls.NavigationView(); }
+        private object Activate_47_NavigationViewTemplateSettings() { return new global::Microsoft.UI.Xaml.Controls.NavigationViewTemplateSettings(); }
+        private object Activate_49_NavigationViewItemHeader() { return new global::Microsoft.UI.Xaml.Controls.NavigationViewItemHeader(); }
+        private object Activate_51_NavigationViewItem() { return new global::Microsoft.UI.Xaml.Controls.NavigationViewItem(); }
+        private object Activate_53_InfoBadge() { return new global::Microsoft.UI.Xaml.Controls.InfoBadge(); }
+        private object Activate_54_MainWindow() { return new global::PayrollManager.UI.MainWindow(); }
+        private object Activate_57_DataGrid() { return new global::CommunityToolkit.WinUI.UI.Controls.DataGrid(); }
+        private object Activate_59_ObservableCollection() { return new global::System.Collections.ObjectModel.ObservableCollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>(); }
+        private object Activate_60_Collection() { return new global::System.Collections.ObjectModel.Collection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>(); }
+        private object Activate_76_ObservableCollection() { return new global::System.Collections.ObjectModel.ObservableCollection<global::Microsoft.UI.Xaml.Style>(); }
+        private object Activate_77_Collection() { return new global::System.Collections.ObjectModel.Collection<global::Microsoft.UI.Xaml.Style>(); }
+        private object Activate_79_ProgressRing() { return new global::Microsoft.UI.Xaml.Controls.ProgressRing(); }
+        private object Activate_81_PersonPicture() { return new global::Microsoft.UI.Xaml.Controls.PersonPicture(); }
+        private object Activate_83_Contact() { return new global::Windows.ApplicationModel.Contacts.Contact(); }
+        private object Activate_85_DataGridTextColumn() { return new global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn(); }
+        private object Activate_90_DataGridTemplateColumn() { return new global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn(); }
+        private object Activate_91_EmployeeManagementPage() { return new global::PayrollManager.UI.Views.EmployeeManagementPage(); }
+        private object Activate_96_EmployeesPage() { return new global::PayrollManager.UI.Views.EmployeesPage(); }
+        private object Activate_97_InfoBar() { return new global::Microsoft.UI.Xaml.Controls.InfoBar(); }
+        private object Activate_102_InfoBarTemplateSettings() { return new global::Microsoft.UI.Xaml.Controls.InfoBarTemplateSettings(); }
+        private object Activate_103_DataGridCheckBoxColumn() { return new global::CommunityToolkit.WinUI.UI.Controls.DataGridCheckBoxColumn(); }
+        private object Activate_104_PayrollRunPage() { return new global::PayrollManager.UI.Views.PayrollRunPage(); }
+        private object Activate_106_PayRunsPage() { return new global::PayrollManager.UI.Views.PayRunsPage(); }
+        private object Activate_107_PayStubDetailsPage() { return new global::PayrollManager.UI.Views.PayStubDetailsPage(); }
+        private object Activate_109_PayStubPage() { return new global::PayrollManager.UI.Views.PayStubPage(); }
+        private object Activate_111_ReportsPage() { return new global::PayrollManager.UI.Views.ReportsPage(); }
+        private object Activate_113_RadioButtons() { return new global::Microsoft.UI.Xaml.Controls.RadioButtons(); }
+        private object Activate_114_SettingsPage() { return new global::PayrollManager.UI.Views.SettingsPage(); }
+        private object Activate_116_TreeViewNode() { return new global::Microsoft.UI.Xaml.Controls.TreeViewNode(); }
         private void StaticInitializer_0_XamlControlsResources() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.XamlControlsResources).TypeHandle);
         private void StaticInitializer_4_Color() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.UI.Color).TypeHandle);
         private void StaticInitializer_5_ValueType() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.ValueType).TypeHandle);
@@ -567,78 +561,76 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
         private void StaticInitializer_17_InverseBoolToVisibilityConverter() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.Converters.InverseBoolToVisibilityConverter).TypeHandle);
         private void StaticInitializer_18_StepIndicatorConverter() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.Converters.StepIndicatorConverter).TypeHandle);
         private void StaticInitializer_19_BoolToFontWeightConverter() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.Converters.BoolToFontWeightConverter).TypeHandle);
-        private void StaticInitializer_20_NumberBox() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NumberBox).TypeHandle);
-        private void StaticInitializer_24_INumberFormatter2() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.Globalization.NumberFormatting.INumberFormatter2).TypeHandle);
-        private void StaticInitializer_28_NumberBoxSpinButtonPlacementMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode).TypeHandle);
-        private void StaticInitializer_29_Enum() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Enum).TypeHandle);
-        private void StaticInitializer_31_NumberBoxValidationMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxValidationMode).TypeHandle);
-        private void StaticInitializer_32_NavigationView() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NavigationView).TypeHandle);
-        private void StaticInitializer_34_NavigationViewPaneDisplayMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewPaneDisplayMode).TypeHandle);
-        private void StaticInitializer_36_IList() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.Generic.IList<global::System.Object>).TypeHandle);
-        private void StaticInitializer_38_NavigationViewDisplayMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode).TypeHandle);
-        private void StaticInitializer_39_NavigationViewBackButtonVisible() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible).TypeHandle);
-        private void StaticInitializer_43_NavigationViewOverflowLabelMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewOverflowLabelMode).TypeHandle);
-        private void StaticInitializer_44_NavigationViewSelectionFollowsFocus() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewSelectionFollowsFocus).TypeHandle);
-        private void StaticInitializer_45_NavigationViewShoulderNavigationEnabled() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewShoulderNavigationEnabled).TypeHandle);
-        private void StaticInitializer_46_NavigationViewTemplateSettings() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewTemplateSettings).TypeHandle);
-        private void StaticInitializer_48_NavigationViewItemHeader() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewItemHeader).TypeHandle);
-        private void StaticInitializer_49_NavigationViewItemBase() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewItemBase).TypeHandle);
-        private void StaticInitializer_50_NavigationViewItem() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewItem).TypeHandle);
-        private void StaticInitializer_52_InfoBadge() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.InfoBadge).TypeHandle);
-        private void StaticInitializer_53_MainWindow() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.MainWindow).TypeHandle);
-        private void StaticInitializer_55_CornerRadius() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.CornerRadius).TypeHandle);
-        private void StaticInitializer_56_DataGrid() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGrid).TypeHandle);
-        private void StaticInitializer_57_IEnumerable() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.IEnumerable).TypeHandle);
-        private void StaticInitializer_58_ObservableCollection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.ObservableCollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>).TypeHandle);
-        private void StaticInitializer_59_Collection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.Collection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>).TypeHandle);
-        private void StaticInitializer_60_DataGridColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn).TypeHandle);
-        private void StaticInitializer_63_Nullable() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Nullable<global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>).TypeHandle);
-        private void StaticInitializer_64_DataGridSortDirection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection).TypeHandle);
-        private void StaticInitializer_66_DataGridLength() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridLength).TypeHandle);
-        private void StaticInitializer_68_DataGridClipboardCopyMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode).TypeHandle);
-        private void StaticInitializer_69_DataGridGridLinesVisibility() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility).TypeHandle);
-        private void StaticInitializer_70_DataGridHeadersVisibility() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility).TypeHandle);
-        private void StaticInitializer_73_DataGridRowDetailsVisibilityMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode).TypeHandle);
-        private void StaticInitializer_74_DataGridSelectionMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode).TypeHandle);
-        private void StaticInitializer_75_ObservableCollection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.ObservableCollection<global::Microsoft.UI.Xaml.Style>).TypeHandle);
-        private void StaticInitializer_76_Collection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.Collection<global::Microsoft.UI.Xaml.Style>).TypeHandle);
-        private void StaticInitializer_77_IList() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.IList).TypeHandle);
-        private void StaticInitializer_78_ProgressRing() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.ProgressRing).TypeHandle);
-        private void StaticInitializer_79_ProgressRingTemplateSettings() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.ProgressRingTemplateSettings).TypeHandle);
-        private void StaticInitializer_80_PersonPicture() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.PersonPicture).TypeHandle);
-        private void StaticInitializer_82_Contact() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.ApplicationModel.Contacts.Contact).TypeHandle);
-        private void StaticInitializer_83_PersonPictureTemplateSettings() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.PersonPictureTemplateSettings).TypeHandle);
-        private void StaticInitializer_84_DataGridTextColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn).TypeHandle);
-        private void StaticInitializer_85_DataGridBoundColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn).TypeHandle);
-        private void StaticInitializer_87_FontStyle() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.UI.Text.FontStyle).TypeHandle);
-        private void StaticInitializer_88_FontWeight() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.UI.Text.FontWeight).TypeHandle);
-        private void StaticInitializer_89_DataGridTemplateColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn).TypeHandle);
-        private void StaticInitializer_90_EmployeeManagementPage() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.Views.EmployeeManagementPage).TypeHandle);
-        private void StaticInitializer_93_EmployeesViewModel() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.ViewModels.EmployeesViewModel).TypeHandle);
-        private void StaticInitializer_94_ObservableObject() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.Mvvm.ComponentModel.ObservableObject).TypeHandle);
-        private void StaticInitializer_95_EmployeesPage() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.Views.EmployeesPage).TypeHandle);
-        private void StaticInitializer_96_InfoBar() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.InfoBar).TypeHandle);
-        private void StaticInitializer_97_InfoBarSeverity() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.InfoBarSeverity).TypeHandle);
-        private void StaticInitializer_99_ICommand() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Windows.Input.ICommand).TypeHandle);
-        private void StaticInitializer_101_InfoBarTemplateSettings() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.InfoBarTemplateSettings).TypeHandle);
-        private void StaticInitializer_102_DataGridCheckBoxColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridCheckBoxColumn).TypeHandle);
-        private void StaticInitializer_103_PayrollRunPage() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.Views.PayrollRunPage).TypeHandle);
-        private void StaticInitializer_104_PayRunWizardViewModel() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.ViewModels.PayRunWizardViewModel).TypeHandle);
-        private void StaticInitializer_105_PayRunsPage() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.Views.PayRunsPage).TypeHandle);
-        private void StaticInitializer_106_PayStubDetailsPage() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.Views.PayStubDetailsPage).TypeHandle);
-        private void StaticInitializer_107_PayStubViewModel() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.ViewModels.PayStubViewModel).TypeHandle);
-        private void StaticInitializer_108_ObservableCollection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.ObservableCollection<global::PayrollManager.UI.Views.EarningLineDisplay>).TypeHandle);
-        private void StaticInitializer_109_Collection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.Collection<global::PayrollManager.UI.Views.EarningLineDisplay>).TypeHandle);
-        private void StaticInitializer_110_EarningLineDisplay() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.Views.EarningLineDisplay).TypeHandle);
-        private void StaticInitializer_111_Decimal() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Decimal).TypeHandle);
-        private void StaticInitializer_112_PayStubPage() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.Views.PayStubPage).TypeHandle);
-        private void StaticInitializer_113_ReportsPage() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.Views.ReportsPage).TypeHandle);
-        private void StaticInitializer_114_ReportsViewModel() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.ViewModels.ReportsViewModel).TypeHandle);
-        private void StaticInitializer_115_RadioButtons() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.RadioButtons).TypeHandle);
-        private void StaticInitializer_116_SettingsPage() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.Views.SettingsPage).TypeHandle);
-        private void StaticInitializer_117_SettingsViewModel() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.ViewModels.SettingsViewModel).TypeHandle);
-        private void StaticInitializer_118_TreeViewNode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.TreeViewNode).TypeHandle);
-        private void StaticInitializer_119_IList() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.Generic.IList<global::Microsoft.UI.Xaml.Controls.TreeViewNode>).TypeHandle);
+        private void StaticInitializer_20_StringToVisibilityConverter() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.Converters.StringToVisibilityConverter).TypeHandle);
+        private void StaticInitializer_21_NumberBox() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NumberBox).TypeHandle);
+        private void StaticInitializer_25_INumberFormatter2() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.Globalization.NumberFormatting.INumberFormatter2).TypeHandle);
+        private void StaticInitializer_29_NumberBoxSpinButtonPlacementMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode).TypeHandle);
+        private void StaticInitializer_30_Enum() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Enum).TypeHandle);
+        private void StaticInitializer_32_NumberBoxValidationMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NumberBoxValidationMode).TypeHandle);
+        private void StaticInitializer_33_NavigationView() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NavigationView).TypeHandle);
+        private void StaticInitializer_35_NavigationViewPaneDisplayMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewPaneDisplayMode).TypeHandle);
+        private void StaticInitializer_37_IList() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.Generic.IList<global::System.Object>).TypeHandle);
+        private void StaticInitializer_39_NavigationViewDisplayMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode).TypeHandle);
+        private void StaticInitializer_40_NavigationViewBackButtonVisible() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible).TypeHandle);
+        private void StaticInitializer_44_NavigationViewOverflowLabelMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewOverflowLabelMode).TypeHandle);
+        private void StaticInitializer_45_NavigationViewSelectionFollowsFocus() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewSelectionFollowsFocus).TypeHandle);
+        private void StaticInitializer_46_NavigationViewShoulderNavigationEnabled() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewShoulderNavigationEnabled).TypeHandle);
+        private void StaticInitializer_47_NavigationViewTemplateSettings() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewTemplateSettings).TypeHandle);
+        private void StaticInitializer_49_NavigationViewItemHeader() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewItemHeader).TypeHandle);
+        private void StaticInitializer_50_NavigationViewItemBase() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewItemBase).TypeHandle);
+        private void StaticInitializer_51_NavigationViewItem() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.NavigationViewItem).TypeHandle);
+        private void StaticInitializer_53_InfoBadge() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.InfoBadge).TypeHandle);
+        private void StaticInitializer_54_MainWindow() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.MainWindow).TypeHandle);
+        private void StaticInitializer_56_CornerRadius() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.CornerRadius).TypeHandle);
+        private void StaticInitializer_57_DataGrid() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGrid).TypeHandle);
+        private void StaticInitializer_58_IEnumerable() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.IEnumerable).TypeHandle);
+        private void StaticInitializer_59_ObservableCollection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.ObservableCollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>).TypeHandle);
+        private void StaticInitializer_60_Collection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.Collection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>).TypeHandle);
+        private void StaticInitializer_61_DataGridColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn).TypeHandle);
+        private void StaticInitializer_64_Nullable() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Nullable<global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>).TypeHandle);
+        private void StaticInitializer_65_DataGridSortDirection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection).TypeHandle);
+        private void StaticInitializer_67_DataGridLength() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridLength).TypeHandle);
+        private void StaticInitializer_69_DataGridClipboardCopyMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode).TypeHandle);
+        private void StaticInitializer_70_DataGridGridLinesVisibility() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility).TypeHandle);
+        private void StaticInitializer_71_DataGridHeadersVisibility() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility).TypeHandle);
+        private void StaticInitializer_74_DataGridRowDetailsVisibilityMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode).TypeHandle);
+        private void StaticInitializer_75_DataGridSelectionMode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode).TypeHandle);
+        private void StaticInitializer_76_ObservableCollection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.ObservableCollection<global::Microsoft.UI.Xaml.Style>).TypeHandle);
+        private void StaticInitializer_77_Collection() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.ObjectModel.Collection<global::Microsoft.UI.Xaml.Style>).TypeHandle);
+        private void StaticInitializer_78_IList() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.IList).TypeHandle);
+        private void StaticInitializer_79_ProgressRing() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.ProgressRing).TypeHandle);
+        private void StaticInitializer_80_ProgressRingTemplateSettings() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.ProgressRingTemplateSettings).TypeHandle);
+        private void StaticInitializer_81_PersonPicture() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.PersonPicture).TypeHandle);
+        private void StaticInitializer_83_Contact() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.ApplicationModel.Contacts.Contact).TypeHandle);
+        private void StaticInitializer_84_PersonPictureTemplateSettings() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.PersonPictureTemplateSettings).TypeHandle);
+        private void StaticInitializer_85_DataGridTextColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn).TypeHandle);
+        private void StaticInitializer_86_DataGridBoundColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn).TypeHandle);
+        private void StaticInitializer_88_FontStyle() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.UI.Text.FontStyle).TypeHandle);
+        private void StaticInitializer_89_FontWeight() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Windows.UI.Text.FontWeight).TypeHandle);
+        private void StaticInitializer_90_DataGridTemplateColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn).TypeHandle);
+        private void StaticInitializer_91_EmployeeManagementPage() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.Views.EmployeeManagementPage).TypeHandle);
+        private void StaticInitializer_94_EmployeesViewModel() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.ViewModels.EmployeesViewModel).TypeHandle);
+        private void StaticInitializer_95_ObservableObject() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.Mvvm.ComponentModel.ObservableObject).TypeHandle);
+        private void StaticInitializer_96_EmployeesPage() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.Views.EmployeesPage).TypeHandle);
+        private void StaticInitializer_97_InfoBar() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.InfoBar).TypeHandle);
+        private void StaticInitializer_98_InfoBarSeverity() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.InfoBarSeverity).TypeHandle);
+        private void StaticInitializer_100_ICommand() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Windows.Input.ICommand).TypeHandle);
+        private void StaticInitializer_102_InfoBarTemplateSettings() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.InfoBarTemplateSettings).TypeHandle);
+        private void StaticInitializer_103_DataGridCheckBoxColumn() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::CommunityToolkit.WinUI.UI.Controls.DataGridCheckBoxColumn).TypeHandle);
+        private void StaticInitializer_104_PayrollRunPage() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.Views.PayrollRunPage).TypeHandle);
+        private void StaticInitializer_105_PayRunWizardViewModel() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.ViewModels.PayRunWizardViewModel).TypeHandle);
+        private void StaticInitializer_106_PayRunsPage() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.Views.PayRunsPage).TypeHandle);
+        private void StaticInitializer_107_PayStubDetailsPage() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.Views.PayStubDetailsPage).TypeHandle);
+        private void StaticInitializer_108_PayStubDetailsViewModel() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.ViewModels.PayStubDetailsViewModel).TypeHandle);
+        private void StaticInitializer_109_PayStubPage() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.Views.PayStubPage).TypeHandle);
+        private void StaticInitializer_110_PayStubViewModel() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.ViewModels.PayStubViewModel).TypeHandle);
+        private void StaticInitializer_111_ReportsPage() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.Views.ReportsPage).TypeHandle);
+        private void StaticInitializer_112_ReportsViewModel() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.ViewModels.ReportsViewModel).TypeHandle);
+        private void StaticInitializer_113_RadioButtons() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.RadioButtons).TypeHandle);
+        private void StaticInitializer_114_SettingsPage() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.Views.SettingsPage).TypeHandle);
+        private void StaticInitializer_115_SettingsViewModel() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::PayrollManager.UI.ViewModels.SettingsViewModel).TypeHandle);
+        private void StaticInitializer_116_TreeViewNode() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::Microsoft.UI.Xaml.Controls.TreeViewNode).TypeHandle);
+        private void StaticInitializer_117_IList() => global::System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(global::System.Collections.Generic.IList<global::Microsoft.UI.Xaml.Controls.TreeViewNode>).TypeHandle);
         private void MapAdd_0_XamlControlsResources(object instance, object key, object item)
         {
             var collection = (global::System.Collections.Generic.IDictionary<global::System.Object, global::System.Object>)instance;
@@ -646,49 +638,37 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
             var newItem = (global::System.Object)item;
             collection.Add(newKey, newItem);
         }
-        private void VectorAdd_36_IList(object instance, object item)
+        private void VectorAdd_37_IList(object instance, object item)
         {
             var collection = (global::System.Collections.Generic.ICollection<global::System.Object>)instance;
             var newItem = (global::System.Object)item;
             collection.Add(newItem);
         }
-        private void VectorAdd_58_ObservableCollection(object instance, object item)
+        private void VectorAdd_59_ObservableCollection(object instance, object item)
         {
             var collection = (global::System.Collections.Generic.ICollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>)instance;
             var newItem = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)item;
             collection.Add(newItem);
         }
-        private void VectorAdd_59_Collection(object instance, object item)
+        private void VectorAdd_60_Collection(object instance, object item)
         {
             var collection = (global::System.Collections.Generic.ICollection<global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn>)instance;
             var newItem = (global::CommunityToolkit.WinUI.UI.Controls.DataGridColumn)item;
             collection.Add(newItem);
         }
-        private void VectorAdd_75_ObservableCollection(object instance, object item)
+        private void VectorAdd_76_ObservableCollection(object instance, object item)
         {
             var collection = (global::System.Collections.Generic.ICollection<global::Microsoft.UI.Xaml.Style>)instance;
             var newItem = (global::Microsoft.UI.Xaml.Style)item;
             collection.Add(newItem);
         }
-        private void VectorAdd_76_Collection(object instance, object item)
+        private void VectorAdd_77_Collection(object instance, object item)
         {
             var collection = (global::System.Collections.Generic.ICollection<global::Microsoft.UI.Xaml.Style>)instance;
             var newItem = (global::Microsoft.UI.Xaml.Style)item;
             collection.Add(newItem);
         }
-        private void VectorAdd_108_ObservableCollection(object instance, object item)
-        {
-            var collection = (global::System.Collections.Generic.ICollection<global::PayrollManager.UI.Views.EarningLineDisplay>)instance;
-            var newItem = (global::PayrollManager.UI.Views.EarningLineDisplay)item;
-            collection.Add(newItem);
-        }
-        private void VectorAdd_109_Collection(object instance, object item)
-        {
-            var collection = (global::System.Collections.Generic.ICollection<global::PayrollManager.UI.Views.EarningLineDisplay>)instance;
-            var newItem = (global::PayrollManager.UI.Views.EarningLineDisplay)item;
-            collection.Add(newItem);
-        }
-        private void VectorAdd_119_IList(object instance, object item)
+        private void VectorAdd_117_IList(object instance, object item)
         {
             var collection = (global::System.Collections.Generic.ICollection<global::Microsoft.UI.Xaml.Controls.TreeViewNode>)instance;
             var newItem = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)item;
@@ -853,10 +833,18 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 20:   //  Microsoft.UI.Xaml.Controls.NumberBox
+            case 20:   //  PayrollManager.UI.Converters.StringToVisibilityConverter
+                userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Object"));
+                userType.Activator = Activate_20_StringToVisibilityConverter;
+                userType.StaticInitializer = StaticInitializer_20_StringToVisibilityConverter;
+                userType.SetIsLocalType();
+                xamlType = userType;
+                break;
+
+            case 21:   //  Microsoft.UI.Xaml.Controls.NumberBox
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Control"));
-                userType.Activator = Activate_20_NumberBox;
-                userType.StaticInitializer = StaticInitializer_20_NumberBox;
+                userType.Activator = Activate_21_NumberBox;
+                userType.StaticInitializer = StaticInitializer_21_NumberBox;
                 userType.AddMemberName("AcceptsExpression");
                 userType.AddMemberName("Description");
                 userType.AddMemberName("Header");
@@ -879,68 +867,68 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 21:   //  Microsoft.UI.Xaml.Controls.Control
+            case 22:   //  Microsoft.UI.Xaml.Controls.Control
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 22:   //  Microsoft.UI.Xaml.DataTemplate
+            case 23:   //  Microsoft.UI.Xaml.DataTemplate
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 23:   //  Double
+            case 24:   //  Double
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 24:   //  Windows.Globalization.NumberFormatting.INumberFormatter2
+            case 25:   //  Windows.Globalization.NumberFormatting.INumberFormatter2
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, null);
-                userType.StaticInitializer = StaticInitializer_24_INumberFormatter2;
+                userType.StaticInitializer = StaticInitializer_25_INumberFormatter2;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 25:   //  String
+            case 26:   //  String
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 26:   //  Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase
+            case 27:   //  Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 27:   //  Microsoft.UI.Xaml.Media.SolidColorBrush
+            case 28:   //  Microsoft.UI.Xaml.Media.SolidColorBrush
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 28:   //  Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode
+            case 29:   //  Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_28_NumberBoxSpinButtonPlacementMode;
+                userType.StaticInitializer = StaticInitializer_29_NumberBoxSpinButtonPlacementMode;
                 userType.AddEnumValue("Hidden", global::Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode.Hidden);
                 userType.AddEnumValue("Compact", global::Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode.Compact);
                 userType.AddEnumValue("Inline", global::Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode.Inline);
                 xamlType = userType;
                 break;
 
-            case 29:   //  System.Enum
+            case 30:   //  System.Enum
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.ValueType"));
-                userType.StaticInitializer = StaticInitializer_29_Enum;
+                userType.StaticInitializer = StaticInitializer_30_Enum;
                 xamlType = userType;
                 break;
 
-            case 30:   //  Microsoft.UI.Xaml.TextReadingOrder
+            case 31:   //  Microsoft.UI.Xaml.TextReadingOrder
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 31:   //  Microsoft.UI.Xaml.Controls.NumberBoxValidationMode
+            case 32:   //  Microsoft.UI.Xaml.Controls.NumberBoxValidationMode
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_31_NumberBoxValidationMode;
+                userType.StaticInitializer = StaticInitializer_32_NumberBoxValidationMode;
                 userType.AddEnumValue("InvalidInputOverwritten", global::Microsoft.UI.Xaml.Controls.NumberBoxValidationMode.InvalidInputOverwritten);
                 userType.AddEnumValue("Disabled", global::Microsoft.UI.Xaml.Controls.NumberBoxValidationMode.Disabled);
                 xamlType = userType;
                 break;
 
-            case 32:   //  Microsoft.UI.Xaml.Controls.NavigationView
+            case 33:   //  Microsoft.UI.Xaml.Controls.NavigationView
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.ContentControl"));
-                userType.Activator = Activate_32_NavigationView;
-                userType.StaticInitializer = StaticInitializer_32_NavigationView;
+                userType.Activator = Activate_33_NavigationView;
+                userType.StaticInitializer = StaticInitializer_33_NavigationView;
                 userType.AddMemberName("PaneDisplayMode");
                 userType.AddMemberName("IsBackEnabled");
                 userType.AddMemberName("IsPaneOpen");
@@ -981,13 +969,13 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 33:   //  Microsoft.UI.Xaml.Controls.ContentControl
+            case 34:   //  Microsoft.UI.Xaml.Controls.ContentControl
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 34:   //  Microsoft.UI.Xaml.Controls.NavigationViewPaneDisplayMode
+            case 35:   //  Microsoft.UI.Xaml.Controls.NavigationViewPaneDisplayMode
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_34_NavigationViewPaneDisplayMode;
+                userType.StaticInitializer = StaticInitializer_35_NavigationViewPaneDisplayMode;
                 userType.AddEnumValue("Auto", global::Microsoft.UI.Xaml.Controls.NavigationViewPaneDisplayMode.Auto);
                 userType.AddEnumValue("Left", global::Microsoft.UI.Xaml.Controls.NavigationViewPaneDisplayMode.Left);
                 userType.AddEnumValue("Top", global::Microsoft.UI.Xaml.Controls.NavigationViewPaneDisplayMode.Top);
@@ -996,106 +984,106 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 35:   //  Microsoft.UI.Xaml.UIElement
+            case 36:   //  Microsoft.UI.Xaml.UIElement
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 36:   //  System.Collections.Generic.IList`1<Object>
+            case 37:   //  System.Collections.Generic.IList`1<Object>
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, null);
-                userType.StaticInitializer = StaticInitializer_36_IList;
-                userType.CollectionAdd = VectorAdd_36_IList;
+                userType.StaticInitializer = StaticInitializer_37_IList;
+                userType.CollectionAdd = VectorAdd_37_IList;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 37:   //  Microsoft.UI.Xaml.Controls.AutoSuggestBox
+            case 38:   //  Microsoft.UI.Xaml.Controls.AutoSuggestBox
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 38:   //  Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode
+            case 39:   //  Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_38_NavigationViewDisplayMode;
+                userType.StaticInitializer = StaticInitializer_39_NavigationViewDisplayMode;
                 userType.AddEnumValue("Minimal", global::Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode.Minimal);
                 userType.AddEnumValue("Compact", global::Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode.Compact);
                 userType.AddEnumValue("Expanded", global::Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode.Expanded);
                 xamlType = userType;
                 break;
 
-            case 39:   //  Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible
+            case 40:   //  Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_39_NavigationViewBackButtonVisible;
+                userType.StaticInitializer = StaticInitializer_40_NavigationViewBackButtonVisible;
                 userType.AddEnumValue("Collapsed", global::Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible.Collapsed);
                 userType.AddEnumValue("Visible", global::Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible.Visible);
                 userType.AddEnumValue("Auto", global::Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible.Auto);
                 xamlType = userType;
                 break;
 
-            case 40:   //  Microsoft.UI.Xaml.Style
+            case 41:   //  Microsoft.UI.Xaml.Style
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 41:   //  Microsoft.UI.Xaml.Controls.StyleSelector
+            case 42:   //  Microsoft.UI.Xaml.Controls.StyleSelector
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 42:   //  Microsoft.UI.Xaml.Controls.DataTemplateSelector
+            case 43:   //  Microsoft.UI.Xaml.Controls.DataTemplateSelector
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 43:   //  Microsoft.UI.Xaml.Controls.NavigationViewOverflowLabelMode
+            case 44:   //  Microsoft.UI.Xaml.Controls.NavigationViewOverflowLabelMode
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_43_NavigationViewOverflowLabelMode;
+                userType.StaticInitializer = StaticInitializer_44_NavigationViewOverflowLabelMode;
                 userType.AddEnumValue("MoreLabel", global::Microsoft.UI.Xaml.Controls.NavigationViewOverflowLabelMode.MoreLabel);
                 userType.AddEnumValue("NoLabel", global::Microsoft.UI.Xaml.Controls.NavigationViewOverflowLabelMode.NoLabel);
                 xamlType = userType;
                 break;
 
-            case 44:   //  Microsoft.UI.Xaml.Controls.NavigationViewSelectionFollowsFocus
+            case 45:   //  Microsoft.UI.Xaml.Controls.NavigationViewSelectionFollowsFocus
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_44_NavigationViewSelectionFollowsFocus;
+                userType.StaticInitializer = StaticInitializer_45_NavigationViewSelectionFollowsFocus;
                 userType.AddEnumValue("Disabled", global::Microsoft.UI.Xaml.Controls.NavigationViewSelectionFollowsFocus.Disabled);
                 userType.AddEnumValue("Enabled", global::Microsoft.UI.Xaml.Controls.NavigationViewSelectionFollowsFocus.Enabled);
                 xamlType = userType;
                 break;
 
-            case 45:   //  Microsoft.UI.Xaml.Controls.NavigationViewShoulderNavigationEnabled
+            case 46:   //  Microsoft.UI.Xaml.Controls.NavigationViewShoulderNavigationEnabled
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_45_NavigationViewShoulderNavigationEnabled;
+                userType.StaticInitializer = StaticInitializer_46_NavigationViewShoulderNavigationEnabled;
                 userType.AddEnumValue("WhenSelectionFollowsFocus", global::Microsoft.UI.Xaml.Controls.NavigationViewShoulderNavigationEnabled.WhenSelectionFollowsFocus);
                 userType.AddEnumValue("Always", global::Microsoft.UI.Xaml.Controls.NavigationViewShoulderNavigationEnabled.Always);
                 userType.AddEnumValue("Never", global::Microsoft.UI.Xaml.Controls.NavigationViewShoulderNavigationEnabled.Never);
                 xamlType = userType;
                 break;
 
-            case 46:   //  Microsoft.UI.Xaml.Controls.NavigationViewTemplateSettings
+            case 47:   //  Microsoft.UI.Xaml.Controls.NavigationViewTemplateSettings
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.DependencyObject"));
-                userType.StaticInitializer = StaticInitializer_46_NavigationViewTemplateSettings;
+                userType.StaticInitializer = StaticInitializer_47_NavigationViewTemplateSettings;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 47:   //  Microsoft.UI.Xaml.DependencyObject
+            case 48:   //  Microsoft.UI.Xaml.DependencyObject
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 48:   //  Microsoft.UI.Xaml.Controls.NavigationViewItemHeader
+            case 49:   //  Microsoft.UI.Xaml.Controls.NavigationViewItemHeader
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NavigationViewItemBase"));
-                userType.Activator = Activate_48_NavigationViewItemHeader;
-                userType.StaticInitializer = StaticInitializer_48_NavigationViewItemHeader;
+                userType.Activator = Activate_49_NavigationViewItemHeader;
+                userType.StaticInitializer = StaticInitializer_49_NavigationViewItemHeader;
                 xamlType = userType;
                 break;
 
-            case 49:   //  Microsoft.UI.Xaml.Controls.NavigationViewItemBase
+            case 50:   //  Microsoft.UI.Xaml.Controls.NavigationViewItemBase
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.ContentControl"));
-                userType.StaticInitializer = StaticInitializer_49_NavigationViewItemBase;
+                userType.StaticInitializer = StaticInitializer_50_NavigationViewItemBase;
                 userType.AddMemberName("IsSelected");
                 xamlType = userType;
                 break;
 
-            case 50:   //  Microsoft.UI.Xaml.Controls.NavigationViewItem
+            case 51:   //  Microsoft.UI.Xaml.Controls.NavigationViewItem
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.NavigationViewItemBase"));
-                userType.Activator = Activate_50_NavigationViewItem;
-                userType.StaticInitializer = StaticInitializer_50_NavigationViewItem;
+                userType.Activator = Activate_51_NavigationViewItem;
+                userType.StaticInitializer = StaticInitializer_51_NavigationViewItem;
                 userType.AddMemberName("Icon");
                 userType.AddMemberName("CompactPaneLength");
                 userType.AddMemberName("HasUnrealizedChildren");
@@ -1108,32 +1096,32 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 51:   //  Microsoft.UI.Xaml.Controls.IconElement
+            case 52:   //  Microsoft.UI.Xaml.Controls.IconElement
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 52:   //  Microsoft.UI.Xaml.Controls.InfoBadge
+            case 53:   //  Microsoft.UI.Xaml.Controls.InfoBadge
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Control"));
-                userType.StaticInitializer = StaticInitializer_52_InfoBadge;
+                userType.StaticInitializer = StaticInitializer_53_InfoBadge;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 53:   //  PayrollManager.UI.MainWindow
+            case 54:   //  PayrollManager.UI.MainWindow
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Window"));
-                userType.Activator = Activate_53_MainWindow;
-                userType.StaticInitializer = StaticInitializer_53_MainWindow;
+                userType.Activator = Activate_54_MainWindow;
+                userType.StaticInitializer = StaticInitializer_54_MainWindow;
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 54:   //  Microsoft.UI.Xaml.Window
+            case 55:   //  Microsoft.UI.Xaml.Window
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 55:   //  Microsoft.UI.Xaml.CornerRadius
+            case 56:   //  Microsoft.UI.Xaml.CornerRadius
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.ValueType"));
-                userType.StaticInitializer = StaticInitializer_55_CornerRadius;
+                userType.StaticInitializer = StaticInitializer_56_CornerRadius;
                 userType.AddMemberName("TopLeft");
                 userType.AddMemberName("TopRight");
                 userType.AddMemberName("BottomRight");
@@ -1141,10 +1129,10 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 56:   //  CommunityToolkit.WinUI.UI.Controls.DataGrid
+            case 57:   //  CommunityToolkit.WinUI.UI.Controls.DataGrid
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Control"));
-                userType.Activator = Activate_56_DataGrid;
-                userType.StaticInitializer = StaticInitializer_56_DataGrid;
+                userType.Activator = Activate_57_DataGrid;
+                userType.StaticInitializer = StaticInitializer_57_DataGrid;
                 userType.AddMemberName("AutoGenerateColumns");
                 userType.AddMemberName("ItemsSource");
                 userType.AddMemberName("CanUserSortColumns");
@@ -1194,32 +1182,32 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 57:   //  System.Collections.IEnumerable
+            case 58:   //  System.Collections.IEnumerable
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, null);
-                userType.StaticInitializer = StaticInitializer_57_IEnumerable;
+                userType.StaticInitializer = StaticInitializer_58_IEnumerable;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 58:   //  System.Collections.ObjectModel.ObservableCollection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>
+            case 59:   //  System.Collections.ObjectModel.ObservableCollection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Collections.ObjectModel.Collection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>"));
-                userType.StaticInitializer = StaticInitializer_58_ObservableCollection;
-                userType.CollectionAdd = VectorAdd_58_ObservableCollection;
+                userType.StaticInitializer = StaticInitializer_59_ObservableCollection;
+                userType.CollectionAdd = VectorAdd_59_ObservableCollection;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 59:   //  System.Collections.ObjectModel.Collection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>
+            case 60:   //  System.Collections.ObjectModel.Collection`1<CommunityToolkit.WinUI.UI.Controls.DataGridColumn>
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Object"));
-                userType.Activator = Activate_59_Collection;
-                userType.StaticInitializer = StaticInitializer_59_Collection;
-                userType.CollectionAdd = VectorAdd_59_Collection;
+                userType.Activator = Activate_60_Collection;
+                userType.StaticInitializer = StaticInitializer_60_Collection;
+                userType.CollectionAdd = VectorAdd_60_Collection;
                 xamlType = userType;
                 break;
 
-            case 60:   //  CommunityToolkit.WinUI.UI.Controls.DataGridColumn
+            case 61:   //  CommunityToolkit.WinUI.UI.Controls.DataGridColumn
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.DependencyObject"));
-                userType.StaticInitializer = StaticInitializer_60_DataGridColumn;
+                userType.StaticInitializer = StaticInitializer_61_DataGridColumn;
                 userType.AddMemberName("ActualWidth");
                 userType.AddMemberName("CanUserReorder");
                 userType.AddMemberName("CanUserResize");
@@ -1242,59 +1230,59 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 61:   //  Microsoft.UI.Xaml.Data.Binding
+            case 62:   //  Microsoft.UI.Xaml.Data.Binding
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 62:   //  Int32
+            case 63:   //  Int32
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 63:   //  System.Nullable`1<CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>
+            case 64:   //  System.Nullable`1<CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.ValueType"));
                 userType.SetBoxedType(GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection"));
                 userType.BoxInstance = userType.BoxType<global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection>;
-                userType.StaticInitializer = StaticInitializer_63_Nullable;
+                userType.StaticInitializer = StaticInitializer_64_Nullable;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 64:   //  CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection
+            case 65:   //  CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_64_DataGridSortDirection;
+                userType.StaticInitializer = StaticInitializer_65_DataGridSortDirection;
                 userType.AddEnumValue("Ascending", global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection.Ascending);
                 userType.AddEnumValue("Descending", global::CommunityToolkit.WinUI.UI.Controls.DataGridSortDirection.Descending);
                 xamlType = userType;
                 break;
 
-            case 65:   //  Microsoft.UI.Xaml.Visibility
+            case 66:   //  Microsoft.UI.Xaml.Visibility
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 66:   //  CommunityToolkit.WinUI.UI.Controls.DataGridLength
+            case 67:   //  CommunityToolkit.WinUI.UI.Controls.DataGridLength
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.ValueType"));
-                userType.StaticInitializer = StaticInitializer_66_DataGridLength;
+                userType.StaticInitializer = StaticInitializer_67_DataGridLength;
                 userType.CreateFromStringMethod = x => (global::System.Object)global::CommunityToolkit.WinUI.UI.Controls.DataGridLength.ConvertFromString(x);
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 67:   //  Microsoft.UI.Xaml.Media.Brush
+            case 68:   //  Microsoft.UI.Xaml.Media.Brush
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 68:   //  CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode
+            case 69:   //  CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_68_DataGridClipboardCopyMode;
+                userType.StaticInitializer = StaticInitializer_69_DataGridClipboardCopyMode;
                 userType.AddEnumValue("None", global::CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode.None);
                 userType.AddEnumValue("ExcludeHeader", global::CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode.ExcludeHeader);
                 userType.AddEnumValue("IncludeHeader", global::CommunityToolkit.WinUI.UI.Controls.DataGridClipboardCopyMode.IncludeHeader);
                 xamlType = userType;
                 break;
 
-            case 69:   //  CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility
+            case 70:   //  CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_69_DataGridGridLinesVisibility;
+                userType.StaticInitializer = StaticInitializer_70_DataGridGridLinesVisibility;
                 userType.AddEnumValue("None", global::CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility.None);
                 userType.AddEnumValue("Horizontal", global::CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility.Horizontal);
                 userType.AddEnumValue("Vertical", global::CommunityToolkit.WinUI.UI.Controls.DataGridGridLinesVisibility.Vertical);
@@ -1302,9 +1290,9 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 70:   //  CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility
+            case 71:   //  CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_70_DataGridHeadersVisibility;
+                userType.StaticInitializer = StaticInitializer_71_DataGridHeadersVisibility;
                 userType.AddEnumValue("None", global::CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility.None);
                 userType.AddEnumValue("Column", global::CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility.Column);
                 userType.AddEnumValue("Row", global::CommunityToolkit.WinUI.UI.Controls.DataGridHeadersVisibility.Row);
@@ -1312,58 +1300,58 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 71:   //  Microsoft.UI.Xaml.Controls.ScrollBarVisibility
+            case 72:   //  Microsoft.UI.Xaml.Controls.ScrollBarVisibility
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 72:   //  Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger
+            case 73:   //  Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 73:   //  CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode
+            case 74:   //  CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_73_DataGridRowDetailsVisibilityMode;
+                userType.StaticInitializer = StaticInitializer_74_DataGridRowDetailsVisibilityMode;
                 userType.AddEnumValue("VisibleWhenSelected", global::CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode.VisibleWhenSelected);
                 userType.AddEnumValue("Visible", global::CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode.Visible);
                 userType.AddEnumValue("Collapsed", global::CommunityToolkit.WinUI.UI.Controls.DataGridRowDetailsVisibilityMode.Collapsed);
                 xamlType = userType;
                 break;
 
-            case 74:   //  CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode
+            case 75:   //  CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_74_DataGridSelectionMode;
+                userType.StaticInitializer = StaticInitializer_75_DataGridSelectionMode;
                 userType.AddEnumValue("Extended", global::CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode.Extended);
                 userType.AddEnumValue("Single", global::CommunityToolkit.WinUI.UI.Controls.DataGridSelectionMode.Single);
                 xamlType = userType;
                 break;
 
-            case 75:   //  System.Collections.ObjectModel.ObservableCollection`1<Microsoft.UI.Xaml.Style>
+            case 76:   //  System.Collections.ObjectModel.ObservableCollection`1<Microsoft.UI.Xaml.Style>
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Collections.ObjectModel.Collection`1<Microsoft.UI.Xaml.Style>"));
-                userType.StaticInitializer = StaticInitializer_75_ObservableCollection;
-                userType.CollectionAdd = VectorAdd_75_ObservableCollection;
+                userType.StaticInitializer = StaticInitializer_76_ObservableCollection;
+                userType.CollectionAdd = VectorAdd_76_ObservableCollection;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 76:   //  System.Collections.ObjectModel.Collection`1<Microsoft.UI.Xaml.Style>
+            case 77:   //  System.Collections.ObjectModel.Collection`1<Microsoft.UI.Xaml.Style>
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Object"));
-                userType.Activator = Activate_76_Collection;
-                userType.StaticInitializer = StaticInitializer_76_Collection;
-                userType.CollectionAdd = VectorAdd_76_Collection;
+                userType.Activator = Activate_77_Collection;
+                userType.StaticInitializer = StaticInitializer_77_Collection;
+                userType.CollectionAdd = VectorAdd_77_Collection;
                 xamlType = userType;
                 break;
 
-            case 77:   //  System.Collections.IList
+            case 78:   //  System.Collections.IList
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, null);
-                userType.StaticInitializer = StaticInitializer_77_IList;
+                userType.StaticInitializer = StaticInitializer_78_IList;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 78:   //  Microsoft.UI.Xaml.Controls.ProgressRing
+            case 79:   //  Microsoft.UI.Xaml.Controls.ProgressRing
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Control"));
-                userType.Activator = Activate_78_ProgressRing;
-                userType.StaticInitializer = StaticInitializer_78_ProgressRing;
+                userType.Activator = Activate_79_ProgressRing;
+                userType.StaticInitializer = StaticInitializer_79_ProgressRing;
                 userType.AddMemberName("IsActive");
                 userType.AddMemberName("IsIndeterminate");
                 userType.AddMemberName("Maximum");
@@ -1373,17 +1361,17 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 79:   //  Microsoft.UI.Xaml.Controls.ProgressRingTemplateSettings
+            case 80:   //  Microsoft.UI.Xaml.Controls.ProgressRingTemplateSettings
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.DependencyObject"));
-                userType.StaticInitializer = StaticInitializer_79_ProgressRingTemplateSettings;
+                userType.StaticInitializer = StaticInitializer_80_ProgressRingTemplateSettings;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 80:   //  Microsoft.UI.Xaml.Controls.PersonPicture
+            case 81:   //  Microsoft.UI.Xaml.Controls.PersonPicture
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Control"));
-                userType.Activator = Activate_80_PersonPicture;
-                userType.StaticInitializer = StaticInitializer_80_PersonPicture;
+                userType.Activator = Activate_81_PersonPicture;
+                userType.StaticInitializer = StaticInitializer_81_PersonPicture;
                 userType.AddMemberName("DisplayName");
                 userType.AddMemberName("BadgeGlyph");
                 userType.AddMemberName("BadgeImageSource");
@@ -1398,28 +1386,28 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 81:   //  Microsoft.UI.Xaml.Media.ImageSource
+            case 82:   //  Microsoft.UI.Xaml.Media.ImageSource
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 82:   //  Windows.ApplicationModel.Contacts.Contact
+            case 83:   //  Windows.ApplicationModel.Contacts.Contact
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Object"));
-                userType.StaticInitializer = StaticInitializer_82_Contact;
+                userType.StaticInitializer = StaticInitializer_83_Contact;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 83:   //  Microsoft.UI.Xaml.Controls.PersonPictureTemplateSettings
+            case 84:   //  Microsoft.UI.Xaml.Controls.PersonPictureTemplateSettings
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.DependencyObject"));
-                userType.StaticInitializer = StaticInitializer_83_PersonPictureTemplateSettings;
+                userType.StaticInitializer = StaticInitializer_84_PersonPictureTemplateSettings;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 84:   //  CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn
+            case 85:   //  CommunityToolkit.WinUI.UI.Controls.DataGridTextColumn
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn"));
-                userType.Activator = Activate_84_DataGridTextColumn;
-                userType.StaticInitializer = StaticInitializer_84_DataGridTextColumn;
+                userType.Activator = Activate_85_DataGridTextColumn;
+                userType.StaticInitializer = StaticInitializer_85_DataGridTextColumn;
                 userType.AddMemberName("FontFamily");
                 userType.AddMemberName("FontSize");
                 userType.AddMemberName("FontStyle");
@@ -1428,9 +1416,9 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 85:   //  CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn
+            case 86:   //  CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn"));
-                userType.StaticInitializer = StaticInitializer_85_DataGridBoundColumn;
+                userType.StaticInitializer = StaticInitializer_86_DataGridBoundColumn;
                 userType.AddMemberName("Binding");
                 userType.AddMemberName("ClipboardContentBinding");
                 userType.AddMemberName("EditingElementStyle");
@@ -1438,79 +1426,79 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 86:   //  Microsoft.UI.Xaml.Media.FontFamily
+            case 87:   //  Microsoft.UI.Xaml.Media.FontFamily
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 87:   //  Windows.UI.Text.FontStyle
+            case 88:   //  Windows.UI.Text.FontStyle
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_87_FontStyle;
+                userType.StaticInitializer = StaticInitializer_88_FontStyle;
                 userType.AddEnumValue("Normal", global::Windows.UI.Text.FontStyle.Normal);
                 userType.AddEnumValue("Oblique", global::Windows.UI.Text.FontStyle.Oblique);
                 userType.AddEnumValue("Italic", global::Windows.UI.Text.FontStyle.Italic);
                 xamlType = userType;
                 break;
 
-            case 88:   //  Windows.UI.Text.FontWeight
+            case 89:   //  Windows.UI.Text.FontWeight
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.ValueType"));
-                userType.StaticInitializer = StaticInitializer_88_FontWeight;
+                userType.StaticInitializer = StaticInitializer_89_FontWeight;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 89:   //  CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn
+            case 90:   //  CommunityToolkit.WinUI.UI.Controls.DataGridTemplateColumn
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridColumn"));
-                userType.Activator = Activate_89_DataGridTemplateColumn;
-                userType.StaticInitializer = StaticInitializer_89_DataGridTemplateColumn;
+                userType.Activator = Activate_90_DataGridTemplateColumn;
+                userType.StaticInitializer = StaticInitializer_90_DataGridTemplateColumn;
                 userType.AddMemberName("CellTemplate");
                 userType.AddMemberName("CellEditingTemplate");
                 xamlType = userType;
                 break;
 
-            case 90:   //  PayrollManager.UI.Views.EmployeeManagementPage
+            case 91:   //  PayrollManager.UI.Views.EmployeeManagementPage
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Page"));
-                userType.Activator = Activate_90_EmployeeManagementPage;
-                userType.StaticInitializer = StaticInitializer_90_EmployeeManagementPage;
+                userType.Activator = Activate_91_EmployeeManagementPage;
+                userType.StaticInitializer = StaticInitializer_91_EmployeeManagementPage;
                 userType.AddMemberName("ViewModel");
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 91:   //  Microsoft.UI.Xaml.Controls.Page
+            case 92:   //  Microsoft.UI.Xaml.Controls.Page
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 92:   //  Microsoft.UI.Xaml.Controls.UserControl
+            case 93:   //  Microsoft.UI.Xaml.Controls.UserControl
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 93:   //  PayrollManager.UI.ViewModels.EmployeesViewModel
+            case 94:   //  PayrollManager.UI.ViewModels.EmployeesViewModel
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("CommunityToolkit.Mvvm.ComponentModel.ObservableObject"));
-                userType.StaticInitializer = StaticInitializer_93_EmployeesViewModel;
+                userType.StaticInitializer = StaticInitializer_94_EmployeesViewModel;
                 userType.SetIsReturnTypeStub();
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 94:   //  CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+            case 95:   //  CommunityToolkit.Mvvm.ComponentModel.ObservableObject
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Object"));
-                userType.StaticInitializer = StaticInitializer_94_ObservableObject;
+                userType.StaticInitializer = StaticInitializer_95_ObservableObject;
                 xamlType = userType;
                 break;
 
-            case 95:   //  PayrollManager.UI.Views.EmployeesPage
+            case 96:   //  PayrollManager.UI.Views.EmployeesPage
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Page"));
-                userType.Activator = Activate_95_EmployeesPage;
-                userType.StaticInitializer = StaticInitializer_95_EmployeesPage;
+                userType.Activator = Activate_96_EmployeesPage;
+                userType.StaticInitializer = StaticInitializer_96_EmployeesPage;
                 userType.AddMemberName("ViewModel");
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 96:   //  Microsoft.UI.Xaml.Controls.InfoBar
+            case 97:   //  Microsoft.UI.Xaml.Controls.InfoBar
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Control"));
-                userType.Activator = Activate_96_InfoBar;
-                userType.StaticInitializer = StaticInitializer_96_InfoBar;
+                userType.Activator = Activate_97_InfoBar;
+                userType.StaticInitializer = StaticInitializer_97_InfoBar;
                 userType.SetContentPropertyName("Microsoft.UI.Xaml.Controls.InfoBar.Content");
                 userType.AddMemberName("Content");
                 userType.AddMemberName("Title");
@@ -1529,9 +1517,9 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 97:   //  Microsoft.UI.Xaml.Controls.InfoBarSeverity
+            case 98:   //  Microsoft.UI.Xaml.Controls.InfoBarSeverity
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Enum"));
-                userType.StaticInitializer = StaticInitializer_97_InfoBarSeverity;
+                userType.StaticInitializer = StaticInitializer_98_InfoBarSeverity;
                 userType.AddEnumValue("Informational", global::Microsoft.UI.Xaml.Controls.InfoBarSeverity.Informational);
                 userType.AddEnumValue("Success", global::Microsoft.UI.Xaml.Controls.InfoBarSeverity.Success);
                 userType.AddEnumValue("Warning", global::Microsoft.UI.Xaml.Controls.InfoBarSeverity.Warning);
@@ -1539,150 +1527,117 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 98:   //  Microsoft.UI.Xaml.Controls.Primitives.ButtonBase
+            case 99:   //  Microsoft.UI.Xaml.Controls.Primitives.ButtonBase
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 99:   //  System.Windows.Input.ICommand
+            case 100:   //  System.Windows.Input.ICommand
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, null);
-                userType.StaticInitializer = StaticInitializer_99_ICommand;
+                userType.StaticInitializer = StaticInitializer_100_ICommand;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 100:   //  Microsoft.UI.Xaml.Controls.IconSource
+            case 101:   //  Microsoft.UI.Xaml.Controls.IconSource
                 xamlType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlSystemBaseType(typeName, type);
                 break;
 
-            case 101:   //  Microsoft.UI.Xaml.Controls.InfoBarTemplateSettings
+            case 102:   //  Microsoft.UI.Xaml.Controls.InfoBarTemplateSettings
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.DependencyObject"));
-                userType.StaticInitializer = StaticInitializer_101_InfoBarTemplateSettings;
+                userType.StaticInitializer = StaticInitializer_102_InfoBarTemplateSettings;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
 
-            case 102:   //  CommunityToolkit.WinUI.UI.Controls.DataGridCheckBoxColumn
+            case 103:   //  CommunityToolkit.WinUI.UI.Controls.DataGridCheckBoxColumn
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("CommunityToolkit.WinUI.UI.Controls.DataGridBoundColumn"));
-                userType.Activator = Activate_102_DataGridCheckBoxColumn;
-                userType.StaticInitializer = StaticInitializer_102_DataGridCheckBoxColumn;
+                userType.Activator = Activate_103_DataGridCheckBoxColumn;
+                userType.StaticInitializer = StaticInitializer_103_DataGridCheckBoxColumn;
                 userType.AddMemberName("IsThreeState");
                 xamlType = userType;
                 break;
 
-            case 103:   //  PayrollManager.UI.Views.PayrollRunPage
+            case 104:   //  PayrollManager.UI.Views.PayrollRunPage
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Page"));
-                userType.Activator = Activate_103_PayrollRunPage;
-                userType.StaticInitializer = StaticInitializer_103_PayrollRunPage;
+                userType.Activator = Activate_104_PayrollRunPage;
+                userType.StaticInitializer = StaticInitializer_104_PayrollRunPage;
                 userType.AddMemberName("ViewModel");
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 104:   //  PayrollManager.UI.ViewModels.PayRunWizardViewModel
+            case 105:   //  PayrollManager.UI.ViewModels.PayRunWizardViewModel
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("CommunityToolkit.Mvvm.ComponentModel.ObservableObject"));
-                userType.StaticInitializer = StaticInitializer_104_PayRunWizardViewModel;
+                userType.StaticInitializer = StaticInitializer_105_PayRunWizardViewModel;
                 userType.SetIsReturnTypeStub();
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 105:   //  PayrollManager.UI.Views.PayRunsPage
+            case 106:   //  PayrollManager.UI.Views.PayRunsPage
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Page"));
-                userType.Activator = Activate_105_PayRunsPage;
-                userType.StaticInitializer = StaticInitializer_105_PayRunsPage;
+                userType.Activator = Activate_106_PayRunsPage;
+                userType.StaticInitializer = StaticInitializer_106_PayRunsPage;
                 userType.AddMemberName("ViewModel");
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 106:   //  PayrollManager.UI.Views.PayStubDetailsPage
+            case 107:   //  PayrollManager.UI.Views.PayStubDetailsPage
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Page"));
-                userType.Activator = Activate_106_PayStubDetailsPage;
-                userType.StaticInitializer = StaticInitializer_106_PayStubDetailsPage;
+                userType.Activator = Activate_107_PayStubDetailsPage;
+                userType.StaticInitializer = StaticInitializer_107_PayStubDetailsPage;
                 userType.AddMemberName("ViewModel");
-                userType.AddMemberName("EarningLines");
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 107:   //  PayrollManager.UI.ViewModels.PayStubViewModel
+            case 108:   //  PayrollManager.UI.ViewModels.PayStubDetailsViewModel
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("CommunityToolkit.Mvvm.ComponentModel.ObservableObject"));
-                userType.StaticInitializer = StaticInitializer_107_PayStubViewModel;
+                userType.StaticInitializer = StaticInitializer_108_PayStubDetailsViewModel;
                 userType.SetIsReturnTypeStub();
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 108:   //  System.Collections.ObjectModel.ObservableCollection`1<PayrollManager.UI.Views.EarningLineDisplay>
-                userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.Collections.ObjectModel.Collection`1<PayrollManager.UI.Views.EarningLineDisplay>"));
-                userType.StaticInitializer = StaticInitializer_108_ObservableCollection;
-                userType.CollectionAdd = VectorAdd_108_ObservableCollection;
-                userType.SetIsReturnTypeStub();
-                xamlType = userType;
-                break;
-
-            case 109:   //  System.Collections.ObjectModel.Collection`1<PayrollManager.UI.Views.EarningLineDisplay>
-                userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Object"));
-                userType.Activator = Activate_109_Collection;
-                userType.StaticInitializer = StaticInitializer_109_Collection;
-                userType.CollectionAdd = VectorAdd_109_Collection;
-                xamlType = userType;
-                break;
-
-            case 110:   //  PayrollManager.UI.Views.EarningLineDisplay
-                userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Object"));
-                userType.Activator = Activate_110_EarningLineDisplay;
-                userType.StaticInitializer = StaticInitializer_110_EarningLineDisplay;
-                userType.AddMemberName("TypeDisplay");
-                userType.AddMemberName("Description");
-                userType.AddMemberName("Hours");
-                userType.AddMemberName("Rate");
-                userType.AddMemberName("Amount");
-                userType.AddMemberName("HoursDisplay");
-                userType.AddMemberName("RateDisplay");
-                userType.AddMemberName("AmountDisplay");
-                userType.AddMemberName("IsTotalRow");
-                userType.SetIsLocalType();
-                xamlType = userType;
-                break;
-
-            case 111:   //  System.Decimal
-                userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("System.ValueType"));
-                userType.StaticInitializer = StaticInitializer_111_Decimal;
-                userType.SetIsReturnTypeStub();
-                xamlType = userType;
-                break;
-
-            case 112:   //  PayrollManager.UI.Views.PayStubPage
+            case 109:   //  PayrollManager.UI.Views.PayStubPage
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Page"));
-                userType.Activator = Activate_112_PayStubPage;
-                userType.StaticInitializer = StaticInitializer_112_PayStubPage;
+                userType.Activator = Activate_109_PayStubPage;
+                userType.StaticInitializer = StaticInitializer_109_PayStubPage;
                 userType.AddMemberName("ViewModel");
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 113:   //  PayrollManager.UI.Views.ReportsPage
-                userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Page"));
-                userType.Activator = Activate_113_ReportsPage;
-                userType.StaticInitializer = StaticInitializer_113_ReportsPage;
-                userType.AddMemberName("ViewModel");
-                userType.SetIsLocalType();
-                xamlType = userType;
-                break;
-
-            case 114:   //  PayrollManager.UI.ViewModels.ReportsViewModel
+            case 110:   //  PayrollManager.UI.ViewModels.PayStubViewModel
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("CommunityToolkit.Mvvm.ComponentModel.ObservableObject"));
-                userType.StaticInitializer = StaticInitializer_114_ReportsViewModel;
+                userType.StaticInitializer = StaticInitializer_110_PayStubViewModel;
                 userType.SetIsReturnTypeStub();
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 115:   //  Microsoft.UI.Xaml.Controls.RadioButtons
+            case 111:   //  PayrollManager.UI.Views.ReportsPage
+                userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Page"));
+                userType.Activator = Activate_111_ReportsPage;
+                userType.StaticInitializer = StaticInitializer_111_ReportsPage;
+                userType.AddMemberName("ViewModel");
+                userType.SetIsLocalType();
+                xamlType = userType;
+                break;
+
+            case 112:   //  PayrollManager.UI.ViewModels.ReportsViewModel
+                userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("CommunityToolkit.Mvvm.ComponentModel.ObservableObject"));
+                userType.StaticInitializer = StaticInitializer_112_ReportsViewModel;
+                userType.SetIsReturnTypeStub();
+                userType.SetIsLocalType();
+                xamlType = userType;
+                break;
+
+            case 113:   //  Microsoft.UI.Xaml.Controls.RadioButtons
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Control"));
-                userType.Activator = Activate_115_RadioButtons;
-                userType.StaticInitializer = StaticInitializer_115_RadioButtons;
+                userType.Activator = Activate_113_RadioButtons;
+                userType.StaticInitializer = StaticInitializer_113_RadioButtons;
                 userType.SetContentPropertyName("Microsoft.UI.Xaml.Controls.RadioButtons.Items");
                 userType.AddMemberName("Items");
                 userType.AddMemberName("SelectedIndex");
@@ -1695,27 +1650,27 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 116:   //  PayrollManager.UI.Views.SettingsPage
+            case 114:   //  PayrollManager.UI.Views.SettingsPage
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.Controls.Page"));
-                userType.Activator = Activate_116_SettingsPage;
-                userType.StaticInitializer = StaticInitializer_116_SettingsPage;
+                userType.Activator = Activate_114_SettingsPage;
+                userType.StaticInitializer = StaticInitializer_114_SettingsPage;
                 userType.AddMemberName("ViewModel");
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 117:   //  PayrollManager.UI.ViewModels.SettingsViewModel
+            case 115:   //  PayrollManager.UI.ViewModels.SettingsViewModel
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("CommunityToolkit.Mvvm.ComponentModel.ObservableObject"));
-                userType.StaticInitializer = StaticInitializer_117_SettingsViewModel;
+                userType.StaticInitializer = StaticInitializer_115_SettingsViewModel;
                 userType.SetIsReturnTypeStub();
                 userType.SetIsLocalType();
                 xamlType = userType;
                 break;
 
-            case 118:   //  Microsoft.UI.Xaml.Controls.TreeViewNode
+            case 116:   //  Microsoft.UI.Xaml.Controls.TreeViewNode
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, GetXamlTypeByName("Microsoft.UI.Xaml.DependencyObject"));
-                userType.Activator = Activate_118_TreeViewNode;
-                userType.StaticInitializer = StaticInitializer_118_TreeViewNode;
+                userType.Activator = Activate_116_TreeViewNode;
+                userType.StaticInitializer = StaticInitializer_116_TreeViewNode;
                 userType.AddMemberName("Children");
                 userType.AddMemberName("Content");
                 userType.AddMemberName("Depth");
@@ -1727,10 +1682,10 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
                 xamlType = userType;
                 break;
 
-            case 119:   //  System.Collections.Generic.IList`1<Microsoft.UI.Xaml.Controls.TreeViewNode>
+            case 117:   //  System.Collections.Generic.IList`1<Microsoft.UI.Xaml.Controls.TreeViewNode>
                 userType = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType(this, typeName, type, null);
-                userType.StaticInitializer = StaticInitializer_119_IList;
-                userType.CollectionAdd = VectorAdd_119_IList;
+                userType.StaticInitializer = StaticInitializer_117_IList;
+                userType.CollectionAdd = VectorAdd_117_IList;
                 userType.SetIsReturnTypeStub();
                 xamlType = userType;
                 break;
@@ -3565,222 +3520,142 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
             var that = (global::PayrollManager.UI.Views.PayStubDetailsPage)instance;
             return that.ViewModel;
         }
-        private object get_188_PayStubDetailsPage_EarningLines(object instance)
-        {
-            var that = (global::PayrollManager.UI.Views.PayStubDetailsPage)instance;
-            return that.EarningLines;
-        }
-        private object get_189_EarningLineDisplay_TypeDisplay(object instance)
-        {
-            var that = (global::PayrollManager.UI.Views.EarningLineDisplay)instance;
-            return that.TypeDisplay;
-        }
-        private void set_189_EarningLineDisplay_TypeDisplay(object instance, object Value)
-        {
-            var that = (global::PayrollManager.UI.Views.EarningLineDisplay)instance;
-            that.TypeDisplay = (global::System.String)Value;
-        }
-        private object get_190_EarningLineDisplay_Description(object instance)
-        {
-            var that = (global::PayrollManager.UI.Views.EarningLineDisplay)instance;
-            return that.Description;
-        }
-        private void set_190_EarningLineDisplay_Description(object instance, object Value)
-        {
-            var that = (global::PayrollManager.UI.Views.EarningLineDisplay)instance;
-            that.Description = (global::System.String)Value;
-        }
-        private object get_191_EarningLineDisplay_Hours(object instance)
-        {
-            var that = (global::PayrollManager.UI.Views.EarningLineDisplay)instance;
-            return that.Hours;
-        }
-        private void set_191_EarningLineDisplay_Hours(object instance, object Value)
-        {
-            var that = (global::PayrollManager.UI.Views.EarningLineDisplay)instance;
-            that.Hours = (global::System.Decimal)Value;
-        }
-        private object get_192_EarningLineDisplay_Rate(object instance)
-        {
-            var that = (global::PayrollManager.UI.Views.EarningLineDisplay)instance;
-            return that.Rate;
-        }
-        private void set_192_EarningLineDisplay_Rate(object instance, object Value)
-        {
-            var that = (global::PayrollManager.UI.Views.EarningLineDisplay)instance;
-            that.Rate = (global::System.Decimal)Value;
-        }
-        private object get_193_EarningLineDisplay_Amount(object instance)
-        {
-            var that = (global::PayrollManager.UI.Views.EarningLineDisplay)instance;
-            return that.Amount;
-        }
-        private void set_193_EarningLineDisplay_Amount(object instance, object Value)
-        {
-            var that = (global::PayrollManager.UI.Views.EarningLineDisplay)instance;
-            that.Amount = (global::System.Decimal)Value;
-        }
-        private object get_194_EarningLineDisplay_HoursDisplay(object instance)
-        {
-            var that = (global::PayrollManager.UI.Views.EarningLineDisplay)instance;
-            return that.HoursDisplay;
-        }
-        private object get_195_EarningLineDisplay_RateDisplay(object instance)
-        {
-            var that = (global::PayrollManager.UI.Views.EarningLineDisplay)instance;
-            return that.RateDisplay;
-        }
-        private object get_196_EarningLineDisplay_AmountDisplay(object instance)
-        {
-            var that = (global::PayrollManager.UI.Views.EarningLineDisplay)instance;
-            return that.AmountDisplay;
-        }
-        private object get_197_EarningLineDisplay_IsTotalRow(object instance)
-        {
-            var that = (global::PayrollManager.UI.Views.EarningLineDisplay)instance;
-            return that.IsTotalRow;
-        }
-        private void set_197_EarningLineDisplay_IsTotalRow(object instance, object Value)
-        {
-            var that = (global::PayrollManager.UI.Views.EarningLineDisplay)instance;
-            that.IsTotalRow = (global::System.Boolean)Value;
-        }
-        private object get_198_PayStubPage_ViewModel(object instance)
+        private object get_188_PayStubPage_ViewModel(object instance)
         {
             var that = (global::PayrollManager.UI.Views.PayStubPage)instance;
             return that.ViewModel;
         }
-        private object get_199_ReportsPage_ViewModel(object instance)
+        private object get_189_ReportsPage_ViewModel(object instance)
         {
             var that = (global::PayrollManager.UI.Views.ReportsPage)instance;
             return that.ViewModel;
         }
-        private object get_200_RadioButtons_Items(object instance)
+        private object get_190_RadioButtons_Items(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             return that.Items;
         }
-        private object get_201_RadioButtons_SelectedIndex(object instance)
+        private object get_191_RadioButtons_SelectedIndex(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             return that.SelectedIndex;
         }
-        private void set_201_RadioButtons_SelectedIndex(object instance, object Value)
+        private void set_191_RadioButtons_SelectedIndex(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             that.SelectedIndex = (global::System.Int32)Value;
         }
-        private object get_202_RadioButtons_Header(object instance)
+        private object get_192_RadioButtons_Header(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             return that.Header;
         }
-        private void set_202_RadioButtons_Header(object instance, object Value)
+        private void set_192_RadioButtons_Header(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             that.Header = (global::System.Object)Value;
         }
-        private object get_203_RadioButtons_HeaderTemplate(object instance)
+        private object get_193_RadioButtons_HeaderTemplate(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             return that.HeaderTemplate;
         }
-        private void set_203_RadioButtons_HeaderTemplate(object instance, object Value)
+        private void set_193_RadioButtons_HeaderTemplate(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             that.HeaderTemplate = (global::Microsoft.UI.Xaml.DataTemplate)Value;
         }
-        private object get_204_RadioButtons_ItemTemplate(object instance)
+        private object get_194_RadioButtons_ItemTemplate(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             return that.ItemTemplate;
         }
-        private void set_204_RadioButtons_ItemTemplate(object instance, object Value)
+        private void set_194_RadioButtons_ItemTemplate(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             that.ItemTemplate = (global::System.Object)Value;
         }
-        private object get_205_RadioButtons_ItemsSource(object instance)
+        private object get_195_RadioButtons_ItemsSource(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             return that.ItemsSource;
         }
-        private void set_205_RadioButtons_ItemsSource(object instance, object Value)
+        private void set_195_RadioButtons_ItemsSource(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             that.ItemsSource = (global::System.Object)Value;
         }
-        private object get_206_RadioButtons_MaxColumns(object instance)
+        private object get_196_RadioButtons_MaxColumns(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             return that.MaxColumns;
         }
-        private void set_206_RadioButtons_MaxColumns(object instance, object Value)
+        private void set_196_RadioButtons_MaxColumns(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             that.MaxColumns = (global::System.Int32)Value;
         }
-        private object get_207_RadioButtons_SelectedItem(object instance)
+        private object get_197_RadioButtons_SelectedItem(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             return that.SelectedItem;
         }
-        private void set_207_RadioButtons_SelectedItem(object instance, object Value)
+        private void set_197_RadioButtons_SelectedItem(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.RadioButtons)instance;
             that.SelectedItem = (global::System.Object)Value;
         }
-        private object get_208_SettingsPage_ViewModel(object instance)
+        private object get_198_SettingsPage_ViewModel(object instance)
         {
             var that = (global::PayrollManager.UI.Views.SettingsPage)instance;
             return that.ViewModel;
         }
-        private object get_209_TreeViewNode_Children(object instance)
+        private object get_199_TreeViewNode_Children(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)instance;
             return that.Children;
         }
-        private object get_210_TreeViewNode_Content(object instance)
+        private object get_200_TreeViewNode_Content(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)instance;
             return that.Content;
         }
-        private void set_210_TreeViewNode_Content(object instance, object Value)
+        private void set_200_TreeViewNode_Content(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)instance;
             that.Content = (global::System.Object)Value;
         }
-        private object get_211_TreeViewNode_Depth(object instance)
+        private object get_201_TreeViewNode_Depth(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)instance;
             return that.Depth;
         }
-        private object get_212_TreeViewNode_HasChildren(object instance)
+        private object get_202_TreeViewNode_HasChildren(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)instance;
             return that.HasChildren;
         }
-        private object get_213_TreeViewNode_HasUnrealizedChildren(object instance)
+        private object get_203_TreeViewNode_HasUnrealizedChildren(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)instance;
             return that.HasUnrealizedChildren;
         }
-        private void set_213_TreeViewNode_HasUnrealizedChildren(object instance, object Value)
+        private void set_203_TreeViewNode_HasUnrealizedChildren(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)instance;
             that.HasUnrealizedChildren = (global::System.Boolean)Value;
         }
-        private object get_214_TreeViewNode_IsExpanded(object instance)
+        private object get_204_TreeViewNode_IsExpanded(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)instance;
             return that.IsExpanded;
         }
-        private void set_214_TreeViewNode_IsExpanded(object instance, object Value)
+        private void set_204_TreeViewNode_IsExpanded(object instance, object Value)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)instance;
             that.IsExpanded = (global::System.Boolean)Value;
         }
-        private object get_215_TreeViewNode_Parent(object instance)
+        private object get_205_TreeViewNode_Parent(object instance)
         {
             var that = (global::Microsoft.UI.Xaml.Controls.TreeViewNode)instance;
             return that.Parent;
@@ -5055,188 +4930,128 @@ namespace PayrollManager.UI.PayrollManager_UI_XamlTypeInfo
                 break;
             case "PayrollManager.UI.Views.PayStubDetailsPage.ViewModel":
                 userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("PayrollManager.UI.Views.PayStubDetailsPage");
-                xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "ViewModel", "PayrollManager.UI.ViewModels.PayStubViewModel");
+                xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "ViewModel", "PayrollManager.UI.ViewModels.PayStubDetailsViewModel");
                 xamlMember.Getter = get_187_PayStubDetailsPage_ViewModel;
                 xamlMember.SetIsReadOnly();
-                break;
-            case "PayrollManager.UI.Views.PayStubDetailsPage.EarningLines":
-                userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("PayrollManager.UI.Views.PayStubDetailsPage");
-                xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "EarningLines", "System.Collections.ObjectModel.ObservableCollection`1<PayrollManager.UI.Views.EarningLineDisplay>");
-                xamlMember.Getter = get_188_PayStubDetailsPage_EarningLines;
-                xamlMember.SetIsReadOnly();
-                break;
-            case "PayrollManager.UI.Views.EarningLineDisplay.TypeDisplay":
-                userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("PayrollManager.UI.Views.EarningLineDisplay");
-                xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "TypeDisplay", "String");
-                xamlMember.Getter = get_189_EarningLineDisplay_TypeDisplay;
-                xamlMember.Setter = set_189_EarningLineDisplay_TypeDisplay;
-                break;
-            case "PayrollManager.UI.Views.EarningLineDisplay.Description":
-                userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("PayrollManager.UI.Views.EarningLineDisplay");
-                xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "Description", "String");
-                xamlMember.Getter = get_190_EarningLineDisplay_Description;
-                xamlMember.Setter = set_190_EarningLineDisplay_Description;
-                break;
-            case "PayrollManager.UI.Views.EarningLineDisplay.Hours":
-                userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("PayrollManager.UI.Views.EarningLineDisplay");
-                xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "Hours", "System.Decimal");
-                xamlMember.Getter = get_191_EarningLineDisplay_Hours;
-                xamlMember.Setter = set_191_EarningLineDisplay_Hours;
-                break;
-            case "PayrollManager.UI.Views.EarningLineDisplay.Rate":
-                userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("PayrollManager.UI.Views.EarningLineDisplay");
-                xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "Rate", "System.Decimal");
-                xamlMember.Getter = get_192_EarningLineDisplay_Rate;
-                xamlMember.Setter = set_192_EarningLineDisplay_Rate;
-                break;
-            case "PayrollManager.UI.Views.EarningLineDisplay.Amount":
-                userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("PayrollManager.UI.Views.EarningLineDisplay");
-                xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "Amount", "System.Decimal");
-                xamlMember.Getter = get_193_EarningLineDisplay_Amount;
-                xamlMember.Setter = set_193_EarningLineDisplay_Amount;
-                break;
-            case "PayrollManager.UI.Views.EarningLineDisplay.HoursDisplay":
-                userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("PayrollManager.UI.Views.EarningLineDisplay");
-                xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "HoursDisplay", "String");
-                xamlMember.Getter = get_194_EarningLineDisplay_HoursDisplay;
-                xamlMember.SetIsReadOnly();
-                break;
-            case "PayrollManager.UI.Views.EarningLineDisplay.RateDisplay":
-                userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("PayrollManager.UI.Views.EarningLineDisplay");
-                xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "RateDisplay", "String");
-                xamlMember.Getter = get_195_EarningLineDisplay_RateDisplay;
-                xamlMember.SetIsReadOnly();
-                break;
-            case "PayrollManager.UI.Views.EarningLineDisplay.AmountDisplay":
-                userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("PayrollManager.UI.Views.EarningLineDisplay");
-                xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "AmountDisplay", "String");
-                xamlMember.Getter = get_196_EarningLineDisplay_AmountDisplay;
-                xamlMember.SetIsReadOnly();
-                break;
-            case "PayrollManager.UI.Views.EarningLineDisplay.IsTotalRow":
-                userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("PayrollManager.UI.Views.EarningLineDisplay");
-                xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "IsTotalRow", "Boolean");
-                xamlMember.Getter = get_197_EarningLineDisplay_IsTotalRow;
-                xamlMember.Setter = set_197_EarningLineDisplay_IsTotalRow;
                 break;
             case "PayrollManager.UI.Views.PayStubPage.ViewModel":
                 userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("PayrollManager.UI.Views.PayStubPage");
                 xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "ViewModel", "PayrollManager.UI.ViewModels.PayStubViewModel");
-                xamlMember.Getter = get_198_PayStubPage_ViewModel;
+                xamlMember.Getter = get_188_PayStubPage_ViewModel;
                 xamlMember.SetIsReadOnly();
                 break;
             case "PayrollManager.UI.Views.ReportsPage.ViewModel":
                 userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("PayrollManager.UI.Views.ReportsPage");
                 xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "ViewModel", "PayrollManager.UI.ViewModels.ReportsViewModel");
-                xamlMember.Getter = get_199_ReportsPage_ViewModel;
+                xamlMember.Getter = get_189_ReportsPage_ViewModel;
                 xamlMember.SetIsReadOnly();
                 break;
             case "Microsoft.UI.Xaml.Controls.RadioButtons.Items":
                 userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.RadioButtons");
                 xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "Items", "System.Collections.Generic.IList`1<Object>");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_200_RadioButtons_Items;
+                xamlMember.Getter = get_190_RadioButtons_Items;
                 xamlMember.SetIsReadOnly();
                 break;
             case "Microsoft.UI.Xaml.Controls.RadioButtons.SelectedIndex":
                 userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.RadioButtons");
                 xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "SelectedIndex", "Int32");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_201_RadioButtons_SelectedIndex;
-                xamlMember.Setter = set_201_RadioButtons_SelectedIndex;
+                xamlMember.Getter = get_191_RadioButtons_SelectedIndex;
+                xamlMember.Setter = set_191_RadioButtons_SelectedIndex;
                 break;
             case "Microsoft.UI.Xaml.Controls.RadioButtons.Header":
                 userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.RadioButtons");
                 xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "Header", "Object");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_202_RadioButtons_Header;
-                xamlMember.Setter = set_202_RadioButtons_Header;
+                xamlMember.Getter = get_192_RadioButtons_Header;
+                xamlMember.Setter = set_192_RadioButtons_Header;
                 break;
             case "Microsoft.UI.Xaml.Controls.RadioButtons.HeaderTemplate":
                 userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.RadioButtons");
                 xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "HeaderTemplate", "Microsoft.UI.Xaml.DataTemplate");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_203_RadioButtons_HeaderTemplate;
-                xamlMember.Setter = set_203_RadioButtons_HeaderTemplate;
+                xamlMember.Getter = get_193_RadioButtons_HeaderTemplate;
+                xamlMember.Setter = set_193_RadioButtons_HeaderTemplate;
                 break;
             case "Microsoft.UI.Xaml.Controls.RadioButtons.ItemTemplate":
                 userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.RadioButtons");
                 xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "ItemTemplate", "Object");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_204_RadioButtons_ItemTemplate;
-                xamlMember.Setter = set_204_RadioButtons_ItemTemplate;
+                xamlMember.Getter = get_194_RadioButtons_ItemTemplate;
+                xamlMember.Setter = set_194_RadioButtons_ItemTemplate;
                 break;
             case "Microsoft.UI.Xaml.Controls.RadioButtons.ItemsSource":
                 userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.RadioButtons");
                 xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "ItemsSource", "Object");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_205_RadioButtons_ItemsSource;
-                xamlMember.Setter = set_205_RadioButtons_ItemsSource;
+                xamlMember.Getter = get_195_RadioButtons_ItemsSource;
+                xamlMember.Setter = set_195_RadioButtons_ItemsSource;
                 break;
             case "Microsoft.UI.Xaml.Controls.RadioButtons.MaxColumns":
                 userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.RadioButtons");
                 xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "MaxColumns", "Int32");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_206_RadioButtons_MaxColumns;
-                xamlMember.Setter = set_206_RadioButtons_MaxColumns;
+                xamlMember.Getter = get_196_RadioButtons_MaxColumns;
+                xamlMember.Setter = set_196_RadioButtons_MaxColumns;
                 break;
             case "Microsoft.UI.Xaml.Controls.RadioButtons.SelectedItem":
                 userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.RadioButtons");
                 xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "SelectedItem", "Object");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_207_RadioButtons_SelectedItem;
-                xamlMember.Setter = set_207_RadioButtons_SelectedItem;
+                xamlMember.Getter = get_197_RadioButtons_SelectedItem;
+                xamlMember.Setter = set_197_RadioButtons_SelectedItem;
                 break;
             case "PayrollManager.UI.Views.SettingsPage.ViewModel":
                 userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("PayrollManager.UI.Views.SettingsPage");
                 xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "ViewModel", "PayrollManager.UI.ViewModels.SettingsViewModel");
-                xamlMember.Getter = get_208_SettingsPage_ViewModel;
+                xamlMember.Getter = get_198_SettingsPage_ViewModel;
                 xamlMember.SetIsReadOnly();
                 break;
             case "Microsoft.UI.Xaml.Controls.TreeViewNode.Children":
                 userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TreeViewNode");
                 xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "Children", "System.Collections.Generic.IList`1<Microsoft.UI.Xaml.Controls.TreeViewNode>");
-                xamlMember.Getter = get_209_TreeViewNode_Children;
+                xamlMember.Getter = get_199_TreeViewNode_Children;
                 xamlMember.SetIsReadOnly();
                 break;
             case "Microsoft.UI.Xaml.Controls.TreeViewNode.Content":
                 userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TreeViewNode");
                 xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "Content", "Object");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_210_TreeViewNode_Content;
-                xamlMember.Setter = set_210_TreeViewNode_Content;
+                xamlMember.Getter = get_200_TreeViewNode_Content;
+                xamlMember.Setter = set_200_TreeViewNode_Content;
                 break;
             case "Microsoft.UI.Xaml.Controls.TreeViewNode.Depth":
                 userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TreeViewNode");
                 xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "Depth", "Int32");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_211_TreeViewNode_Depth;
+                xamlMember.Getter = get_201_TreeViewNode_Depth;
                 xamlMember.SetIsReadOnly();
                 break;
             case "Microsoft.UI.Xaml.Controls.TreeViewNode.HasChildren":
                 userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TreeViewNode");
                 xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "HasChildren", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_212_TreeViewNode_HasChildren;
+                xamlMember.Getter = get_202_TreeViewNode_HasChildren;
                 xamlMember.SetIsReadOnly();
                 break;
             case "Microsoft.UI.Xaml.Controls.TreeViewNode.HasUnrealizedChildren":
                 userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TreeViewNode");
                 xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "HasUnrealizedChildren", "Boolean");
-                xamlMember.Getter = get_213_TreeViewNode_HasUnrealizedChildren;
-                xamlMember.Setter = set_213_TreeViewNode_HasUnrealizedChildren;
+                xamlMember.Getter = get_203_TreeViewNode_HasUnrealizedChildren;
+                xamlMember.Setter = set_203_TreeViewNode_HasUnrealizedChildren;
                 break;
             case "Microsoft.UI.Xaml.Controls.TreeViewNode.IsExpanded":
                 userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TreeViewNode");
                 xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "IsExpanded", "Boolean");
                 xamlMember.SetIsDependencyProperty();
-                xamlMember.Getter = get_214_TreeViewNode_IsExpanded;
-                xamlMember.Setter = set_214_TreeViewNode_IsExpanded;
+                xamlMember.Getter = get_204_TreeViewNode_IsExpanded;
+                xamlMember.Setter = set_204_TreeViewNode_IsExpanded;
                 break;
             case "Microsoft.UI.Xaml.Controls.TreeViewNode.Parent":
                 userType = (global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlUserType)GetXamlTypeByName("Microsoft.UI.Xaml.Controls.TreeViewNode");
                 xamlMember = new global::PayrollManager.UI.PayrollManager_UI_XamlTypeInfo.XamlMember(this, "Parent", "Microsoft.UI.Xaml.Controls.TreeViewNode");
-                xamlMember.Getter = get_215_TreeViewNode_Parent;
+                xamlMember.Getter = get_205_TreeViewNode_Parent;
                 xamlMember.SetIsReadOnly();
                 break;
             }

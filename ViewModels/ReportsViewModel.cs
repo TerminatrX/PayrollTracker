@@ -112,9 +112,22 @@ public partial class ReportsViewModel : ObservableObject
     public string CurrentPageRange => $"{(_currentPage - 1) * _pageSize + 1}-{Math.Min(_currentPage * _pageSize, TotalEmployeeCount)}";
 
     // ═══════════════════════════════════════════════════════════════
-    // COMPANY TOTALS
+    // COMPANY TOTALS (computed from PayStubs in date range)
     // ═══════════════════════════════════════════════════════════════
 
+    [ObservableProperty]
+    private decimal _companyTotalGross;
+
+    [ObservableProperty]
+    private decimal _companyTotalTaxes;
+
+    [ObservableProperty]
+    private decimal _companyTotalBenefits;
+
+    [ObservableProperty]
+    private decimal _companyTotalNet;
+
+    // Individual tax components for detailed display
     [ObservableProperty]
     private decimal _companyGross;
 
@@ -129,9 +142,6 @@ public partial class ReportsViewModel : ObservableObject
 
     [ObservableProperty]
     private decimal _companyMedicare;
-
-    [ObservableProperty]
-    private decimal _companyTotalTaxes;
 
     [ObservableProperty]
     private decimal _companyNet;
@@ -187,126 +197,8 @@ public partial class ReportsViewModel : ObservableObject
 
         try
         {
-            var (start, end) = GetDateRange();
-
-            // Use AggregationService to get employee and company totals
-            var employeeTotalsList = await _aggregationService.GetAllEmployeeTotalsAsync(start, end);
-            
-            // Get company totals based on period type
-            CompanyTotals? companyTotals;
-            if (PeriodIndex == 4) // Full Year
-            {
-                companyTotals = await _aggregationService.GetCompanyYtdTotalsAsync(SelectedYear);
-            }
-            else if (PeriodIndex >= 0 && PeriodIndex <= 3) // Quarter
-            {
-                companyTotals = await _aggregationService.GetCompanyQtdTotalsAsync(end);
-            }
-            else // Custom range
-            {
-                // Calculate company totals for custom range
-                var query = _dbContext.PayStubs
-                    .Include(ps => ps.PayRun)
-                    .Where(ps => ps.PayRun!.PayDate >= start && ps.PayRun.PayDate <= end);
-
-                var totals = await query
-                    .GroupBy(_ => 1)
-                    .Select(g => new
-                    {
-                        EmployeeCount = g.Select(x => x.EmployeeId).Distinct().Count(),
-                        Gross = g.Sum(x => x.GrossPay),
-                        Federal = g.Sum(x => x.TaxFederal),
-                        State = g.Sum(x => x.TaxState),
-                        SS = g.Sum(x => x.TaxSocialSecurity),
-                        Medicare = g.Sum(x => x.TaxMedicare),
-                        PreTax401k = g.Sum(x => x.PreTax401kDeduction),
-                        PostTax = g.Sum(x => x.PostTaxDeductions),
-                        Net = g.Sum(x => x.NetPay),
-                        Count = g.Count()
-                    })
-                    .FirstOrDefaultAsync();
-
-                companyTotals = totals != null ? new CompanyTotals
-                {
-                    Year = SelectedYear,
-                    EmployeeCount = totals.EmployeeCount,
-                    GrossPay = totals.Gross,
-                    FederalTax = totals.Federal,
-                    StateTax = totals.State,
-                    SocialSecurity = totals.SS,
-                    Medicare = totals.Medicare,
-                    TotalTaxes = totals.Federal + totals.State + totals.SS + totals.Medicare,
-                    PreTax401k = totals.PreTax401k,
-                    PostTaxDeductions = totals.PostTax,
-                    TotalDeductions = totals.PreTax401k + totals.PostTax,
-                    NetPay = totals.Net,
-                    PayStubCount = totals.Count
-                } : null;
-            }
-
-            // Populate EmployeeTotals collection
-            EmployeeTotals.Clear();
-            EmployeeSummaries.Clear();
-            
-            foreach (var totals in employeeTotalsList)
-            {
-                EmployeeTotals.Add(new EmployeeReportRow
-                {
-                    EmployeeId = totals.EmployeeId,
-                    EmployeeName = totals.EmployeeName,
-                    GrossPay = totals.GrossPay,
-                    FederalTax = totals.FederalTax,
-                    StateTax = totals.StateTax,
-                    SocialSecurity = totals.SocialSecurity,
-                    Medicare = totals.Medicare,
-                    TotalTaxes = totals.TotalTaxes,
-                    TotalDeductions = totals.TotalDeductions,
-                    NetPay = totals.NetPay
-                });
-                
-                // Also populate the summary rows for the new grid
-                var nameParts = totals.EmployeeName.Split(' ');
-                var initials = nameParts.Length >= 2 
-                    ? $"{nameParts[0][0]}{nameParts[^1][0]}" 
-                    : totals.EmployeeName[..Math.Min(2, totals.EmployeeName.Length)];
-                
-                EmployeeSummaries.Add(new EmployeeSummaryRow
-                {
-                    EmployeeId = $"EMP{totals.EmployeeId:D3}",
-                    EmployeeName = totals.EmployeeName,
-                    Initials = initials.ToUpper(),
-                    DepartmentType = "Full-Time",
-                    GrossPay = totals.GrossPay,
-                    FederalTax = totals.FederalTax,
-                    StateTax = totals.StateTax,
-                    Benefits = totals.TotalDeductions,
-                    NetPay = totals.NetPay,
-                    Status = "PROCESSED"
-                });
-            }
-            
-            OnPropertyChanged(nameof(TotalEmployeeCount));
-            OnPropertyChanged(nameof(CurrentPageRange));
-
-            // Set company totals
-            if (companyTotals != null)
-            {
-                CompanyGross = companyTotals.GrossPay;
-                CompanyFederalTax = companyTotals.FederalTax;
-                CompanyStateTax = companyTotals.StateTax;
-                CompanySocialSecurity = companyTotals.SocialSecurity;
-                CompanyMedicare = companyTotals.Medicare;
-                CompanyTotalTaxes = companyTotals.TotalTaxes;
-                CompanyNet = companyTotals.NetPay;
-
-                // Set KPI tile values
-                TotalGross = CompanyGross;
-                TotalTaxes = CompanyTotalTaxes;
-                TotalBenefits = companyTotals.TotalDeductions;
-                TotalNet = CompanyNet;
-            }
-
-            StatusMessage = $"Report complete: {employeeTotalsList.Count} employees, {start:d} - {end:d}";
+            var (startDate, endDate) = GetDateRange();
+            await LoadReportDataAsync(startDate, endDate);
         }
         catch (Exception ex)
         {
@@ -318,17 +210,146 @@ public partial class ReportsViewModel : ObservableObject
         }
     }
 
+    /// <summary>
+    /// Loads report data for the specified date range.
+    /// Queries PayStubs joined with PayRuns and Employees where PayRun.PayDate is in the interval.
+    /// </summary>
+    public async Task LoadReportDataAsync(DateTime startDate, DateTime endDate)
+    {
+        // Query PayStubs joined with PayRuns and Employees where PayRun.PayDate is in the interval
+        var payStubs = await _dbContext.PayStubs
+            .Include(ps => ps.PayRun)
+            .Include(ps => ps.Employee)
+            .Where(ps => ps.PayRun != null && 
+                         ps.PayRun.PayDate >= startDate && 
+                         ps.PayRun.PayDate <= endDate)
+            .ToListAsync();
+
+        // Compute company totals
+        CompanyTotalGross = payStubs.Sum(ps => ps.GrossPay);
+        CompanyTotalTaxes = payStubs.Sum(ps => ps.TotalTaxes);
+        CompanyTotalBenefits = payStubs.Sum(ps => ps.PreTax401kDeduction + ps.PostTaxDeductions);
+        CompanyTotalNet = payStubs.Sum(ps => ps.NetPay);
+
+        // Set individual tax components for display
+        CompanyGross = CompanyTotalGross;
+        CompanyFederalTax = payStubs.Sum(ps => ps.TaxFederal);
+        CompanyStateTax = payStubs.Sum(ps => ps.TaxState);
+        CompanySocialSecurity = payStubs.Sum(ps => ps.TaxSocialSecurity);
+        CompanyMedicare = payStubs.Sum(ps => ps.TaxMedicare);
+        CompanyTotalTaxes = CompanyFederalTax + CompanyStateTax + CompanySocialSecurity + CompanyMedicare;
+        CompanyNet = CompanyTotalNet;
+
+        // Set KPI tile values
+        TotalGross = CompanyTotalGross;
+        TotalTaxes = CompanyTotalTaxes;
+        TotalBenefits = CompanyTotalBenefits;
+        TotalNet = CompanyTotalNet;
+
+        // Compute per-employee totals over the same window
+        var employeeGroups = payStubs
+            .GroupBy(ps => ps.EmployeeId)
+            .Select(g => new
+            {
+                EmployeeId = g.Key,
+                Employee = g.First().Employee,
+                GrossPay = g.Sum(ps => ps.GrossPay),
+                FederalTax = g.Sum(ps => ps.TaxFederal),
+                StateTax = g.Sum(ps => ps.TaxState),
+                SocialSecurity = g.Sum(ps => ps.TaxSocialSecurity),
+                Medicare = g.Sum(ps => ps.TaxMedicare),
+                TotalTaxes = g.Sum(ps => ps.TotalTaxes),
+                PreTax401k = g.Sum(ps => ps.PreTax401kDeduction),
+                PostTaxDeductions = g.Sum(ps => ps.PostTaxDeductions),
+                TotalDeductions = g.Sum(ps => ps.PreTax401kDeduction + ps.PostTaxDeductions),
+                NetPay = g.Sum(ps => ps.NetPay)
+            })
+            .OrderBy(g => g.Employee?.FullName ?? "Unknown")
+            .ToList();
+
+        // Populate EmployeeTotals collection
+        EmployeeTotals.Clear();
+        EmployeeSummaries.Clear();
+
+        foreach (var group in employeeGroups)
+        {
+            var employeeName = group.Employee?.FullName ?? "Unknown";
+            
+            EmployeeTotals.Add(new EmployeeReportRow
+            {
+                EmployeeId = group.EmployeeId,
+                EmployeeName = employeeName,
+                GrossPay = group.GrossPay,
+                FederalTax = group.FederalTax,
+                StateTax = group.StateTax,
+                SocialSecurity = group.SocialSecurity,
+                Medicare = group.Medicare,
+                TotalTaxes = group.TotalTaxes,
+                TotalDeductions = group.TotalDeductions,
+                NetPay = group.NetPay
+            });
+
+            // Also populate the summary rows for the new grid
+            var nameParts = employeeName.Split(' ');
+            var initials = nameParts.Length >= 2
+                ? $"{nameParts[0][0]}{nameParts[^1][0]}"
+                : employeeName[..Math.Min(2, employeeName.Length)];
+
+            EmployeeSummaries.Add(new EmployeeSummaryRow
+            {
+                EmployeeId = $"EMP{group.EmployeeId:D3}",
+                EmployeeName = employeeName,
+                Initials = initials.ToUpper(),
+                DepartmentType = group.Employee?.Department ?? "Full-Time",
+                GrossPay = group.GrossPay,
+                FederalTax = group.FederalTax,
+                StateTax = group.StateTax,
+                Benefits = group.TotalDeductions,
+                NetPay = group.NetPay,
+                Status = "PROCESSED"
+            });
+        }
+
+        OnPropertyChanged(nameof(TotalEmployeeCount));
+        OnPropertyChanged(nameof(CurrentPageRange));
+
+        StatusMessage = $"Report complete: {employeeGroups.Count} employees, {startDate:d} - {endDate:d}";
+    }
+
     private (DateTime start, DateTime end) GetDateRange()
     {
         var year = SelectedYear;
         return PeriodIndex switch
         {
-            0 => (new DateTime(year, 1, 1), new DateTime(year, 3, 31, 23, 59, 59)),   // Q1
-            1 => (new DateTime(year, 4, 1), new DateTime(year, 6, 30, 23, 59, 59)),   // Q2
-            2 => (new DateTime(year, 7, 1), new DateTime(year, 9, 30, 23, 59, 59)),   // Q3
-            3 => (new DateTime(year, 10, 1), new DateTime(year, 12, 31, 23, 59, 59)), // Q4
-            4 => (new DateTime(year, 1, 1), new DateTime(year, 12, 31, 23, 59, 59)),  // Full Year
-            5 => (CustomStartDate.DateTime, CustomEndDate.DateTime),                   // Custom
+            0 => GetQuarterRange(year, 1),   // Q1
+            1 => GetQuarterRange(year, 2),   // Q2
+            2 => GetQuarterRange(year, 3),   // Q3
+            3 => GetQuarterRange(year, 4),   // Q4
+            4 => GetYearRange(year),         // Full Year
+            5 => (CustomStartDate.DateTime, CustomEndDate.DateTime), // Custom
+            _ => GetYearRange(year)
+        };
+    }
+
+    /// <summary>
+    /// Gets the date range for a full year.
+    /// </summary>
+    public static (DateTime start, DateTime end) GetYearRange(int year)
+    {
+        return (new DateTime(year, 1, 1), new DateTime(year, 12, 31, 23, 59, 59));
+    }
+
+    /// <summary>
+    /// Gets the date range for a specific quarter of a year.
+    /// </summary>
+    public static (DateTime start, DateTime end) GetQuarterRange(int year, int quarter)
+    {
+        return quarter switch
+        {
+            1 => (new DateTime(year, 1, 1), new DateTime(year, 3, 31, 23, 59, 59)),   // Q1
+            2 => (new DateTime(year, 4, 1), new DateTime(year, 6, 30, 23, 59, 59)),   // Q2
+            3 => (new DateTime(year, 7, 1), new DateTime(year, 9, 30, 23, 59, 59)),   // Q3
+            4 => (new DateTime(year, 10, 1), new DateTime(year, 12, 31, 23, 59, 59)), // Q4
             _ => (new DateTime(year, 1, 1), new DateTime(year, 12, 31, 23, 59, 59))
         };
     }
@@ -341,18 +362,39 @@ public partial class ReportsViewModel : ObservableObject
 
         try
         {
-            var (start, end) = GetDateRange();
+            var (startDate, endDate) = GetDateRange();
             
-            // Get company totals
-            CompanyTotals? companyTotals = null;
-            if (PeriodIndex == 4) // Full Year
+            // Query PayStubs directly for the date range
+            var payStubs = await _dbContext.PayStubs
+                .Include(ps => ps.PayRun)
+                .Include(ps => ps.Employee)
+                .Where(ps => ps.PayRun != null && 
+                             ps.PayRun.PayDate >= startDate && 
+                             ps.PayRun.PayDate <= endDate)
+                .ToListAsync();
+
+            // Compute company totals
+            var companyTotalGross = payStubs.Sum(ps => ps.GrossPay);
+            var companyTotalTaxes = payStubs.Sum(ps => ps.TotalTaxes);
+            var companyTotalBenefits = payStubs.Sum(ps => ps.PreTax401kDeduction + ps.PostTaxDeductions);
+            var companyTotalNet = payStubs.Sum(ps => ps.NetPay);
+
+            var companyTotals = new CompanyTotals
             {
-                companyTotals = await _aggregationService.GetCompanyYtdTotalsAsync(SelectedYear);
-            }
-            else if (PeriodIndex >= 0 && PeriodIndex <= 3) // Quarter
-            {
-                companyTotals = await _aggregationService.GetCompanyQtdTotalsAsync(end);
-            }
+                Year = SelectedYear,
+                EmployeeCount = payStubs.Select(ps => ps.EmployeeId).Distinct().Count(),
+                GrossPay = companyTotalGross,
+                FederalTax = payStubs.Sum(ps => ps.TaxFederal),
+                StateTax = payStubs.Sum(ps => ps.TaxState),
+                SocialSecurity = payStubs.Sum(ps => ps.TaxSocialSecurity),
+                Medicare = payStubs.Sum(ps => ps.TaxMedicare),
+                TotalTaxes = companyTotalTaxes,
+                PreTax401k = payStubs.Sum(ps => ps.PreTax401kDeduction),
+                PostTaxDeductions = payStubs.Sum(ps => ps.PostTaxDeductions),
+                TotalDeductions = companyTotalBenefits,
+                NetPay = companyTotalNet,
+                PayStubCount = payStubs.Count
+            };
 
             // Convert EmployeeReportRow to EmployeeTotals
             var employeeTotals = EmployeeTotals.Select(row => new EmployeeTotals
@@ -374,8 +416,8 @@ public partial class ReportsViewModel : ObservableObject
             var filePath = await _exportService.ExportReportToCsvAsync(
                 employeeTotals,
                 companyTotals,
-                start,
-                end);
+                startDate,
+                endDate);
 
             LastExportPath = filePath;
             StatusMessage = $"Exported to: {filePath}";
@@ -398,18 +440,39 @@ public partial class ReportsViewModel : ObservableObject
 
         try
         {
-            var (start, end) = GetDateRange();
+            var (startDate, endDate) = GetDateRange();
             
-            // Get company totals
-            CompanyTotals? companyTotals = null;
-            if (PeriodIndex == 4) // Full Year
+            // Query PayStubs directly for the date range
+            var payStubs = await _dbContext.PayStubs
+                .Include(ps => ps.PayRun)
+                .Include(ps => ps.Employee)
+                .Where(ps => ps.PayRun != null && 
+                             ps.PayRun.PayDate >= startDate && 
+                             ps.PayRun.PayDate <= endDate)
+                .ToListAsync();
+
+            // Compute company totals
+            var companyTotalGross = payStubs.Sum(ps => ps.GrossPay);
+            var companyTotalTaxes = payStubs.Sum(ps => ps.TotalTaxes);
+            var companyTotalBenefits = payStubs.Sum(ps => ps.PreTax401kDeduction + ps.PostTaxDeductions);
+            var companyTotalNet = payStubs.Sum(ps => ps.NetPay);
+
+            var companyTotals = new CompanyTotals
             {
-                companyTotals = await _aggregationService.GetCompanyYtdTotalsAsync(SelectedYear);
-            }
-            else if (PeriodIndex >= 0 && PeriodIndex <= 3) // Quarter
-            {
-                companyTotals = await _aggregationService.GetCompanyQtdTotalsAsync(end);
-            }
+                Year = SelectedYear,
+                EmployeeCount = payStubs.Select(ps => ps.EmployeeId).Distinct().Count(),
+                GrossPay = companyTotalGross,
+                FederalTax = payStubs.Sum(ps => ps.TaxFederal),
+                StateTax = payStubs.Sum(ps => ps.TaxState),
+                SocialSecurity = payStubs.Sum(ps => ps.TaxSocialSecurity),
+                Medicare = payStubs.Sum(ps => ps.TaxMedicare),
+                TotalTaxes = companyTotalTaxes,
+                PreTax401k = payStubs.Sum(ps => ps.PreTax401kDeduction),
+                PostTaxDeductions = payStubs.Sum(ps => ps.PostTaxDeductions),
+                TotalDeductions = companyTotalBenefits,
+                NetPay = companyTotalNet,
+                PayStubCount = payStubs.Count
+            };
 
             // Convert EmployeeReportRow to EmployeeTotals
             var employeeTotals = EmployeeTotals.Select(row => new EmployeeTotals
@@ -431,8 +494,8 @@ public partial class ReportsViewModel : ObservableObject
             var filePath = await _exportService.ExportReportToPdfAsync(
                 employeeTotals,
                 companyTotals,
-                start,
-                end);
+                startDate,
+                endDate);
 
             LastExportPath = filePath;
             StatusMessage = $"Exported to: {filePath}";

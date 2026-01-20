@@ -21,27 +21,27 @@
 
         <!-- Search and Filters -->
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,16">
-            <TextBox x:ConnectionId='35' x:Name="SearchBox"
+            <TextBox x:ConnectionId='36' x:Name="SearchBox"
                      PlaceholderText="Search by name or ID..."
                      Width="280"
                                                                                                            
                      Style="{StaticResource FormTextBoxStyle}" />
 
-            <ComboBox x:ConnectionId='36' Header="Status" Width="140"
+            <ComboBox x:ConnectionId='37' Header="Status" Width="140"
                                                                                        >
                 <ComboBoxItem Content="All" />
                 <ComboBoxItem Content="Active" />
                 <ComboBoxItem Content="Inactive" />
             </ComboBox>
 
-            <ComboBox x:ConnectionId='37' Header="Pay Type" Width="140"
+            <ComboBox x:ConnectionId='38' Header="Pay Type" Width="140"
                                                                                         >
                 <ComboBoxItem Content="All" />
                 <ComboBoxItem Content="Salary" />
                 <ComboBoxItem Content="Hourly" />
             </ComboBox>
 
-            <Button x:ConnectionId='38' Content="New Employee" 
+            <Button x:ConnectionId='39' Content="New Employee" 
                     Style="{StaticResource PrimaryButtonStyle}"
                                                                    
                     Margin="24,18,0,0" />
@@ -127,17 +127,17 @@
                             <TextBlock Text="PROFILE" Style="{StaticResource SectionTitleStyle}" />
                             
                             <StackPanel Orientation="Horizontal">
-                                <PersonPicture x:ConnectionId='25' Width="64" Height="64"                                                               />
+                                <PersonPicture x:ConnectionId='26' Width="64" Height="64"                                                               />
                                 <StackPanel VerticalAlignment="Center">
-                                    <TextBlock x:ConnectionId='26'                                                        
+                                    <TextBlock x:ConnectionId='27'                                                        
                                                FontSize="18" FontWeight="SemiBold" />
                                     <StackPanel Orientation="Horizontal">
-                                        <Border x:ConnectionId='27' CornerRadius="10" Padding="8,2"
+                                        <Border x:ConnectionId='28' CornerRadius="10" Padding="8,2"
                                                                                                                                                              >
-                                            <TextBlock x:ConnectionId='29'                                                                                                        
+                                            <TextBlock x:ConnectionId='30'                                                                                                        
                                                        FontSize="11" Foreground="White" />
                                         </Border>
-                                        <TextBlock x:ConnectionId='28'                                                              
+                                        <TextBlock x:ConnectionId='29'                                                              
                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                    VerticalAlignment="Center" />
                                     </StackPanel>
@@ -154,17 +154,17 @@
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
 
-                                <TextBox x:ConnectionId='21' Grid.Row="0" Grid.Column="0" Header="First Name"
+                                <TextBox x:ConnectionId='22' Grid.Row="0" Grid.Column="0" Header="First Name"
                                                                                                                                       />
-                                <TextBox x:ConnectionId='22' Grid.Row="0" Grid.Column="1" Header="Last Name"
+                                <TextBox x:ConnectionId='23' Grid.Row="0" Grid.Column="1" Header="Last Name"
                                                                                                                                      />
 
-                                <ComboBox x:ConnectionId='23' Grid.Row="1" Grid.Column="0" Header="Pay Type" HorizontalAlignment="Stretch"
+                                <ComboBox x:ConnectionId='24' Grid.Row="1" Grid.Column="0" Header="Pay Type" HorizontalAlignment="Stretch"
                                                                                                                                                           >
                                     <ComboBoxItem Content="Salary" />
                                     <ComboBoxItem Content="Hourly" />
                                 </ComboBox>
-                                <CheckBox x:ConnectionId='24' Grid.Row="1" Grid.Column="1" Content="Active" 
+                                <CheckBox x:ConnectionId='25' Grid.Row="1" Grid.Column="1" Content="Active" 
                                                                                                      
                                           VerticalAlignment="Bottom" Margin="0,0,0,4" />
                             </Grid>
@@ -185,21 +185,22 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
 
                                 <StackPanel Grid.Row="0" Grid.Column="0">
                                     <TextBlock Text="Annualized Salary" Style="{StaticResource LabelStyle}" />
-                                    <TextBlock x:ConnectionId='20'                                                                                                              
+                                    <TextBlock x:ConnectionId='21'                                                                                                              
                                                Style="{StaticResource LargeValueStyle}" />
                                 </StackPanel>
 
                                 <NumberBox x:ConnectionId='15' Grid.Row="0" Grid.Column="1" Header="401k %"
                                                                                                                                                                 
-                                           Minimum="0" Maximum="25" SmallChange="0.5" />
+                                           Minimum="0" Maximum="0.25" SmallChange="0.01" />
 
                                 <NumberBox x:ConnectionId='16' Grid.Row="1" Grid.Column="0" Header="Annual Salary"
                                                                                                                                                            
-                                                                                                                                                       
+                                                                                                      
                                            Minimum="0" />
 
                                 <NumberBox x:ConnectionId='17' Grid.Row="1" Grid.Column="1" Header="Hourly Rate"
@@ -207,11 +208,16 @@
                                                                                                       
                                            Minimum="0" />
 
-                                <NumberBox x:ConnectionId='18' Grid.Row="2" Grid.Column="0" Header="Health Ins/Period"
+                                <NumberBox x:ConnectionId='18' Grid.Row="2" Grid.Column="0" Header="Default Hours/Period"
+                                                                                                               
+                                                                                                      
+                                           Minimum="0" />
+
+                                <NumberBox x:ConnectionId='19' Grid.Row="2" Grid.Column="1" Header="Health Ins/Period"
                                                                                                                                                                        
                                            Minimum="0" />
 
-                                <NumberBox x:ConnectionId='19' Grid.Row="2" Grid.Column="1" Header="Other Deductions"
+                                <NumberBox x:ConnectionId='20' Grid.Row="3" Grid.Column="0" Header="Other Deductions"
                                                                                                                                                                        
                                            Minimum="0" />
                             </Grid>

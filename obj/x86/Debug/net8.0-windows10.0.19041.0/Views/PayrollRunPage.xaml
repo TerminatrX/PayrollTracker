@@ -19,19 +19,19 @@
         <!-- Title and Step Indicator -->
         <StackPanel Grid.Row="0" Margin="0,0,0,24">
             <TextBlock Text="Pay Run" Style="{StaticResource PageTitleStyle}" />
-            <TextBlock x:ConnectionId='39'                                                  
+            <TextBlock x:ConnectionId='41'                                                  
                        FontSize="16" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
         </StackPanel>
 
         <!-- Step Indicator Dots -->
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,24">
-            <Ellipse x:ConnectionId='36' Width="12" Height="12" 
-                                                                                                                       />
-            <Rectangle Width="40" Height="2" Fill="{ThemeResource SystemFillColorNeutralBrush}" VerticalAlignment="Center" />
-            <Ellipse x:ConnectionId='37' Width="12" Height="12" 
-                                                                                                                       />
-            <Rectangle Width="40" Height="2" Fill="{ThemeResource SystemFillColorNeutralBrush}" VerticalAlignment="Center" />
             <Ellipse x:ConnectionId='38' Width="12" Height="12" 
+                                                                                                                       />
+            <Rectangle Width="40" Height="2" Fill="{ThemeResource SystemFillColorNeutralBrush}" VerticalAlignment="Center" />
+            <Ellipse x:ConnectionId='39' Width="12" Height="12" 
+                                                                                                                       />
+            <Rectangle Width="40" Height="2" Fill="{ThemeResource SystemFillColorNeutralBrush}" VerticalAlignment="Center" />
+            <Ellipse x:ConnectionId='40' Width="12" Height="12" 
                                                                                                                        />
         </StackPanel>
 
@@ -45,15 +45,15 @@
                         <TextBlock Text="SELECT PAY PERIOD" Style="{StaticResource SectionTitleStyle}" />
                         
                         <StackPanel>
-                            <CalendarDatePicker x:ConnectionId='33' Header="Period Start" 
+                            <CalendarDatePicker x:ConnectionId='35' Header="Period Start" 
                                                                                                   
                                                 MinWidth="200" />
                             
-                            <CalendarDatePicker x:ConnectionId='34' Header="Period End" 
+                            <CalendarDatePicker x:ConnectionId='36' Header="Period End" 
                                                                                                 
                                                 MinWidth="200" />
                             
-                            <CalendarDatePicker x:ConnectionId='35' Header="Pay Date" 
+                            <CalendarDatePicker x:ConnectionId='37' Header="Pay Date" 
                                                                                               
                                                 MinWidth="200" />
                         </StackPanel>
@@ -69,7 +69,17 @@
                 <!-- Step 2: Review Employees with Earnings Input -->
                 <StackPanel x:ConnectionId='8'                                                                                                           
                             Spacing="16">
-                    <TextBlock Text="REVIEW EMPLOYEES &amp; EARNINGS" Style="{StaticResource SectionTitleStyle}" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="REVIEW EMPLOYEES &amp; EARNINGS" Style="{StaticResource SectionTitleStyle}" />
+                        <CheckBox x:ConnectionId='34' Grid.Column="1" 
+                                  Content="Include inactive employees"
+                                                                                             
+                                  VerticalAlignment="Center" />
+                    </Grid>
                     
                     <InfoBar Title="Overtime Calculation" 
                              Message="For hourly employees, overtime is paid at 1.5× the regular rate. Enter regular and overtime hours separately."
@@ -85,6 +95,19 @@
                         <controls:DataGrid.Columns>
                             <controls:DataGridCheckBoxColumn Header="Include" Binding="{Binding IsIncluded, Mode=TwoWay}" Width="60" />
                             <controls:DataGridTextColumn Header="Employee" Binding="{Binding FullName}" Width="150" IsReadOnly="True" />
+                            <controls:DataGridTemplateColumn Header="Status" Width="80">
+                                <controls:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border CornerRadius="4" Padding="6,2" 
+                                                Background="{Binding IsActive, Converter={StaticResource StatusColorConverter}}"
+                                                HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding IsActive, Converter={StaticResource StatusTextConverter}}" 
+                                                       FontSize="10" FontWeight="Bold"
+                                                       Foreground="White" />
+                                        </Border>
+                                    </DataTemplate>
+                                </controls:DataGridTemplateColumn.CellTemplate>
+                            </controls:DataGridTemplateColumn>
                             <controls:DataGridTextColumn Header="Type" Binding="{Binding PayType}" Width="70" IsReadOnly="True" />
                             <controls:DataGridTextColumn Header="Rate" Binding="{Binding RateDisplay}" Width="100" IsReadOnly="True" />
                             <controls:DataGridTemplateColumn Header="Regular Hrs" Width="90">

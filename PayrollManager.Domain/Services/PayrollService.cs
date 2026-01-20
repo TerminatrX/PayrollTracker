@@ -17,10 +17,40 @@ public class PayStubInput
     public string? CommissionDescription { get; set; }
 }
 
+/// <summary>
+/// Represents a draft pay run with period dates for preview calculations.
+/// </summary>
+public class PayRunDraft
+{
+    public DateTime PeriodStart { get; set; }
+    public DateTime PeriodEnd { get; set; }
+    public DateTime PayDate { get; set; }
+}
+
+/// <summary>
+/// Preview result of pay stub calculation without saving to database.
+/// Contains the same calculated values that would be saved.
+/// </summary>
+public class PayStubPreview
+{
+    public decimal GrossPay { get; set; }
+    public decimal PreTax401kDeduction { get; set; }
+    public decimal TaxFederal { get; set; }
+    public decimal TaxState { get; set; }
+    public decimal TaxSocialSecurity { get; set; }
+    public decimal TaxMedicare { get; set; }
+    public decimal PostTaxDeductions { get; set; }
+    public decimal TotalTaxes { get; set; }
+    public decimal NetPay { get; set; }
+    public decimal YtdGross { get; set; }
+    public decimal YtdTaxes { get; set; }
+    public decimal YtdNet { get; set; }
+}
+
 public class PayrollService
 {
     private readonly AppDbContext _dbContext;
-    private readonly CompanySettings _companySettings;
+    private readonly CompanySettingsService _companySettingsService;
 
     // Constants
     private const decimal OvertimeMultiplier = 1.5m;
@@ -32,10 +62,10 @@ public class PayrollService
     private const decimal MedicareAdditionalRate = 0.009m; // Additional Medicare tax rate
     private const decimal Annual401kLimit = 23000m; // 2024 401(k) contribution limit
 
-    public PayrollService(AppDbContext dbContext, CompanySettings companySettings)
+    public PayrollService(AppDbContext dbContext, CompanySettingsService companySettingsService)
     {
         _dbContext = dbContext;
-        _companySettings = companySettings;
+        _companySettingsService = companySettingsService;
     }
 
     /// <summary>
@@ -64,17 +94,50 @@ public class PayrollService
     }
 
     /// <summary>
-    /// Generate a pay stub with detailed earning lines including overtime, bonus, and commission.
-    /// Includes proper FICA calculations, 401k limits, YTD accumulations, and biweekly frequency support.
+    /// Internal calculation result used by both preview and generation.
     /// </summary>
-    public async Task<PayStub> GeneratePayStubAsync(
-        Employee employee,
-        PayRun payRun,
-        PayStubInput input)
+    private class PayStubCalculationResult
     {
+        public decimal GrossPay { get; set; }
+        public decimal TotalHours { get; set; }
+        public decimal PreTax401k { get; set; }
+        public decimal PreTaxDeductions { get; set; }
+        public decimal TaxableIncome { get; set; }
+        public decimal TaxFederal { get; set; }
+        public decimal TaxState { get; set; }
+        public decimal TaxSocialSecurity { get; set; }
+        public decimal TaxMedicare { get; set; }
+        public decimal PostTaxDeductions { get; set; }
+        public decimal TotalTaxes { get; set; }
+        public decimal NetPay { get; set; }
+        public decimal YtdGross { get; set; }
+        public decimal YtdTaxes { get; set; }
+        public decimal YtdNet { get; set; }
+        public List<EarningLine> EarningLines { get; set; } = new();
+        public List<DeductionLine> DeductionLines { get; set; } = new();
+        public List<TaxLine> TaxLines { get; set; } = new();
+    }
+
+    /// <summary>
+    /// Core calculation logic shared between preview and generation.
+    /// </summary>
+    private async Task<PayStubCalculationResult> CalculatePayStubAsync(
+        Employee employee,
+        PayStubInput input,
+        DateTime payDate,
+        decimal ytdGrossPrior,
+        decimal ytdTaxesPrior,
+        decimal ytd401kPrior,
+        decimal ytdSocialSecurityPrior,
+        decimal ytdMedicarePrior,
+        decimal priorNetPaySum)
+    {
+        // Get latest settings from service (cached, but always current)
+        var companySettings = await _companySettingsService.GetSettingsAsync();
+        
         // Ensure biweekly frequency (26 periods per year)
-        var payPeriods = _companySettings.PayPeriodsPerYear > 0
-            ? _companySettings.PayPeriodsPerYear
+        var payPeriods = companySettings.PayPeriodsPerYear > 0
+            ? companySettings.PayPeriodsPerYear
             : 26; // Default to biweekly
 
         // ═══════════════════════════════════════════════════════════════
@@ -163,23 +226,7 @@ public class PayrollService
         }
 
         // ═══════════════════════════════════════════════════════════════
-        // STEP 2: GET YTD TOTALS FOR ACCUMULATIONS
-        // ═══════════════════════════════════════════════════════════════
-        var year = payRun.PayDate.Year;
-        var priorPayStubs = await _dbContext.PayStubs
-            .Where(ps => ps.EmployeeId == employee.Id && 
-                         ps.PayRun!.PayDate.Year == year &&
-                         ps.PayRun.PayDate < payRun.PayDate)
-            .ToListAsync();
-
-        var ytdGrossPrior = priorPayStubs.Sum(ps => ps.GrossPay);
-        var ytdTaxesPrior = priorPayStubs.Sum(ps => ps.TotalTaxes);
-        var ytd401kPrior = priorPayStubs.Sum(ps => ps.PreTax401kDeduction);
-        var ytdSocialSecurityPrior = priorPayStubs.Sum(ps => ps.TaxSocialSecurity);
-        var ytdMedicarePrior = priorPayStubs.Sum(ps => ps.TaxMedicare);
-
-        // ═══════════════════════════════════════════════════════════════
-        // STEP 3: CALCULATE 401K DEDUCTION (Pre-Tax)
+        // STEP 2: CALCULATE 401K DEDUCTION (Pre-Tax)
         // ═══════════════════════════════════════════════════════════════
         var deductionLines = new List<DeductionLine>();
         
@@ -218,7 +265,7 @@ public class PayrollService
         var taxableIncome = grossPay - preTaxDeductions;
 
         // ═══════════════════════════════════════════════════════════════
-        // STEP 4: CALCULATE FICA TAXES (Social Security + Medicare)
+        // STEP 3: CALCULATE FICA TAXES (Social Security + Medicare)
         // ═══════════════════════════════════════════════════════════════
         var taxLines = new List<TaxLine>();
 
@@ -227,7 +274,7 @@ public class PayrollService
         var ytdGrossForSS = ytdGrossPrior;
         var remainingWageBase = Math.Max(0, SocialSecurityWageBase - ytdGrossForSS);
         var socialSecurityTaxableAmount = Math.Min(grossPay, remainingWageBase);
-        var taxSocialSecurity = socialSecurityTaxableAmount * (_companySettings.SocialSecurityPercent / 100m);
+        var taxSocialSecurity = socialSecurityTaxableAmount * (companySettings.SocialSecurityPercent / 100m);
 
         if (taxSocialSecurity > 0)
         {
@@ -235,25 +282,22 @@ public class PayrollService
             {
                 Type = TaxType.SocialSecurity,
                 Amount = taxSocialSecurity,
-                Rate = _companySettings.SocialSecurityPercent,
-                TaxableAmount = socialSecurityTaxableAmount, // Amount subject to SS tax (up to wage base)
-                Description = $"Social Security ({_companySettings.SocialSecurityPercent}%)"
+                Rate = companySettings.SocialSecurityPercent,
+                TaxableAmount = socialSecurityTaxableAmount,
+                Description = $"Social Security ({companySettings.SocialSecurityPercent}%)"
             });
         }
 
         // Medicare (1.45% on all earnings, +0.9% on earnings over $200k)
-        // Medicare is also calculated on gross pay (before pre-tax deductions)
-        var medicareBaseRate = _companySettings.MedicarePercent / 100m;
+        var medicareBaseRate = companySettings.MedicarePercent / 100m;
         var medicareBaseTax = grossPay * medicareBaseRate;
 
         // Additional Medicare tax (0.9%) on earnings over $200k
-        // This is calculated on gross pay (before pre-tax deductions)
         var additionalMedicareTax = 0m;
         var ytdGrossForMedicare = ytdGrossPrior + grossPay;
         
         if (ytdGrossForMedicare > MedicareAdditionalThreshold)
         {
-            // Calculate how much of current period is over threshold
             var grossOverThreshold = Math.Max(0, ytdGrossForMedicare - MedicareAdditionalThreshold);
             var priorGrossOverThreshold = Math.Max(0, ytdGrossPrior - MedicareAdditionalThreshold);
             var currentPeriodOverThreshold = grossOverThreshold - priorGrossOverThreshold;
@@ -269,43 +313,41 @@ public class PayrollService
             {
                 Type = TaxType.Medicare,
                 Amount = taxMedicare,
-                Rate = _companySettings.MedicarePercent + (additionalMedicareTax > 0 ? 0.9m : 0m),
-                TaxableAmount = grossPay, // Medicare is calculated on gross pay
+                Rate = companySettings.MedicarePercent + (additionalMedicareTax > 0 ? 0.9m : 0m),
+                TaxableAmount = grossPay,
                 Description = additionalMedicareTax > 0
-                    ? $"Medicare ({_companySettings.MedicarePercent}% + 0.9% Additional)"
-                    : $"Medicare ({_companySettings.MedicarePercent}%)"
+                    ? $"Medicare ({companySettings.MedicarePercent}% + 0.9% Additional)"
+                    : $"Medicare ({companySettings.MedicarePercent}%)"
             });
         }
 
         // ═══════════════════════════════════════════════════════════════
-        // STEP 5: CALCULATE FEDERAL AND STATE INCOME TAXES
+        // STEP 4: CALCULATE FEDERAL AND STATE INCOME TAXES
         // ═══════════════════════════════════════════════════════════════
-        // Federal income tax (using percentage method - can be enhanced with tax brackets)
-        var taxFederal = taxableIncome * (_companySettings.FederalTaxPercent / 100m);
+        var taxFederal = taxableIncome * (companySettings.FederalTaxPercent / 100m);
         
         taxLines.Add(new TaxLine
         {
             Type = TaxType.FederalIncome,
             Amount = taxFederal,
-            Rate = _companySettings.FederalTaxPercent,
+            Rate = companySettings.FederalTaxPercent,
             TaxableAmount = taxableIncome,
-            Description = $"Federal Income Tax ({_companySettings.FederalTaxPercent}%)"
+            Description = $"Federal Income Tax ({companySettings.FederalTaxPercent}%)"
         });
 
-        // State income tax
-        var taxState = taxableIncome * (_companySettings.StateTaxPercent / 100m);
+        var taxState = taxableIncome * (companySettings.StateTaxPercent / 100m);
         
         taxLines.Add(new TaxLine
         {
             Type = TaxType.StateIncome,
             Amount = taxState,
-            Rate = _companySettings.StateTaxPercent,
+            Rate = companySettings.StateTaxPercent,
             TaxableAmount = taxableIncome,
-            Description = $"State Income Tax ({_companySettings.StateTaxPercent}%)"
+            Description = $"State Income Tax ({companySettings.StateTaxPercent}%)"
         });
 
         // ═══════════════════════════════════════════════════════════════
-        // STEP 6: CALCULATE POST-TAX DEDUCTIONS
+        // STEP 5: CALCULATE POST-TAX DEDUCTIONS
         // ═══════════════════════════════════════════════════════════════
         if (employee.OtherDeductionsPerPeriod > 0)
         {
@@ -321,53 +363,167 @@ public class PayrollService
         var postTaxDeductions = deductionLines.Where(d => !d.IsPreTax).Sum(d => d.Amount);
 
         // ═══════════════════════════════════════════════════════════════
-        // STEP 7: CALCULATE NET PAY
+        // STEP 6: CALCULATE NET PAY
         // ═══════════════════════════════════════════════════════════════
         var totalTaxes = taxFederal + taxState + taxSocialSecurity + taxMedicare;
         var netPay = taxableIncome - totalTaxes - postTaxDeductions;
 
         // ═══════════════════════════════════════════════════════════════
-        // STEP 8: CALCULATE YTD ACCUMULATIONS
+        // STEP 7: CALCULATE YTD ACCUMULATIONS
         // ═══════════════════════════════════════════════════════════════
         var ytdGross = ytdGrossPrior + grossPay;
         var ytdTaxes = ytdTaxesPrior + totalTaxes;
-        var ytdNet = priorPayStubs.Sum(ps => ps.NetPay) + netPay;
+        var ytdNet = priorNetPaySum + netPay;
 
-        // ═══════════════════════════════════════════════════════════════
-        // STEP 9: CREATE PAY STUB
-        // ═══════════════════════════════════════════════════════════════
-        var payStub = new PayStub
+        return new PayStubCalculationResult
         {
-            EmployeeId = employee.Id,
-            PayRunId = payRun.Id,
-            HoursWorked = totalHours,
             GrossPay = grossPay,
-            PreTax401kDeduction = preTax401k,
+            TotalHours = totalHours,
+            PreTax401k = preTax401k,
+            PreTaxDeductions = preTaxDeductions,
+            TaxableIncome = taxableIncome,
             TaxFederal = taxFederal,
             TaxState = taxState,
             TaxSocialSecurity = taxSocialSecurity,
             TaxMedicare = taxMedicare,
             PostTaxDeductions = postTaxDeductions,
+            TotalTaxes = totalTaxes,
             NetPay = netPay,
             YtdGross = ytdGross,
             YtdTaxes = ytdTaxes,
-            YtdNet = ytdNet
+            YtdNet = ytdNet,
+            EarningLines = earningLines,
+            DeductionLines = deductionLines,
+            TaxLines = taxLines
+        };
+    }
+
+    /// <summary>
+    /// Preview pay stub calculation without saving to database.
+    /// Uses the same calculation logic as GeneratePayStubAsync to ensure accuracy.
+    /// </summary>
+    public async Task<PayStubPreview> PreviewPayStubAsync(
+        Employee employee,
+        PayRunDraft draft,
+        PayStubInput input)
+    {
+        // Get YTD totals for calculations
+        var year = draft.PayDate.Year;
+        var priorPayStubs = await _dbContext.PayStubs
+            .Where(ps => ps.EmployeeId == employee.Id && 
+                         ps.PayRun!.PayDate.Year == year &&
+                         ps.PayRun.PayDate < draft.PayDate)
+            .ToListAsync();
+
+        var ytdGrossPrior = priorPayStubs.Sum(ps => ps.GrossPay);
+        var ytdTaxesPrior = priorPayStubs.Sum(ps => ps.TotalTaxes);
+        var ytd401kPrior = priorPayStubs.Sum(ps => ps.PreTax401kDeduction);
+        var ytdSocialSecurityPrior = priorPayStubs.Sum(ps => ps.TaxSocialSecurity);
+        var ytdMedicarePrior = priorPayStubs.Sum(ps => ps.TaxMedicare);
+        var priorNetPaySum = priorPayStubs.Sum(ps => ps.NetPay);
+
+        // Use shared calculation logic
+        var result = await CalculatePayStubAsync(
+            employee,
+            input,
+            draft.PayDate,
+            ytdGrossPrior,
+            ytdTaxesPrior,
+            ytd401kPrior,
+            ytdSocialSecurityPrior,
+            ytdMedicarePrior,
+            priorNetPaySum);
+
+        // Return preview (no database entities)
+        return new PayStubPreview
+        {
+            GrossPay = result.GrossPay,
+            PreTax401kDeduction = result.PreTax401k,
+            TaxFederal = result.TaxFederal,
+            TaxState = result.TaxState,
+            TaxSocialSecurity = result.TaxSocialSecurity,
+            TaxMedicare = result.TaxMedicare,
+            PostTaxDeductions = result.PostTaxDeductions,
+            TotalTaxes = result.TotalTaxes,
+            NetPay = result.NetPay,
+            YtdGross = result.YtdGross,
+            YtdTaxes = result.YtdTaxes,
+            YtdNet = result.YtdNet
+        };
+    }
+
+    /// <summary>
+    /// Generate a pay stub with detailed earning lines including overtime, bonus, and commission.
+    /// Includes proper FICA calculations, 401k limits, YTD accumulations, and biweekly frequency support.
+    /// Uses the same calculation logic as PreviewPayStubAsync to ensure consistency.
+    /// </summary>
+    public async Task<PayStub> GeneratePayStubAsync(
+        Employee employee,
+        PayRun payRun,
+        PayStubInput input)
+    {
+        // Get YTD totals for calculations
+        var year = payRun.PayDate.Year;
+        var priorPayStubs = await _dbContext.PayStubs
+            .Where(ps => ps.EmployeeId == employee.Id && 
+                         ps.PayRun!.PayDate.Year == year &&
+                         ps.PayRun.PayDate < payRun.PayDate)
+            .ToListAsync();
+
+        var ytdGrossPrior = priorPayStubs.Sum(ps => ps.GrossPay);
+        var ytdTaxesPrior = priorPayStubs.Sum(ps => ps.TotalTaxes);
+        var ytd401kPrior = priorPayStubs.Sum(ps => ps.PreTax401kDeduction);
+        var ytdSocialSecurityPrior = priorPayStubs.Sum(ps => ps.TaxSocialSecurity);
+        var ytdMedicarePrior = priorPayStubs.Sum(ps => ps.TaxMedicare);
+        var priorNetPaySum = priorPayStubs.Sum(ps => ps.NetPay);
+
+        // Use shared calculation logic
+        var result = await CalculatePayStubAsync(
+            employee,
+            input,
+            payRun.PayDate,
+            ytdGrossPrior,
+            ytdTaxesPrior,
+            ytd401kPrior,
+            ytdSocialSecurityPrior,
+            ytdMedicarePrior,
+            priorNetPaySum);
+
+        // ═══════════════════════════════════════════════════════════════
+        // CREATE PAY STUB ENTITY
+        // ═══════════════════════════════════════════════════════════════
+        var payStub = new PayStub
+        {
+            EmployeeId = employee.Id,
+            PayRunId = payRun.Id,
+            HoursWorked = result.TotalHours,
+            GrossPay = result.GrossPay,
+            PreTax401kDeduction = result.PreTax401k,
+            TaxFederal = result.TaxFederal,
+            TaxState = result.TaxState,
+            TaxSocialSecurity = result.TaxSocialSecurity,
+            TaxMedicare = result.TaxMedicare,
+            PostTaxDeductions = result.PostTaxDeductions,
+            NetPay = result.NetPay,
+            YtdGross = result.YtdGross,
+            YtdTaxes = result.YtdTaxes,
+            YtdNet = result.YtdNet
         };
 
         // Add earning lines
-        foreach (var line in earningLines)
+        foreach (var line in result.EarningLines)
         {
             payStub.EarningLines.Add(line);
         }
 
         // Add deduction lines
-        foreach (var line in deductionLines)
+        foreach (var line in result.DeductionLines)
         {
             payStub.DeductionLines.Add(line);
         }
 
         // Add tax lines
-        foreach (var line in taxLines)
+        foreach (var line in result.TaxLines)
         {
             payStub.TaxLines.Add(line);
         }

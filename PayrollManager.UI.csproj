@@ -37,6 +37,7 @@
 
   <ItemGroup>
     <Compile Remove="PayrollManager.Domain\**\*.cs" />
+    <Compile Remove="PayrollManager.Domain.Tests\**\*.cs" />
     <Compile Remove="Components\**\*.razor" />
     <Compile Remove="Components\**\*.razor.cs" />
   </ItemGroup>

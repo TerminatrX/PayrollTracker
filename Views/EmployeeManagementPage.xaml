@@ -185,6 +185,7 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
 
                                 <StackPanel Grid.Row="0" Grid.Column="0">
@@ -195,11 +196,11 @@
 
                                 <NumberBox Grid.Row="0" Grid.Column="1" Header="401k %"
                                            Value="{x:Bind ViewModel.Editor.PreTax401kPercent, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}"
-                                           Minimum="0" Maximum="25" SmallChange="0.5" />
+                                           Minimum="0" Maximum="0.25" SmallChange="0.01" />
 
                                 <NumberBox Grid.Row="1" Grid.Column="0" Header="Annual Salary"
                                            Value="{x:Bind ViewModel.Editor.AnnualSalary, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}"
-                                           IsEnabled="{x:Bind ViewModel.Editor.IsHourly, Mode=OneWay, Converter={StaticResource InverseBoolConverter}}"
+                                           IsEnabled="{x:Bind ViewModel.Editor.IsSalary, Mode=OneWay}"
                                            Minimum="0" />
 
                                 <NumberBox Grid.Row="1" Grid.Column="1" Header="Hourly Rate"
@@ -207,11 +208,16 @@
                                            IsEnabled="{x:Bind ViewModel.Editor.IsHourly, Mode=OneWay}"
                                            Minimum="0" />
 
-                                <NumberBox Grid.Row="2" Grid.Column="0" Header="Health Ins/Period"
+                                <NumberBox Grid.Row="2" Grid.Column="0" Header="Default Hours/Period"
+                                           Value="{x:Bind ViewModel.Editor.DefaultHoursPerPeriod, Mode=TwoWay}"
+                                           IsEnabled="{x:Bind ViewModel.Editor.IsHourly, Mode=OneWay}"
+                                           Minimum="0" />
+
+                                <NumberBox Grid.Row="2" Grid.Column="1" Header="Health Ins/Period"
                                            Value="{x:Bind ViewModel.Editor.HealthInsurancePerPeriod, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}"
                                            Minimum="0" />
 
-                                <NumberBox Grid.Row="2" Grid.Column="1" Header="Other Deductions"
+                                <NumberBox Grid.Row="3" Grid.Column="0" Header="Other Deductions"
                                            Value="{x:Bind ViewModel.Editor.OtherDeductionsPerPeriod, Mode=TwoWay, Converter={StaticResource DecimalToDoubleConverter}}"
                                            Minimum="0" />
                             </Grid>

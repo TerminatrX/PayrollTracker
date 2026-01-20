@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
 using PayrollManager.Domain.Data;
 using PayrollManager.Domain.Models;
+using PayrollManager.Domain.Services;
 
 namespace PayrollManager.UI.ViewModels;
 
@@ -12,11 +13,13 @@ namespace PayrollManager.UI.ViewModels;
 public partial class SettingsViewModel : ObservableObject
 {
     private readonly AppDbContext _dbContext;
+    private readonly CompanySettingsService _companySettingsService;
     private int _settingsId;
 
-    public SettingsViewModel(AppDbContext dbContext)
+    public SettingsViewModel(AppDbContext dbContext, CompanySettingsService companySettingsService)
     {
         _dbContext = dbContext;
+        _companySettingsService = companySettingsService;
         _ = LoadSettingsAsync();
     }
     // ═══════════════════════════════════════════════════════════════
@@ -128,23 +131,8 @@ public partial class SettingsViewModel : ObservableObject
 
         try
         {
-            var settings = await _dbContext.CompanySettings.FirstOrDefaultAsync();
-            
-            if (settings == null)
-            {
-                settings = new CompanySettings
-                {
-                    CompanyName = "My Company",
-                    PayPeriodsPerYear = 26,
-                    FederalTaxPercent = 12m,
-                    StateTaxPercent = 5m,
-                    SocialSecurityPercent = 6.2m,
-                    MedicarePercent = 1.45m,
-                    DefaultHoursPerPeriod = 80
-                };
-                _dbContext.CompanySettings.Add(settings);
-                await _dbContext.SaveChangesAsync();
-            }
+            // Use CompanySettingsService to get settings (ensures single record and uses cache)
+            var settings = await _companySettingsService.GetSettingsAsync();
 
             _settingsId = settings.Id;
             CompanyName = settings.CompanyName;
@@ -192,24 +180,26 @@ public partial class SettingsViewModel : ObservableObject
 
         try
         {
-            var settings = await _dbContext.CompanySettings.FindAsync(_settingsId);
-            
-            if (settings != null)
+            // Create updated settings object
+            var settings = new CompanySettings
             {
-                settings.CompanyName = CompanyName;
-                settings.CompanyAddress = CompanyAddress;
-                settings.TaxId = TaxId;
-                settings.FederalTaxPercent = (decimal)FederalTaxPercent;
-                settings.StateTaxPercent = (decimal)StateTaxPercent;
-                settings.SocialSecurityPercent = (decimal)SocialSecurityRate;
-                settings.MedicarePercent = (decimal)MedicarePercent;
-                settings.PayPeriodsPerYear = PayPeriodsPerYear;
-                settings.DefaultHoursPerPeriod = DefaultHoursPerPeriod;
+                Id = _settingsId,
+                CompanyName = CompanyName,
+                CompanyAddress = CompanyAddress,
+                TaxId = TaxId,
+                FederalTaxPercent = (decimal)FederalTaxPercent,
+                StateTaxPercent = (decimal)StateTaxPercent,
+                SocialSecurityPercent = (decimal)SocialSecurityRate,
+                MedicarePercent = (decimal)MedicarePercent,
+                PayPeriodsPerYear = PayPeriodsPerYear,
+                DefaultHoursPerPeriod = DefaultHoursPerPeriod
+            };
 
-                await _dbContext.SaveChangesAsync();
-                HasChanges = false;
-                StatusMessage = "Settings saved successfully";
-            }
+            // Save via service (ensures single record and invalidates cache)
+            await _companySettingsService.SaveSettingsAsync(settings);
+            
+            HasChanges = false;
+            StatusMessage = "Settings saved successfully";
         }
         catch (Exception ex)
         {

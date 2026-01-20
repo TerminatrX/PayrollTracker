@@ -62,6 +62,7 @@
             <converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />
             <converters:StepIndicatorConverter x:Key="StepIndicatorConverter" />
             <converters:BoolToFontWeightConverter x:Key="BoolToFontWeightConverter" />
+            <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
 
             <!-- Legacy brush aliases for backward compatibility -->
             <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />

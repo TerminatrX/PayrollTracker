@@ -19,15 +19,16 @@
 
                 <StackPanel>
                     <TextBlock Text="Pay Stub" Style="{StaticResource PageTitleStyle}" Margin="0" />
-                    <TextBlock x:Name="EmployeeNameText" FontSize="18" 
+                    <TextBlock Text="{x:Bind ViewModel.EmployeeName, Mode=OneWay}" FontSize="18" 
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                    <TextBlock x:Name="PayPeriodText" FontSize="14" 
+                    <TextBlock Text="{x:Bind ViewModel.PayPeriodText, Mode=OneWay}" FontSize="14" 
                                Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" HorizontalAlignment="Right">
                     <TextBlock Text="NET PAY" Style="{StaticResource LabelStyle}" HorizontalAlignment="Right" />
-                    <TextBlock x:Name="NetPayText" FontSize="36" FontWeight="Bold" 
+                    <TextBlock Text="{x:Bind ViewModel.NetPay, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                               FontSize="36" FontWeight="Bold" 
                                Foreground="{StaticResource SuccessBrush}" HorizontalAlignment="Right" />
                 </StackPanel>
             </Grid>
@@ -45,7 +46,8 @@
                                        CanUserResizeColumns="True"
                                        HeadersVisibility="Column"
                                        GridLinesVisibility="Horizontal"
-                                       MaxHeight="200">
+                                       MaxHeight="200"
+                                       ItemsSource="{x:Bind ViewModel.EarningLines, Mode=OneWay}">
                         <controls:DataGrid.Columns>
                             <controls:DataGridTextColumn Header="Type" Binding="{Binding TypeDisplay}" Width="120" />
                             <controls:DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*" />
@@ -104,7 +106,9 @@
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Text="401(k) Contribution" />
-                        <TextBlock Grid.Column="1" x:Name="PreTax401kText" HorizontalAlignment="Right" 
+                        <TextBlock Grid.Column="1" 
+                                   Text="{x:Bind ViewModel.PreTax401k, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                   HorizontalAlignment="Right" 
                                    Foreground="{StaticResource WarningBrush}" />
                     </Grid>
                 </StackPanel>
@@ -129,23 +133,33 @@
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="Federal Income Tax" />
-                        <TextBlock Grid.Row="0" Grid.Column="1" x:Name="FederalTaxText" HorizontalAlignment="Right" 
+                        <TextBlock Grid.Row="0" Grid.Column="1" 
+                                   Text="{x:Bind ViewModel.TaxFederal, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                   HorizontalAlignment="Right" 
                                    Foreground="{StaticResource WarningBrush}" />
 
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="State Income Tax" />
-                        <TextBlock Grid.Row="1" Grid.Column="1" x:Name="StateTaxText" HorizontalAlignment="Right" 
+                        <TextBlock Grid.Row="1" Grid.Column="1" 
+                                   Text="{x:Bind ViewModel.TaxState, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                   HorizontalAlignment="Right" 
                                    Foreground="{StaticResource WarningBrush}" />
 
                         <TextBlock Grid.Row="2" Grid.Column="0" Text="Social Security" />
-                        <TextBlock Grid.Row="2" Grid.Column="1" x:Name="SocialSecurityText" HorizontalAlignment="Right" 
+                        <TextBlock Grid.Row="2" Grid.Column="1" 
+                                   Text="{x:Bind ViewModel.TaxSocialSecurity, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                   HorizontalAlignment="Right" 
                                    Foreground="{StaticResource WarningBrush}" />
 
                         <TextBlock Grid.Row="3" Grid.Column="0" Text="Medicare" />
-                        <TextBlock Grid.Row="3" Grid.Column="1" x:Name="MedicareText" HorizontalAlignment="Right" 
+                        <TextBlock Grid.Row="3" Grid.Column="1" 
+                                   Text="{x:Bind ViewModel.TaxMedicare, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                   HorizontalAlignment="Right" 
                                    Foreground="{StaticResource WarningBrush}" />
 
                         <TextBlock Grid.Row="4" Grid.Column="0" Text="Total Taxes" FontWeight="SemiBold" Margin="0,8,0,0" />
-                        <TextBlock Grid.Row="4" Grid.Column="1" x:Name="TotalTaxesText" HorizontalAlignment="Right" 
+                        <TextBlock Grid.Row="4" Grid.Column="1" 
+                                   Text="{x:Bind ViewModel.TotalTaxes, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                   HorizontalAlignment="Right" 
                                    FontWeight="SemiBold" Foreground="{StaticResource WarningBrush}" Margin="0,8,0,0" />
                     </Grid>
                 </StackPanel>
@@ -168,13 +182,19 @@
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="Health Insurance" />
-                        <TextBlock Grid.Row="0" Grid.Column="1" x:Name="HealthInsuranceText" HorizontalAlignment="Right" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" 
+                                   Text="{x:Bind ViewModel.HealthInsurance, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                   HorizontalAlignment="Right" />
 
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="Other Deductions" />
-                        <TextBlock Grid.Row="1" Grid.Column="1" x:Name="OtherDeductionsText" HorizontalAlignment="Right" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" 
+                                   Text="{x:Bind ViewModel.OtherDeductions, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                   HorizontalAlignment="Right" />
 
                         <TextBlock Grid.Row="2" Grid.Column="0" Text="Total Deductions" FontWeight="SemiBold" Margin="0,8,0,0" />
-                        <TextBlock Grid.Row="2" Grid.Column="1" x:Name="TotalDeductionsText" HorizontalAlignment="Right" 
+                        <TextBlock Grid.Row="2" Grid.Column="1" 
+                                   Text="{x:Bind ViewModel.TotalDeductions, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                   HorizontalAlignment="Right" 
                                    FontWeight="SemiBold" Margin="0,8,0,0" />
                     </Grid>
                 </StackPanel>
@@ -195,23 +215,27 @@
 
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="Regular" Style="{StaticResource LabelStyle}" />
-                            <TextBlock x:Name="RegularEarningsText" Style="{StaticResource LargeValueStyle}" />
+                            <TextBlock Text="{x:Bind ViewModel.RegularEarnings, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                       Style="{StaticResource LargeValueStyle}" />
                         </StackPanel>
 
                         <StackPanel Grid.Column="1">
                             <TextBlock Text="Overtime" Style="{StaticResource LabelStyle}" />
-                            <TextBlock x:Name="OvertimeEarningsText" Style="{StaticResource LargeValueStyle}" 
+                            <TextBlock Text="{x:Bind ViewModel.OvertimeEarnings, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                       Style="{StaticResource LargeValueStyle}" 
                                        Foreground="{StaticResource AccentBrush}" />
                         </StackPanel>
 
                         <StackPanel Grid.Column="2">
                             <TextBlock Text="Bonus" Style="{StaticResource LabelStyle}" />
-                            <TextBlock x:Name="BonusEarningsText" Style="{StaticResource LargeValueStyle}" />
+                            <TextBlock Text="{x:Bind ViewModel.BonusEarnings, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                       Style="{StaticResource LargeValueStyle}" />
                         </StackPanel>
 
                         <StackPanel Grid.Column="3">
                             <TextBlock Text="Commission" Style="{StaticResource LabelStyle}" />
-                            <TextBlock x:Name="CommissionEarningsText" Style="{StaticResource LargeValueStyle}" />
+                            <TextBlock Text="{x:Bind ViewModel.CommissionEarnings, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                       Style="{StaticResource LargeValueStyle}" />
                         </StackPanel>
                     </Grid>
                 </StackPanel>
@@ -231,18 +255,21 @@
 
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="YTD Gross" Style="{StaticResource LabelStyle}" />
-                            <TextBlock x:Name="YtdGrossText" Style="{StaticResource LargeValueStyle}" />
+                            <TextBlock Text="{x:Bind ViewModel.YtdGross, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                       Style="{StaticResource LargeValueStyle}" />
                         </StackPanel>
 
                         <StackPanel Grid.Column="1">
                             <TextBlock Text="YTD Taxes" Style="{StaticResource LabelStyle}" />
-                            <TextBlock x:Name="YtdTaxesText" Style="{StaticResource LargeValueStyle}" 
+                            <TextBlock Text="{x:Bind ViewModel.YtdTaxes, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                       Style="{StaticResource LargeValueStyle}" 
                                        Foreground="{StaticResource WarningBrush}" />
                         </StackPanel>
 
                         <StackPanel Grid.Column="2">
                             <TextBlock Text="YTD Net" Style="{StaticResource LabelStyle}" />
-                            <TextBlock x:Name="YtdNetText" Style="{StaticResource LargeValueStyle}" 
+                            <TextBlock Text="{x:Bind ViewModel.YtdNet, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
+                                       Style="{StaticResource LargeValueStyle}" 
                                        Foreground="{StaticResource SuccessBrush}" />
                         </StackPanel>
                     </Grid>
@@ -258,6 +285,22 @@
                 <Button Content="Back" 
                         Command="{x:Bind ViewModel.NavigateBackCommand}" />
             </StackPanel>
+
+            <!-- Debug Toggle (only functional in Debug builds) -->
+            <Border x:Name="DebugSection" 
+                    Style="{StaticResource CardStyle}" Margin="0,16,0,0" 
+                    Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}">
+                <StackPanel>
+                    <ToggleSwitch Header="Debug Mode" 
+                                  IsOn="{x:Bind ViewModel.IsDebugModeEnabled, Mode=TwoWay}" />
+                    <TextBlock Text="{x:Bind ViewModel.DebugInfo, Mode=OneWay}" 
+                               FontFamily="Consolas" 
+                               FontSize="11" 
+                               Margin="0,8,0,0"
+                               TextWrapping="Wrap"
+                               Visibility="{x:Bind ViewModel.IsDebugModeEnabled, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                </StackPanel>
+            </Border>
         </StackPanel>
     </ScrollViewer>
 </Page>

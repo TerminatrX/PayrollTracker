@@ -14,10 +14,12 @@ namespace PayrollManager.Domain.Services;
 public class ExportService
 {
     private readonly AppDbContext _dbContext;
+    private readonly CompanySettingsService _companySettingsService;
 
-    public ExportService(AppDbContext dbContext)
+    public ExportService(AppDbContext dbContext, CompanySettingsService companySettingsService)
     {
         _dbContext = dbContext;
+        _companySettingsService = companySettingsService;
         QuestPDF.Settings.License = LicenseType.Community;
     }
 
@@ -119,7 +121,7 @@ public class ExportService
         if (payStub == null)
             throw new ArgumentException($"Pay stub {payStubId} not found");
 
-        var companySettings = await _dbContext.CompanySettings.FirstOrDefaultAsync();
+        var companySettings = await _companySettingsService.GetSettingsAsync();
 
         if (string.IsNullOrEmpty(outputPath))
         {
@@ -367,6 +369,7 @@ public class ExportService
         }
 
         sb.AppendLine("EMPLOYEE TOTALS");
+        // Header row with all columns
         sb.AppendLine("Employee ID,Employee Name,Gross Pay,Federal Tax,State Tax,Social Security,Medicare,Total Taxes,Pre-Tax 401k,Post-Tax Deductions,Total Deductions,Net Pay,Pay Stubs");
         
         foreach (var totals in employeeTotals)
@@ -384,6 +387,23 @@ public class ExportService
                          $"{totals.TotalDeductions:F2}," +
                          $"{totals.NetPay:F2}," +
                          $"{totals.PayStubCount}");
+        }
+
+        // Add Totals row at the end with company totals
+        if (companyTotals != null)
+        {
+            sb.AppendLine($"Totals,{EscapeCsv("COMPANY TOTALS")}," +
+                         $"{companyTotals.GrossPay:F2}," +
+                         $"{companyTotals.FederalTax:F2}," +
+                         $"{companyTotals.StateTax:F2}," +
+                         $"{companyTotals.SocialSecurity:F2}," +
+                         $"{companyTotals.Medicare:F2}," +
+                         $"{companyTotals.TotalTaxes:F2}," +
+                         $"{companyTotals.PreTax401k:F2}," +
+                         $"{companyTotals.PostTaxDeductions:F2}," +
+                         $"{companyTotals.TotalDeductions:F2}," +
+                         $"{companyTotals.NetPay:F2}," +
+                         $"{companyTotals.PayStubCount}");
         }
 
         var content = sb.ToString();
@@ -408,7 +428,7 @@ public class ExportService
         DateTime endDate,
         string? outputPath = null)
     {
-        var companySettings = await _dbContext.CompanySettings.FirstOrDefaultAsync();
+        var companySettings = await _companySettingsService.GetSettingsAsync();
 
         if (string.IsNullOrEmpty(outputPath))
         {

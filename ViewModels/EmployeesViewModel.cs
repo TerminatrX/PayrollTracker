@@ -19,6 +19,30 @@ public partial class EmployeesViewModel : ObservableObject
         _dbContext = dbContext;
         Editor = new EmployeeViewModel();
         
+        // Subscribe to Editor property changes to update CanSave
+        Editor.ErrorsChanged += (s, e) =>
+        {
+            OnPropertyChanged(nameof(CanSave));
+            SaveEmployeeCommand.NotifyCanExecuteChanged();
+        };
+        Editor.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(EmployeeViewModel.HasErrors) ||
+                e.PropertyName == nameof(EmployeeViewModel.FirstName) ||
+                e.PropertyName == nameof(EmployeeViewModel.LastName) ||
+                e.PropertyName == nameof(EmployeeViewModel.AnnualSalary) ||
+                e.PropertyName == nameof(EmployeeViewModel.HourlyRate) ||
+                e.PropertyName == nameof(EmployeeViewModel.DefaultHoursPerPeriod) ||
+                e.PropertyName == nameof(EmployeeViewModel.PreTax401kPercent) ||
+                e.PropertyName == nameof(EmployeeViewModel.HealthInsurancePerPeriod) ||
+                e.PropertyName == nameof(EmployeeViewModel.OtherDeductionsPerPeriod) ||
+                e.PropertyName == nameof(EmployeeViewModel.IsHourly))
+            {
+                OnPropertyChanged(nameof(CanSave));
+                SaveEmployeeCommand.NotifyCanExecuteChanged();
+            }
+        };
+        
         // Initialize collections
         Departments = new ObservableCollection<string>
         {
@@ -60,7 +84,10 @@ public partial class EmployeesViewModel : ObservableObject
     [ObservableProperty]
     private EmployeeViewModel _editor = new();
 
-    public bool HasSelectedEmployee => SelectedEmployee != null;
+    [ObservableProperty]
+    private bool _isNewEmployeeMode;
+
+    public bool HasSelectedEmployee => SelectedEmployee != null || IsNewEmployeeMode;
 
     // ═══════════════════════════════════════════════════════════════
     // SEARCH STATE
@@ -105,9 +132,43 @@ public partial class EmployeesViewModel : ObservableObject
         ? "Never" 
         : LastSaveTime.ToString("g");
 
-    public bool CanSave => !Editor.HasErrors &&
-                           !string.IsNullOrWhiteSpace(Editor.FirstName) &&
-                           !string.IsNullOrWhiteSpace(Editor.LastName);
+    public bool CanSave
+    {
+        get
+        {
+            // Check required fields
+            if (string.IsNullOrWhiteSpace(Editor.FirstName) || string.IsNullOrWhiteSpace(Editor.LastName))
+                return false;
+
+            // Check validation errors
+            if (Editor.HasErrors)
+                return false;
+
+            // Validate compensation based on pay type
+            if (Editor.IsHourly)
+            {
+                // Hourly: HourlyRate must be > 0, DefaultHoursPerPeriod must be >= 0
+                if (Editor.HourlyRate <= 0 || Editor.DefaultHoursPerPeriod < 0)
+                    return false;
+            }
+            else
+            {
+                // Salary: AnnualSalary must be > 0
+                if (Editor.AnnualSalary <= 0)
+                    return false;
+            }
+
+            // Validate 401k percent (0 to 0.25)
+            if (Editor.PreTax401kPercent < 0 || Editor.PreTax401kPercent > 0.25m)
+                return false;
+
+            // Validate deductions must be >= 0
+            if (Editor.HealthInsurancePerPeriod < 0 || Editor.OtherDeductionsPerPeriod < 0)
+                return false;
+
+            return true;
+        }
+    }
 
     public bool CanDelete => Editor.Id.HasValue;
 
@@ -152,14 +213,20 @@ public partial class EmployeesViewModel : ObservableObject
     {
         Editor.Reset();
         SelectedEmployee = null;
+        IsNewEmployeeMode = true;
+        OnPropertyChanged(nameof(HasSelectedEmployee));
     }
 
     [RelayCommand(CanExecute = nameof(CanSave))]
     private async Task SaveEmployeeAsync()
     {
-        if (Editor.HasErrors)
+        // Validate all fields before saving
+        Editor.ValidateAll();
+        
+        if (!CanSave)
         {
             StatusMessage = "Please fix validation errors before saving";
+            SaveEmployeeCommand.NotifyCanExecuteChanged();
             return;
         }
 
@@ -176,17 +243,50 @@ public partial class EmployeesViewModel : ObservableObject
                     Editor.ApplyTo(employee);
                 }
             }
+            Employee? savedEmployee = null;
+            if (Editor.Id.HasValue)
+            {
+                savedEmployee = await _dbContext.Employees.FindAsync(Editor.Id.Value);
+                if (savedEmployee != null)
+                {
+                    Editor.ApplyTo(savedEmployee);
+                }
+            }
             else
             {
-                var employee = new Employee();
-                Editor.ApplyTo(employee);
-                _dbContext.Employees.Add(employee);
+                savedEmployee = new Employee();
+                Editor.ApplyTo(savedEmployee);
+                _dbContext.Employees.Add(savedEmployee);
             }
 
             await _dbContext.SaveChangesAsync();
             LastSaveTime = DateTime.Now;
+            
+            // Store the employee ID after saving (EF Core will populate it)
+            var savedEmployeeId = savedEmployee.Id;
+            
+            // Reload employees to refresh the list
             await LoadEmployeesAsync();
-            Editor.Reset();
+            
+            // Find and select the saved employee
+            var employeeToSelect = AllEmployees.FirstOrDefault(e => e.Id == savedEmployeeId);
+            if (employeeToSelect != null)
+            {
+                Editor.LoadFrom(employeeToSelect);
+                SelectedEmployee = employeeToSelect;
+                IsNewEmployeeMode = false;
+            }
+            else
+            {
+                // This shouldn't happen, but handle it gracefully
+                Editor.Reset();
+                IsNewEmployeeMode = false;
+            }
+            
+            OnPropertyChanged(nameof(HasSelectedEmployee));
+            
+            SaveEmployeeCommand.NotifyCanExecuteChanged();
+            OnPropertyChanged(nameof(CanSave));
             StatusMessage = "Employee saved successfully";
         }
         catch (Exception ex)
@@ -243,11 +343,14 @@ public partial class EmployeesViewModel : ObservableObject
         if (SelectedEmployee != null)
         {
             Editor.LoadFrom(SelectedEmployee);
+            IsNewEmployeeMode = false;
         }
         else
         {
             Editor.Reset();
+            IsNewEmployeeMode = false;
         }
+        OnPropertyChanged(nameof(HasSelectedEmployee));
     }
 
     [RelayCommand]
@@ -327,10 +430,14 @@ public partial class EmployeesViewModel : ObservableObject
         if (value != null)
         {
             Editor.LoadFrom(value);
+            IsNewEmployeeMode = false;
         }
-        else
+        else if (!IsNewEmployeeMode)
         {
             Editor.Reset();
         }
+        OnPropertyChanged(nameof(HasSelectedEmployee));
+        SaveEmployeeCommand.NotifyCanExecuteChanged();
+        OnPropertyChanged(nameof(CanSave));
     }
 }

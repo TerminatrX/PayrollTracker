@@ -16,6 +16,7 @@ public partial class EmployeeViewModel : ObservableObject, INotifyDataErrorInfo
     private bool _isHourly;
     private decimal _annualSalary;
     private decimal _hourlyRate;
+    private int _defaultHoursPerPeriod = 80;
     private decimal _preTax401kPercent;
     private decimal _healthInsurancePerPeriod;
     private decimal _otherDeductionsPerPeriod;
@@ -59,6 +60,7 @@ public partial class EmployeeViewModel : ObservableObject, INotifyDataErrorInfo
             {
                 ValidateFirstName();
                 OnPropertyChanged(nameof(FullName));
+                OnPropertyChanged(nameof(HasErrors));
             }
         }
     }
@@ -72,6 +74,7 @@ public partial class EmployeeViewModel : ObservableObject, INotifyDataErrorInfo
             {
                 ValidateLastName();
                 OnPropertyChanged(nameof(FullName));
+                OnPropertyChanged(nameof(HasErrors));
             }
         }
     }
@@ -92,10 +95,25 @@ public partial class EmployeeViewModel : ObservableObject, INotifyDataErrorInfo
             if (SetProperty(ref _isHourly, value))
             {
                 OnPropertyChanged(nameof(PayTypeDisplay));
+                OnPropertyChanged(nameof(IsSalary));
                 ValidateCompensation();
+                // Clear irrelevant fields when switching pay types
+                if (value)
+                {
+                    // Switching to hourly - clear annual salary
+                    AnnualSalary = 0;
+                }
+                else
+                {
+                    // Switching to salary - clear hourly rate and default hours
+                    HourlyRate = 0;
+                    DefaultHoursPerPeriod = 80;
+                }
             }
         }
     }
+
+    public bool IsSalary => !IsHourly;
 
     public string PayTypeDisplay => IsHourly ? "Hourly" : "Salary";
 
@@ -108,6 +126,7 @@ public partial class EmployeeViewModel : ObservableObject, INotifyDataErrorInfo
             {
                 ValidateCompensation();
                 OnPropertyChanged(nameof(AnnualizedSalary));
+                OnPropertyChanged(nameof(HasErrors));
             }
         }
     }
@@ -121,12 +140,27 @@ public partial class EmployeeViewModel : ObservableObject, INotifyDataErrorInfo
             {
                 ValidateCompensation();
                 OnPropertyChanged(nameof(AnnualizedSalary));
+                OnPropertyChanged(nameof(HasErrors));
             }
         }
     }
 
-    // Computed annualized salary (for hourly: rate * 80 hours * 26 periods)
-    public decimal AnnualizedSalary => IsHourly ? HourlyRate * 80m * 26m : AnnualSalary;
+    public int DefaultHoursPerPeriod
+    {
+        get => _defaultHoursPerPeriod;
+        set
+        {
+            if (SetProperty(ref _defaultHoursPerPeriod, value))
+            {
+                ValidateCompensation();
+                OnPropertyChanged(nameof(AnnualizedSalary));
+                OnPropertyChanged(nameof(HasErrors));
+            }
+        }
+    }
+
+    // Computed annualized salary (for hourly: rate * DefaultHoursPerPeriod * 26 periods)
+    public decimal AnnualizedSalary => IsHourly ? HourlyRate * DefaultHoursPerPeriod * 26m : AnnualSalary;
 
     public decimal PreTax401kPercent
     {
@@ -136,6 +170,7 @@ public partial class EmployeeViewModel : ObservableObject, INotifyDataErrorInfo
             if (SetProperty(ref _preTax401kPercent, value))
             {
                 Validate401k();
+                OnPropertyChanged(nameof(HasErrors));
             }
         }
     }
@@ -148,6 +183,7 @@ public partial class EmployeeViewModel : ObservableObject, INotifyDataErrorInfo
             if (SetProperty(ref _healthInsurancePerPeriod, value))
             {
                 ValidateDeduction(nameof(HealthInsurancePerPeriod), value);
+                OnPropertyChanged(nameof(HasErrors));
             }
         }
     }
@@ -160,6 +196,7 @@ public partial class EmployeeViewModel : ObservableObject, INotifyDataErrorInfo
             if (SetProperty(ref _otherDeductionsPerPeriod, value))
             {
                 ValidateDeduction(nameof(OtherDeductionsPerPeriod), value);
+                OnPropertyChanged(nameof(HasErrors));
             }
         }
     }
@@ -351,21 +388,25 @@ public partial class EmployeeViewModel : ObservableObject, INotifyDataErrorInfo
     {
         if (IsHourly)
         {
+            // Hourly: HourlyRate must be > 0, DefaultHoursPerPeriod must be >= 0
             SetError(nameof(HourlyRate), HourlyRate <= 0 ? "Hourly rate must be greater than 0" : null);
-            SetError(nameof(AnnualSalary), null);
+            SetError(nameof(DefaultHoursPerPeriod), DefaultHoursPerPeriod < 0 ? "Default hours per period must be 0 or greater" : null);
+            SetError(nameof(AnnualSalary), null); // AnnualSalary is ignored for hourly
         }
         else
         {
+            // Salary: AnnualSalary must be > 0
             SetError(nameof(AnnualSalary), AnnualSalary <= 0 ? "Annual salary must be greater than 0" : null);
-            SetError(nameof(HourlyRate), null);
+            SetError(nameof(HourlyRate), null); // HourlyRate is ignored for salary
+            SetError(nameof(DefaultHoursPerPeriod), null); // DefaultHoursPerPeriod is ignored for salary
         }
     }
 
     private void Validate401k()
     {
         SetError(nameof(PreTax401kPercent), 
-            PreTax401kPercent < 0 || PreTax401kPercent > 25 
-                ? "401k % must be between 0 and 25" 
+            PreTax401kPercent < 0 || PreTax401kPercent > 0.25m 
+                ? "401k % must be between 0 and 0.25 (0% and 25%)" 
                 : null);
     }
 
@@ -393,6 +434,7 @@ public partial class EmployeeViewModel : ObservableObject, INotifyDataErrorInfo
         IsHourly = employee.IsHourly;
         AnnualSalary = employee.AnnualSalary;
         HourlyRate = employee.HourlyRate;
+        DefaultHoursPerPeriod = employee.DefaultHoursPerPeriod;
         PreTax401kPercent = employee.PreTax401kPercent;
         HealthInsurancePerPeriod = employee.HealthInsurancePerPeriod;
         OtherDeductionsPerPeriod = employee.OtherDeductionsPerPeriod;
@@ -409,6 +451,7 @@ public partial class EmployeeViewModel : ObservableObject, INotifyDataErrorInfo
         employee.IsHourly = IsHourly;
         employee.AnnualSalary = AnnualSalary;
         employee.HourlyRate = HourlyRate;
+        employee.DefaultHoursPerPeriod = DefaultHoursPerPeriod;
         employee.PreTax401kPercent = PreTax401kPercent;
         employee.HealthInsurancePerPeriod = HealthInsurancePerPeriod;
         employee.OtherDeductionsPerPeriod = OtherDeductionsPerPeriod;
@@ -425,6 +468,7 @@ public partial class EmployeeViewModel : ObservableObject, INotifyDataErrorInfo
         IsHourly = false;
         AnnualSalary = 0;
         HourlyRate = 0;
+        DefaultHoursPerPeriod = 80;
         PreTax401kPercent = 0;
         HealthInsurancePerPeriod = 0;
         OtherDeductionsPerPeriod = 0;

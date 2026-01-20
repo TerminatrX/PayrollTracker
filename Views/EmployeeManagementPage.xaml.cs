@@ -56,6 +56,10 @@ public sealed partial class EmployeeManagementPage : Page
             // Load employee details into editor
             ViewModel.Editor.LoadFrom(employee);
         }
+        else if (sender is DataGrid grid2 && grid2.SelectedItem == null)
+        {
+            ViewModel.SelectedEmployee = null;
+        }
     }
 
     protected override void OnKeyDown(KeyRoutedEventArgs e)

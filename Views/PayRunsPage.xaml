@@ -486,6 +486,16 @@
                     </StackPanel>
                 </Button>
 
+                <!-- Status Message -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" 
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                    <TextBlock Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
+                               FontSize="12" 
+                               Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                               Visibility="{x:Bind ViewModel.StatusMessage, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}" />
+                </StackPanel>
+
                 <!-- Status & Primary Action -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
                     <TextBlock Text="{x:Bind ViewModel.AutoSaveStatus, Mode=OneWay}"
@@ -496,7 +506,8 @@
                                   Width="20" Height="20" />
 
                     <Button Style="{ThemeResource AccentButtonStyle}"
-                            Command="{x:Bind ViewModel.GeneratePayRunCommand}"
+                            Command="{x:Bind ViewModel.FinalizeCommand}"
+                            IsEnabled="{x:Bind ViewModel.CanFinalize, Mode=OneWay}"
                             Padding="24,12">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Review &amp; Finalize Run" FontWeight="Bold" />
