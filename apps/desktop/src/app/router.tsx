@@ -4,6 +4,9 @@ import { AppShell } from "@/components/layout/AppShell";
 import { EmptyState } from "@/components/ui/primitives";
 import { EmployeesPage } from "@/features/employees/EmployeesPage";
 import { SettingsPage } from "@/features/settings/SettingsPage";
+import { PayRunsPage } from "@/features/pay-runs/PayRunsPage";
+import { NewPayRunWizard } from "@/features/pay-runs/NewPayRunWizard";
+import { PayRunDetail } from "@/features/pay-runs/PayRunDetail";
 import {
   EmployeeCompensationTab,
   EmployeeOverviewTab,
@@ -36,6 +39,14 @@ export const router = createBrowserRouter([
               { path: "taxes", element: <EmployeeTaxesTab /> },
             ],
           },
+        ],
+      },
+      {
+        path: "pay-runs",
+        children: [
+          { index: true, element: <PayRunsPage /> },
+          { path: "new", element: <NewPayRunWizard /> },
+          { path: ":payRunId", element: <PayRunDetail /> },
         ],
       },
       { path: "settings", element: <SettingsPage /> },

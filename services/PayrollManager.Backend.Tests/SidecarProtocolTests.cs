@@ -50,6 +50,7 @@ public class SidecarProtocolTests : IDisposable
 
         new EmployeeCommands(CreateDbContext).RegisterOn(dispatcher);
         new SettingsCommands(CreateDbContext).RegisterOn(dispatcher);
+        new PayRunCommands(CreateDbContext).RegisterOn(dispatcher);
         return dispatcher;
     }
 

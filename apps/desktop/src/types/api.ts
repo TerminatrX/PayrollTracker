@@ -117,6 +117,119 @@ export interface Backup {
   createdUtc: string;
 }
 
+export type PayRunStatus = "Draft" | "Calculated" | "Posted" | "Voided";
+
+export interface PayRunSummary {
+  id: number;
+  periodStart: string;
+  periodEnd: string;
+  payDate: string;
+  status: PayRunStatus;
+  employeeCount: number;
+  grossPay: number;
+  netPay: number;
+  employeeTaxes: number;
+  employerTaxes: number;
+  totalEmployerCost: number;
+  postedAtUtc?: string | null;
+  voidedAtUtc?: string | null;
+  voidReason?: string | null;
+  engineVersion?: string | null;
+}
+
+export interface PayRunWarning {
+  code: string;
+  message: string;
+  blocksPosting: boolean;
+  employeeId?: number | null;
+}
+
+export interface PayRunLine {
+  employeeId: number;
+  employeeName: string;
+  hoursWorked: number;
+  grossPay: number;
+  preTaxDeductions: number;
+  totalTaxes: number;
+  postTaxDeductions: number;
+  netPay: number;
+  employerTaxes: number;
+}
+
+export interface PayRunTotals {
+  employeeCount: number;
+  grossPay: number;
+  preTaxDeductions: number;
+  employeeTaxes: number;
+  postTaxDeductions: number;
+  netPay: number;
+  employerTaxes: number;
+  totalEmployerCost: number;
+}
+
+export interface PayRunPreview {
+  periodStart: string;
+  periodEnd: string;
+  payDate: string;
+  lines: PayRunLine[];
+  totals: PayRunTotals;
+  warnings: PayRunWarning[];
+  calculationHash: string;
+  canPost: boolean;
+}
+
+export interface PayRunDraftInput {
+  periodStart: string;
+  periodEnd: string;
+  payDate: string;
+}
+
+export interface PayRunEmployeeInput {
+  employeeId: number;
+  regularHours: number;
+  overtimeHours: number;
+  bonusAmount: number;
+  commissionAmount: number;
+  bonusDescription?: string | null;
+  commissionDescription?: string | null;
+}
+
+export interface PayRunEmployeeSuggestion {
+  employeeId: number;
+  fullName: string;
+  jobTitle?: string | null;
+  department?: string | null;
+  isHourly: boolean;
+  hourlyRate: number;
+  annualSalary: number;
+  salaryPerPeriod: number;
+  suggestedRegularHours: number;
+  suggestedOvertimeHours: number;
+  w4OnFile: boolean;
+}
+
+export interface SuggestPayRunResponse {
+  draft: PayRunDraftInput;
+  employees: PayRunEmployeeSuggestion[];
+}
+
+export interface PayStubLine {
+  payStubId: number;
+  employeeId: number;
+  employeeName: string;
+  hoursWorked: number;
+  grossPay: number;
+  totalTaxes: number;
+  postTaxDeductions: number;
+  netPay: number;
+  employerTaxes: number;
+}
+
+export interface PayRunDetail {
+  summary: PayRunSummary;
+  stubs: PayStubLine[];
+}
+
 export interface HealthResponse {
   status: string;
   engineVersion: string;
