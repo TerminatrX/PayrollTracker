@@ -5,6 +5,9 @@ using PayrollManager.Domain.Data;
 using PayrollManager.Domain.Models;
 using PayrollManager.Domain.Services;
 using System.Collections.ObjectModel;
+using Windows.Storage.Pickers;
+using WinRT.Interop;
+using PayrollManager.UI.Utils;
 
 // NOTE: This ViewModel only displays stored PayStub values from the database.
 // It NEVER recalculates or regenerates pay stub values using PayrollService.
@@ -123,6 +126,16 @@ public partial class PayStubDetailsViewModel : ObservableObject
     [ObservableProperty]
     private string _debugInfo = string.Empty;
 
+    [ObservableProperty]
+    private string _statusMessage = string.Empty;
+
+    public bool HasStatusMessage => !string.IsNullOrEmpty(StatusMessage);
+
+    partial void OnStatusMessageChanged(string value)
+    {
+        OnPropertyChanged(nameof(HasStatusMessage));
+    }
+
     // ═══════════════════════════════════════════════════════════════
     // COMMANDS
     // ═══════════════════════════════════════════════════════════
@@ -136,43 +149,141 @@ public partial class PayStubDetailsViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private async Task DownloadCsvAsync()
+    private void ShowExportMenu()
     {
-        if (_payStub == null)
+        // The flyout is handled by XAML, this command just needs to exist for binding
+    }
+
+    [RelayCommand]
+    private async Task SaveToDesktopAsync()
+    {
+        if (_payStub == null || _employee == null || _payStub.PayRun == null)
         {
             return;
         }
 
         try
         {
-            var filePath = await _exportService.ExportPayStubToCsvAsync(_payStub.Id);
-            // Could show a message here if needed
+            // Get desktop folder
+            var desktopFolder = await Windows.Storage.StorageFolder.GetFolderFromPathAsync(
+                Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
+            
+            var fileName = $"PayStub_{_employee.LastName}_{_payStub.PayRun.PayDate:yyyyMMdd}.pdf";
+            var file = await desktopFolder.CreateFileAsync(fileName, Windows.Storage.CreationCollisionOption.ReplaceExisting);
+
+            // Generate PDF bytes
+            var companySettings = await _dbContext.CompanySettings.FirstOrDefaultAsync();
+            if (companySettings == null)
+            {
+                var settingsService = new CompanySettingsService(_dbContext);
+                companySettings = await settingsService.GetSettingsAsync();
+            }
+            
+            var pdfBytes = _exportService.GeneratePayStubPdfBytes(_payStub, companySettings);
+            
+            // Write to file
+            await Windows.Storage.FileIO.WriteBytesAsync(file, pdfBytes);
+            
+            // Show success message
+            StatusMessage = $"PDF saved to Desktop: {fileName}";
+            System.Diagnostics.Debug.WriteLine($"PDF saved successfully to Desktop: {fileName}");
+            _ = ClearStatusMessageAfterDelay();
         }
         catch (Exception ex)
         {
-            // Handle error
-            System.Diagnostics.Debug.WriteLine($"Export error: {ex.Message}");
+            StatusMessage = $"Error saving PDF: {ex.Message}";
+            System.Diagnostics.Debug.WriteLine($"PDF export error: {ex.Message}");
+            _ = ClearStatusMessageAfterDelay();
         }
     }
 
     [RelayCommand]
-    private async Task DownloadPdfAsync()
+    private async Task PrintAsync()
     {
-        if (_payStub == null)
+        if (_payStub == null || _employee == null || _payStub.PayRun == null)
         {
             return;
         }
 
         try
         {
-            var filePath = await _exportService.ExportPayStubToPdfAsync(_payStub.Id);
-            // Could show a message here if needed
+            // Generate PDF bytes
+            var companySettings = await _dbContext.CompanySettings.FirstOrDefaultAsync();
+            if (companySettings == null)
+            {
+                var settingsService = new CompanySettingsService(_dbContext);
+                companySettings = await settingsService.GetSettingsAsync();
+            }
+            
+            var pdfBytes = _exportService.GeneratePayStubPdfBytes(_payStub, companySettings);
+            
+            // Save PDF to temp file
+            var tempFolder = Windows.Storage.ApplicationData.Current.TemporaryFolder;
+            var tempFile = await tempFolder.CreateFileAsync($"PayStub_{_payStub.Id}.pdf", 
+                Windows.Storage.CreationCollisionOption.ReplaceExisting);
+            await Windows.Storage.FileIO.WriteBytesAsync(tempFile, pdfBytes);
+            
+            // Launch print dialog
+            await Windows.System.Launcher.LaunchFileAsync(tempFile, new Windows.System.LauncherOptions
+            {
+                DisplayApplicationPicker = false
+            });
+            
+            StatusMessage = "Print dialog opened";
+            _ = ClearStatusMessageAfterDelay();
         }
         catch (Exception ex)
         {
-            // Handle error
-            System.Diagnostics.Debug.WriteLine($"Export error: {ex.Message}");
+            StatusMessage = $"Error printing: {ex.Message}";
+            System.Diagnostics.Debug.WriteLine($"Print error: {ex.Message}");
+            _ = ClearStatusMessageAfterDelay();
         }
+    }
+
+    [RelayCommand]
+    private async Task PrintPreviewAsync()
+    {
+        if (_payStub == null || _employee == null || _payStub.PayRun == null)
+        {
+            return;
+        }
+
+        try
+        {
+            // Generate PDF bytes
+            var companySettings = await _dbContext.CompanySettings.FirstOrDefaultAsync();
+            if (companySettings == null)
+            {
+                var settingsService = new CompanySettingsService(_dbContext);
+                companySettings = await settingsService.GetSettingsAsync();
+            }
+            
+            var pdfBytes = _exportService.GeneratePayStubPdfBytes(_payStub, companySettings);
+            
+            // Save PDF to temp file
+            var tempFolder = Windows.Storage.ApplicationData.Current.TemporaryFolder;
+            var tempFile = await tempFolder.CreateFileAsync($"PayStub_{_payStub.Id}.pdf", 
+                Windows.Storage.CreationCollisionOption.ReplaceExisting);
+            await Windows.Storage.FileIO.WriteBytesAsync(tempFile, pdfBytes);
+            
+            // Open PDF in default viewer (which will show print preview)
+            await Windows.System.Launcher.LaunchFileAsync(tempFile);
+            
+            StatusMessage = "Print preview opened";
+            _ = ClearStatusMessageAfterDelay();
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Error opening print preview: {ex.Message}";
+            System.Diagnostics.Debug.WriteLine($"Print preview error: {ex.Message}");
+            _ = ClearStatusMessageAfterDelay();
+        }
+    }
+
+    private async Task ClearStatusMessageAfterDelay()
+    {
+        await Task.Delay(5000); // Clear after 5 seconds
+        StatusMessage = string.Empty;
     }
 
     // ═══════════════════════════════════════════════════════════════

@@ -5,6 +5,7 @@ using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using System.Text;
+using System.Linq;
 
 namespace PayrollManager.Domain.Services;
 
@@ -106,7 +107,7 @@ public class ExportService
     }
 
     /// <summary>
-    /// Export pay stub to PDF using QuestPDF
+    /// Export pay stub to PDF using QuestPDF, matching the Design LLC Earnings Statement layout
     /// </summary>
     public async Task<string> ExportPayStubToPdfAsync(int payStubId, string? outputPath = null)
     {
@@ -121,218 +122,362 @@ public class ExportService
         if (payStub == null)
             throw new ArgumentException($"Pay stub {payStubId} not found");
 
+        if (payStub.Employee == null || payStub.PayRun == null)
+            throw new InvalidOperationException("Pay stub is missing required Employee or PayRun data");
+
         var companySettings = await _companySettingsService.GetSettingsAsync();
 
         if (string.IsNullOrEmpty(outputPath))
         {
-            var fileName = $"paystub_{payStub.Employee?.LastName ?? "unknown"}_{payStub.PayRun?.PayDate:yyyyMMdd}.pdf";
+            var fileName = $"paystub_{payStub.Employee.LastName}_{payStub.PayRun.PayDate:yyyyMMdd}.pdf";
             outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName);
         }
+
+        // Generate PDF bytes
+        var pdfBytes = GeneratePayStubPdfBytes(payStub, companySettings);
+        
+        // Write to file
+        await File.WriteAllBytesAsync(outputPath, pdfBytes);
+        return outputPath;
+    }
+
+    /// <summary>
+    /// Generates PDF bytes for a pay stub matching the Design LLC Earnings Statement layout
+    /// </summary>
+    public byte[] GeneratePayStubPdfBytes(PayStub payStub, CompanySettings companySettings)
+    {
+        var employee = payStub.Employee!;
+        var payRun = payStub.PayRun!;
+        
+        // Derive check number from PayStub ID
+        var checkNumber = payStub.Id.ToString("D4");
+        
+        // Determine pay schedule
+        var paySchedule = companySettings.PayPeriodsPerYear switch
+        {
+            52 => "Weekly",
+            26 => "Bi-Weekly",
+            24 => "Semi-Monthly",
+            12 => "Monthly",
+            _ => $"{companySettings.PayPeriodsPerYear} periods/year"
+        };
+
+        // Calculate total deductions (pre-tax + post-tax)
+        var totalDeductions = payStub.PreTax401kDeduction + payStub.PostTaxDeductions;
+        var ytdDeductions = payStub.YtdGross - payStub.YtdNet - payStub.YtdTaxes;
 
         var document = Document.Create(container =>
         {
             container.Page(page =>
             {
                 page.Size(PageSizes.Letter);
-                page.Margin(2, Unit.Centimetre);
+                page.Margin(0.5f, Unit.Inch);
                 page.PageColor(Colors.White);
-                page.DefaultTextStyle(x => x.FontSize(10));
+                page.DefaultTextStyle(x => x.FontSize(9).FontFamily("Arial"));
 
-                page.Header()
-                    .Row(row =>
-                    {
-                        row.RelativeItem().Column(column =>
-                        {
-                            column.Item().Text(companySettings?.CompanyName ?? "Company Name")
-                                .FontSize(18).Bold();
-                            column.Item().Text(companySettings?.CompanyAddress ?? "")
-                                .FontSize(10);
-                        });
-                        row.ConstantItem(100).AlignRight().Text("PAY STUB")
-                            .FontSize(16).Bold();
-                    });
-
+                // ═══════════════════════════════════════════════════════════════
+                // TOP SECTION: EARNINGS STATEMENT
+                // ═══════════════════════════════════════════════════════════════
+                
                 page.Content()
-                    .PaddingVertical(1, Unit.Centimetre)
                     .Column(column =>
                     {
-                        // Employee Info
+                        // Header Row: Company Name (left) | Earnings Statement + Check Number (right)
                         column.Item().Row(row =>
                         {
-                            row.RelativeItem().Text($"Employee: {payStub.Employee?.FullName ?? "Unknown"}");
-                            row.ConstantItem(150).Text($"ID: {payStub.EmployeeId:D5}");
+                            row.RelativeItem().Column(col =>
+                            {
+                                col.Item().Text(companySettings.CompanyName)
+                                    .FontSize(16).Bold();
+                                if (!string.IsNullOrEmpty(companySettings.TaxId))
+                                {
+                                    col.Item().Text($"ID: {companySettings.TaxId}")
+                                        .FontSize(8);
+                                }
+                                if (!string.IsNullOrEmpty(companySettings.CompanyAddress))
+                                {
+                                    col.Item().Text(companySettings.CompanyAddress)
+                                        .FontSize(9);
+                                }
+                            });
+                            
+                            row.ConstantItem(200).Column(col =>
+                            {
+                                col.Item().AlignRight().Text("EARNINGS STATEMENT")
+                                    .FontSize(14).Bold();
+                                col.Item().AlignRight().Text($"Check Number: {checkNumber}")
+                                    .FontSize(9);
+                            });
                         });
-                        column.Item().Text($"Pay Period: {payStub.PayRun?.PeriodStart:MMM dd, yyyy} - {payStub.PayRun?.PeriodEnd:MMM dd, yyyy}");
-                        column.Item().Text($"Pay Date: {payStub.PayRun?.PayDate:MMM dd, yyyy}");
+
                         column.Item().PaddingTop(10);
 
-                        // Earnings
-                        column.Item().Text("EARNINGS").FontSize(12).Bold();
+                        // Information Table: Employee Info | Pay Date | Pay Period | Pay Schedule
                         column.Item().Table(table =>
                         {
                             table.ColumnsDefinition(columns =>
                             {
-                                columns.RelativeColumn();
-                                columns.RelativeColumn();
-                                columns.ConstantColumn(60);
-                                columns.ConstantColumn(80);
-                                columns.ConstantColumn(80);
+                                columns.RelativeColumn(2); // Employee Info
+                                columns.RelativeColumn();    // Pay Date
+                                columns.RelativeColumn();    // Pay Period
+                                columns.RelativeColumn();    // Pay Schedule
                             });
 
-                            table.Header(header =>
+                            // Employee Information Column
+                            table.Cell().Column(empCol =>
                             {
-                                header.Cell().Text("Type").Bold();
-                                header.Cell().Text("Description").Bold();
-                                header.Cell().Text("Hours").Bold();
-                                header.Cell().AlignRight().Text("Rate").Bold();
-                                header.Cell().AlignRight().Text("Amount").Bold();
+                                empCol.Item().Text("EMPLOYEE INFORMATION").FontSize(8).Bold();
+                                empCol.Item().Text(employee.FullName).FontSize(10).Bold();
+                                empCol.Item().Text("SSN: XXX-XX-XXXX").FontSize(8); // Placeholder
+                                empCol.Item().Text("123 Main Street").FontSize(8); // Placeholder address
+                                empCol.Item().Text("City, ST 12345").FontSize(8); // Placeholder
                             });
 
-                            foreach (var line in payStub.EarningLines)
+                            // Pay Date Column
+                            table.Cell().Column(dateCol =>
                             {
-                                table.Cell().Text(line.Type.ToString());
-                                table.Cell().Text(line.Description);
-                                table.Cell().Text(line.Hours.ToString("F2"));
-                                table.Cell().AlignRight().Text($"${line.Rate:F2}");
-                                table.Cell().AlignRight().Text($"${line.Amount:F2}");
+                                dateCol.Item().Text("PAY DATE").FontSize(8).Bold();
+                                dateCol.Item().Text(payRun.PayDate.ToString("MMM dd, yyyy"))
+                                    .FontSize(10).Bold();
+                            });
+
+                            // Pay Period Column
+                            table.Cell().Column(periodCol =>
+                            {
+                                periodCol.Item().Text("PAY PERIOD").FontSize(8).Bold();
+                                periodCol.Item().Text($"{payRun.PeriodStart:MMM dd, yyyy}")
+                                    .FontSize(9);
+                                periodCol.Item().Text($"to {payRun.PeriodEnd:MMM dd, yyyy}")
+                                    .FontSize(9);
+                            });
+
+                            // Pay Schedule Column
+                            table.Cell().Column(schedCol =>
+                            {
+                                schedCol.Item().Text("PAY SCHEDULE").FontSize(8).Bold();
+                                schedCol.Item().Text(paySchedule)
+                                    .FontSize(9);
+                            });
+                        });
+
+                        column.Item().PaddingTop(10);
+
+                        // Earnings Table: Description | Rate | Hours | Total | YTD
+                        column.Item().Text("EARNINGS").FontSize(10).Bold();
+                        column.Item().Table(earningsTable =>
+                        {
+                            earningsTable.ColumnsDefinition(columns =>
+                            {
+                                columns.RelativeColumn(3); // Description
+                                columns.ConstantColumn(70); // Rate
+                                columns.ConstantColumn(60); // Hours
+                                columns.ConstantColumn(80); // Total
+                                columns.ConstantColumn(80); // YTD
+                            });
+
+                            earningsTable.Header(header =>
+                            {
+                                header.Cell().Text("Description").FontSize(9).Bold();
+                                header.Cell().AlignRight().Text("Rate").FontSize(9).Bold();
+                                header.Cell().AlignRight().Text("Hours").FontSize(9).Bold();
+                                header.Cell().AlignRight().Text("Total").FontSize(9).Bold();
+                                header.Cell().AlignRight().Text("YTD").FontSize(9).Bold();
+                            });
+
+                            // Add earning lines
+                            if (payStub.EarningLines.Any())
+                            {
+                                foreach (var line in payStub.EarningLines.OrderBy(e => e.Type))
+                                {
+                                    earningsTable.Cell().Text(line.Description).FontSize(9);
+                                    earningsTable.Cell().AlignRight().Text($"${line.Rate:F2}").FontSize(9);
+                                    earningsTable.Cell().AlignRight().Text(line.Hours > 0 ? line.Hours.ToString("F2") : "—").FontSize(9);
+                                    earningsTable.Cell().AlignRight().Text($"${line.Amount:F2}").FontSize(9);
+                                    earningsTable.Cell().AlignRight().Text("—").FontSize(9); // YTD per line not tracked
+                                }
+                            }
+                            else
+                            {
+                                // Fallback: single regular earnings row
+                                var rate = employee.IsHourly ? employee.HourlyRate : (payStub.GrossPay / (payStub.HoursWorked > 0 ? payStub.HoursWorked : 1));
+                                earningsTable.Cell().Text(employee.IsHourly ? "Regular Earnings" : "Salary").FontSize(9);
+                                earningsTable.Cell().AlignRight().Text($"${rate:F2}").FontSize(9);
+                                earningsTable.Cell().AlignRight().Text(payStub.HoursWorked > 0 ? payStub.HoursWorked.ToString("F2") : "—").FontSize(9);
+                                earningsTable.Cell().AlignRight().Text($"${payStub.GrossPay:F2}").FontSize(9);
+                                earningsTable.Cell().AlignRight().Text("—").FontSize(9);
                             }
 
-                            table.Cell().ColumnSpan(4).AlignRight().Text("Total Gross Pay:").Bold();
-                            table.Cell().AlignRight().Text($"${payStub.GrossPay:F2}").Bold();
+                            // Total Gross row
+                            earningsTable.Cell().ColumnSpan(3).AlignRight().Text("Total Gross").FontSize(9).Bold();
+                            earningsTable.Cell().AlignRight().Text($"${payStub.GrossPay:F2}").FontSize(9).Bold();
+                            earningsTable.Cell().AlignRight().Text($"${payStub.YtdGross:F2}").FontSize(9).Bold();
                         });
 
                         column.Item().PaddingTop(10);
 
-                        // Deductions
-                        column.Item().Text("DEDUCTIONS").FontSize(12).Bold();
-                        column.Item().Table(table =>
+                        // Taxes/Deductions Section (Current & YTD)
+                        column.Item().Row(taxesRow =>
                         {
-                            table.ColumnsDefinition(columns =>
+                            // Left: Taxes/Deductions table
+                            taxesRow.RelativeItem().Table(taxesTable =>
                             {
-                                columns.RelativeColumn();
-                                columns.RelativeColumn();
-                                columns.ConstantColumn(60);
-                                columns.ConstantColumn(80);
-                            });
+                                taxesTable.ColumnsDefinition(columns =>
+                                {
+                                    columns.RelativeColumn(2);
+                                    columns.ConstantColumn(80); // Current
+                                    columns.ConstantColumn(80); // YTD
+                                });
 
-                            table.Header(header =>
-                            {
-                                header.Cell().Text("Type").Bold();
-                                header.Cell().Text("Description").Bold();
-                                header.Cell().Text("Pre-Tax").Bold();
-                                header.Cell().AlignRight().Text("Amount").Bold();
-                            });
+                                taxesTable.Header(header =>
+                                {
+                                    header.Cell().Text("TAXES / DEDUCTIONS").FontSize(9).Bold();
+                                    header.Cell().AlignRight().Text("Current").FontSize(9).Bold();
+                                    header.Cell().AlignRight().Text("YTD").FontSize(9).Bold();
+                                });
 
-                            foreach (var line in payStub.DeductionLines)
-                            {
-                                table.Cell().Text(line.Type.ToString());
-                                table.Cell().Text(line.Description);
-                                table.Cell().Text(line.IsPreTax ? "Yes" : "No");
-                                table.Cell().AlignRight().Text($"${line.Amount:F2}");
-                            }
+                                // Federal Tax
+                                taxesTable.Cell().Text("Federal").FontSize(9);
+                                taxesTable.Cell().AlignRight().Text($"${payStub.TaxFederal:F2}").FontSize(9);
+                                taxesTable.Cell().AlignRight().Text("—").FontSize(9); // YTD per tax not tracked separately
+
+                                // Medicare
+                                taxesTable.Cell().Text("Medicare").FontSize(9);
+                                taxesTable.Cell().AlignRight().Text($"${payStub.TaxMedicare:F2}").FontSize(9);
+                                taxesTable.Cell().AlignRight().Text("—").FontSize(9);
+
+                                // FICA (Social Security)
+                                taxesTable.Cell().Text("FICA").FontSize(9);
+                                taxesTable.Cell().AlignRight().Text($"${payStub.TaxSocialSecurity:F2}").FontSize(9);
+                                taxesTable.Cell().AlignRight().Text("—").FontSize(9);
+
+                                // State Tax
+                                taxesTable.Cell().Text("State").FontSize(9);
+                                taxesTable.Cell().AlignRight().Text($"${payStub.TaxState:F2}").FontSize(9);
+                                taxesTable.Cell().AlignRight().Text("—").FontSize(9);
+
+                                // Other Deductions (if any)
+                                if (totalDeductions > 0)
+                                {
+                                    taxesTable.Cell().Text("Other Deductions").FontSize(9);
+                                    taxesTable.Cell().AlignRight().Text($"${totalDeductions:F2}").FontSize(9);
+                                    taxesTable.Cell().AlignRight().Text($"${ytdDeductions:F2}").FontSize(9);
+                                }
+
+                                // Summary rows
+                                taxesTable.Cell().Text("Gross").FontSize(9).Bold();
+                                taxesTable.Cell().AlignRight().Text($"${payStub.GrossPay:F2}").FontSize(9).Bold();
+                                taxesTable.Cell().AlignRight().Text($"${payStub.YtdGross:F2}").FontSize(9).Bold();
+
+                                taxesTable.Cell().Text("Taxes / Deductions").FontSize(9).Bold();
+                                taxesTable.Cell().AlignRight().Text($"${payStub.TotalTaxes + totalDeductions:F2}").FontSize(9).Bold();
+                                taxesTable.Cell().AlignRight().Text($"${payStub.YtdTaxes + ytdDeductions:F2}").FontSize(9).Bold();
+
+                                taxesTable.Cell().Text("Net Pay").FontSize(9).Bold();
+                                taxesTable.Cell().AlignRight().Text($"${payStub.NetPay:F2}").FontSize(9).Bold();
+                                taxesTable.Cell().AlignRight().Text($"${payStub.YtdNet:F2}").FontSize(9).Bold();
+                            });
                         });
 
                         column.Item().PaddingTop(10);
 
-                        // Taxes
-                        column.Item().Text("TAXES").FontSize(12).Bold();
-                        column.Item().Table(table =>
+                        // YTD Summary Strip (horizontal bar)
+                        column.Item().Background(Colors.Grey.Lighten3)
+                            .Padding(8)
+                            .Row(ytdRow =>
+                            {
+                                ytdRow.RelativeItem().Column(ytdCol =>
+                                {
+                                    ytdCol.Item().Text("YTD GROSS").FontSize(8).Bold();
+                                    ytdCol.Item().Text($"${payStub.YtdGross:F2}").FontSize(11).Bold();
+                                });
+                                ytdRow.RelativeItem().Column(ytdCol =>
+                                {
+                                    ytdCol.Item().Text("YTD TAXES / DEDUCTIONS").FontSize(8).Bold();
+                                    ytdCol.Item().Text($"${payStub.YtdTaxes + ytdDeductions:F2}").FontSize(11).Bold();
+                                });
+                                ytdRow.RelativeItem().Column(ytdCol =>
+                                {
+                                    ytdCol.Item().Text("YTD NET PAY").FontSize(8).Bold();
+                                    ytdCol.Item().Text($"${payStub.YtdNet:F2}").FontSize(11).Bold();
+                                });
+                            });
+
+                        column.Item().PaddingTop(15);
+
+                        // ═══════════════════════════════════════════════════════════════
+                        // BOTTOM SECTION: DIRECT DEPOSIT ADVICE (Tear-off)
+                        // ═══════════════════════════════════════════════════════════════
+
+                        // Dashed line separator
+                        column.Item().LineHorizontal(1).LineColor(Colors.Grey.Medium);
+
+                        column.Item().PaddingTop(10);
+
+                        // Direct Deposit Advice Header
+                        column.Item().Row(ddRow =>
                         {
-                            table.ColumnsDefinition(columns =>
+                            ddRow.RelativeItem().Column(ddCol =>
                             {
-                                columns.RelativeColumn();
-                                columns.RelativeColumn();
-                                columns.ConstantColumn(60);
-                                columns.ConstantColumn(80);
-                                columns.ConstantColumn(80);
+                                ddCol.Item().Text(companySettings.CompanyName).FontSize(10).Bold();
+                                if (!string.IsNullOrEmpty(companySettings.CompanyAddress))
+                                {
+                                    ddCol.Item().Text(companySettings.CompanyAddress).FontSize(8);
+                                }
                             });
-
-                            table.Header(header =>
+                            ddRow.ConstantItem(200).Column(ddCol =>
                             {
-                                header.Cell().Text("Type").Bold();
-                                header.Cell().Text("Description").Bold();
-                                header.Cell().Text("Rate").Bold();
-                                header.Cell().AlignRight().Text("Taxable").Bold();
-                                header.Cell().AlignRight().Text("Amount").Bold();
+                                ddCol.Item().AlignRight().Text($"Check Number: {checkNumber}").FontSize(9);
+                                ddCol.Item().AlignRight().Text($"Pay Date: {payRun.PayDate:MMM dd, yyyy}").FontSize(9);
                             });
-
-                            foreach (var line in payStub.TaxLines)
-                            {
-                                table.Cell().Text(line.Type.ToString());
-                                table.Cell().Text(line.Description);
-                                table.Cell().Text($"{line.Rate:F2}%");
-                                table.Cell().AlignRight().Text($"${line.TaxableAmount:F2}");
-                                table.Cell().AlignRight().Text($"${line.Amount:F2}");
-                            }
                         });
 
                         column.Item().PaddingTop(10);
 
-                        // Summary
-                        column.Item().Text("SUMMARY").FontSize(12).Bold();
-                        column.Item().Table(table =>
+                        // Body: Deposited to / Account of
+                        column.Item().Column(bodyCol =>
                         {
-                            table.ColumnsDefinition(columns =>
-                            {
-                                columns.RelativeColumn();
-                                columns.ConstantColumn(100);
-                            });
-
-                            table.Cell().Text("Gross Pay");
-                            table.Cell().AlignRight().Text($"${payStub.GrossPay:F2}");
-
-                            table.Cell().Text("Pre-Tax Deductions");
-                            table.Cell().AlignRight().Text($"${payStub.PreTax401kDeduction:F2}");
-
-                            table.Cell().Text("Taxable Income");
-                            table.Cell().AlignRight().Text($"${payStub.GrossPay - payStub.PreTax401kDeduction:F2}");
-
-                            table.Cell().Text("Total Taxes");
-                            table.Cell().AlignRight().Text($"${payStub.TotalTaxes:F2}");
-
-                            table.Cell().Text("Post-Tax Deductions");
-                            table.Cell().AlignRight().Text($"${payStub.PostTaxDeductions:F2}");
-
-                            table.Cell().Text("Net Pay").Bold();
-                            table.Cell().AlignRight().Text($"${payStub.NetPay:F2}").Bold();
+                            bodyCol.Item().Text($"Deposited to {employee.FullName}").FontSize(10);
+                            bodyCol.Item().Text("to the Account of:").FontSize(9);
+                            bodyCol.Item().Text("123 Main Street").FontSize(9); // Placeholder
+                            bodyCol.Item().Text("City, ST 12345").FontSize(9); // Placeholder
                         });
 
                         column.Item().PaddingTop(10);
 
-                        // YTD
-                        column.Item().Text("YEAR-TO-DATE").FontSize(12).Bold();
-                        column.Item().Table(table =>
-                        {
-                            table.ColumnsDefinition(columns =>
+                        // Amount Block (prominent box)
+                        column.Item().Background(Colors.White)
+                            .Border(1)
+                            .BorderColor(Colors.Black)
+                            .Padding(12)
+                            .Row(amountRow =>
                             {
-                                columns.RelativeColumn();
-                                columns.ConstantColumn(100);
+                                amountRow.RelativeItem().Column(amountCol =>
+                                {
+                                    amountCol.Item().Text("Amount:").FontSize(9);
+                                    amountCol.Item().Text(AmountToWordsConverter.ConvertToWords(payStub.NetPay))
+                                        .FontSize(9);
+                                });
+                                amountRow.ConstantItem(120).AlignRight().Column(amountCol =>
+                                {
+                                    amountCol.Item().Text("$").FontSize(16).Bold();
+                                    amountCol.Item().Text($"{payStub.NetPay:F2}").FontSize(20).Bold();
+                                });
                             });
 
-                            table.Cell().Text("YTD Gross");
-                            table.Cell().AlignRight().Text($"${payStub.YtdGross:F2}");
+                        column.Item().PaddingTop(10);
 
-                            table.Cell().Text("YTD Taxes");
-                            table.Cell().AlignRight().Text($"${payStub.YtdTaxes:F2}");
-
-                            table.Cell().Text("YTD Net");
-                            table.Cell().AlignRight().Text($"${payStub.YtdNet:F2}");
+                        // Footer text
+                        column.Item().AlignCenter().Column(footerCol =>
+                        {
+                            footerCol.Item().Text("THIS IS NOT A CHECK").FontSize(8).Bold();
+                            footerCol.Item().Text("DIRECT DEPOSIT").FontSize(8).Bold();
+                            footerCol.Item().Text("NON-NEGOTIABLE").FontSize(8).Bold();
                         });
-                    });
-
-                page.Footer()
-                    .AlignCenter()
-                    .DefaultTextStyle(TextStyle.Default.FontSize(8))
-                    .Text(x =>
-                    {
-                        x.Span("Generated on ");
-                        x.Span(DateTime.Now.ToString("MMM dd, yyyy HH:mm"));
                     });
             });
         });
 
-        document.GeneratePdf(outputPath);
-        return outputPath;
+        return document.GeneratePdf();
     }
 
     /// <summary>
