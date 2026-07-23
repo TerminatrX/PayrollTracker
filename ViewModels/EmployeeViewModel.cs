@@ -440,6 +440,7 @@ public partial class EmployeeViewModel : ObservableObject, INotifyDataErrorInfo
         OtherDeductionsPerPeriod = employee.OtherDeductionsPerPeriod;
         JobTitle = employee.JobTitle ?? string.Empty;
         Department = employee.Department ?? "Engineering";
+        HireDate = employee.HireDate;
         _errors.Clear();
     }
 
@@ -457,6 +458,10 @@ public partial class EmployeeViewModel : ObservableObject, INotifyDataErrorInfo
         employee.OtherDeductionsPerPeriod = OtherDeductionsPerPeriod;
         employee.JobTitle = string.IsNullOrWhiteSpace(JobTitle) ? null : JobTitle.Trim();
         employee.Department = string.IsNullOrWhiteSpace(Department) ? null : Department.Trim();
+
+        // Defect #9: HireDate was collected in the UI but silently dropped here, because the
+        // entity had no column for it. It does now.
+        employee.HireDate = HireDate;
     }
 
     public void Reset()

@@ -36,8 +36,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- This project lives at the repository root, so its default glob would swallow every
+         sibling project's sources (including their generated obj/ files). Each sibling must be
+         excluded explicitly. -->
     <Compile Remove="PayrollManager.Domain\**\*.cs" />
     <Compile Remove="PayrollManager.Domain.Tests\**\*.cs" />
+    <Compile Remove="services\**\*.cs" />
+    <Compile Remove="apps\**\*.cs" />
     <Compile Remove="Components\**\*.razor" />
     <Compile Remove="Components\**\*.razor.cs" />
   </ItemGroup>

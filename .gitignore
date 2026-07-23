@@ -152,3 +152,11 @@ $RECYCLE.BIN/
 
 ## Mac desktop service store files
 .DS_Store
+
+## ── Tauri desktop app (apps/desktop) ──────────────────────────────
+node_modules/
+apps/desktop/dist/
+apps/desktop/src-tauri/target/
+apps/desktop/src-tauri/gen/
+# Generated from app-icon.png by `npx tauri icon`; regenerate rather than commit.
+apps/desktop/src-tauri/icons/

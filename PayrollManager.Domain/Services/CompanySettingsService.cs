@@ -49,8 +49,6 @@ public class CompanySettingsService
                     CompanyName = "My Company",
                     CompanyAddress = string.Empty,
                     TaxId = string.Empty,
-                    FederalTaxPercent = 12m,
-                    StateTaxPercent = 5m,
                     SocialSecurityPercent = 6.2m,
                     MedicarePercent = 1.45m,
                     PayPeriodsPerYear = 26,
@@ -111,8 +109,6 @@ public class CompanySettingsService
                     CompanyName = "My Company",
                     CompanyAddress = string.Empty,
                     TaxId = string.Empty,
-                    FederalTaxPercent = 12m,
-                    StateTaxPercent = 5m,
                     SocialSecurityPercent = 6.2m,
                     MedicarePercent = 1.45m,
                     PayPeriodsPerYear = 26,
@@ -186,8 +182,9 @@ public class CompanySettingsService
                 existing.CompanyName = settings.CompanyName;
                 existing.CompanyAddress = settings.CompanyAddress;
                 existing.TaxId = settings.TaxId;
-                existing.FederalTaxPercent = settings.FederalTaxPercent;
-                existing.StateTaxPercent = settings.StateTaxPercent;
+                existing.SuiRatePercent = settings.SuiRatePercent;
+                existing.SuiWageBase = settings.SuiWageBase;
+                existing.ReceivesFullFutaCredit = settings.ReceivesFullFutaCredit;
                 existing.SocialSecurityPercent = settings.SocialSecurityPercent;
                 existing.MedicarePercent = settings.MedicarePercent;
                 existing.PayPeriodsPerYear = settings.PayPeriodsPerYear;

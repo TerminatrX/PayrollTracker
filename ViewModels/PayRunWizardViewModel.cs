@@ -32,13 +32,25 @@ public partial class PayRunWizardViewModel : ObservableObject
     private readonly AppDbContext _dbContext;
     private readonly PayrollService _payrollService;
     private readonly CompanySettingsService _companySettingsService;
+    private readonly PayRunService _payRunService;
 
-    public PayRunWizardViewModel(AppDbContext dbContext, PayrollService payrollService, CompanySettingsService companySettingsService)
+    /// <summary>
+    /// Conditions surfaced by the last preview. Entries with BlocksPosting must be resolved
+    /// before the run can be posted.
+    /// </summary>
+    public ObservableCollection<PayRunWarning> BlockingWarnings { get; } = new();
+
+    public PayRunWizardViewModel(
+        AppDbContext dbContext,
+        PayrollService payrollService,
+        CompanySettingsService companySettingsService,
+        PayRunService payRunService)
     {
         _dbContext = dbContext;
         _payrollService = payrollService;
         _companySettingsService = companySettingsService;
-        
+        _payRunService = payRunService;
+
         // Initialize default dates
         var today = DateTimeOffset.Now.Date;
         PeriodStart = today.AddDays(-13);
@@ -549,8 +561,16 @@ public partial class PayRunWizardViewModel : ObservableObject
 
             if (employee.IsHourly)
             {
-                row.RegularHours = Math.Min(defaultHours, 40);
-                row.OvertimeHours = Math.Max(0, defaultHours - 40);
+                // FLSA overtime is per WORKWEEK, not per pay period. Splitting the period
+                // total at 40 defaulted every hourly employee on an ordinary 80-hour biweekly
+                // schedule to 40 regular + 40 overtime hours - a 25% overpayment that the
+                // operator would simply accept as the pre-filled default.
+                var workweeks = FlsaOvertime.WorkweeksInPeriod(settings.PayPeriodsPerYear);
+                var (regularHours, overtimeHours) =
+                    FlsaOvertime.SplitEvenlyAcrossWorkweeks((decimal)defaultHours, workweeks);
+
+                row.RegularHours = (double)regularHours;
+                row.OvertimeHours = (double)overtimeHours;
             }
 
             // Subscribe to property changes to update validation and estimates
@@ -704,95 +724,98 @@ public partial class PayRunWizardViewModel : ObservableObject
         }
 
         IsLoading = true;
-        StatusMessage = "Generating pay run...";
+        StatusMessage = "Calculating pay run...";
+        BlockingWarnings.Clear();
 
         try
         {
-            // Create the pay run
-            var payRun = new PayRun
+            var draft = new PayRunDraft
             {
                 PeriodStart = PeriodStart.DateTime,
                 PeriodEnd = PeriodEnd.DateTime,
                 PayDate = PayDate.DateTime
             };
 
-            _dbContext.PayRuns.Add(payRun);
-            // Save PayRun first to get its ID (required for PayStub.PayRunId foreign key)
-            await _dbContext.SaveChangesAsync();
+            var inputs = EmployeeRows
+                .Where(r => r.IsIncluded)
+                .Select(r => new PayRunEmployeeInput
+                {
+                    EmployeeId = r.EmployeeId,
+                    RegularHours = (decimal)r.RegularHours,
+                    OvertimeHours = (decimal)r.OvertimeHours,
+                    BonusAmount = (decimal)r.BonusAmount,
+                    CommissionAmount = (decimal)r.CommissionAmount,
+                    BonusDescription = r.BonusDescription,
+                    CommissionDescription = r.CommissionDescription
+                })
+                .ToList();
 
-            // Generate pay stubs for each included employee
-            GeneratedStubs.Clear();
-            var includedRows = EmployeeRows.Where(r => r.IsIncluded).ToList();
-            var totalEmployees = includedRows.Count;
-            var processedCount = 0;
+            // Preview first, so the operator is shown blocking conditions - duplicate pay
+            // period, negative net pay, terminated employee - BEFORE anything is written.
+            var preview = await _payRunService.PreviewAsync(draft, inputs);
 
-            foreach (var row in includedRows)
+            foreach (var warning in preview.Warnings)
             {
-                var employee = await _dbContext.Employees.FindAsync(row.EmployeeId);
-                if (employee == null)
-                {
-                    StatusMessage = $"Employee {row.FullName} not found";
-                    continue;
-                }
-
-                // Create PayStubInput from row data
-                var input = new PayStubInput
-                {
-                    RegularHours = (decimal)row.RegularHours,
-                    OvertimeHours = (decimal)row.OvertimeHours,
-                    BonusAmount = (decimal)row.BonusAmount,
-                    CommissionAmount = (decimal)row.CommissionAmount,
-                    BonusDescription = row.BonusDescription,
-                    CommissionDescription = row.CommissionDescription
-                };
-
-                // Generate pay stub using PayrollService
-                var payStub = await _payrollService.GeneratePayStubAsync(employee, payRun, input);
-                
-                // Add to context (this will also add related EarningLines, DeductionLines, TaxLines)
-                _dbContext.PayStubs.Add(payStub);
-                
-                // Add to generated stubs list for display
-                // Calculate earnings breakdown from EarningLines (they're already added to payStub by PayrollService)
-                var regularPay = payStub.EarningLines.Where(e => e.Type == EarningType.Regular).Sum(e => e.Amount);
-                var overtimePay = payStub.EarningLines.Where(e => e.Type == EarningType.Overtime).Sum(e => e.Amount);
-                var bonusPay = payStub.EarningLines.Where(e => e.Type == EarningType.Bonus || e.Type == EarningType.Commission).Sum(e => e.Amount);
-                
-                GeneratedStubs.Add(new PayStubResult
-                {
-                    EmployeeId = employee.Id,
-                    EmployeeName = employee.FullName,
-                    RegularPay = regularPay,
-                    OvertimePay = overtimePay,
-                    BonusPay = bonusPay,
-                    GrossPay = payStub.GrossPay,
-                    NetPay = payStub.NetPay,
-                    TotalTaxes = payStub.TotalTaxes,
-                    Taxes = payStub.TotalTaxes,
-                    YtdGross = payStub.YtdGross,
-                    YtdNet = payStub.YtdNet
-                });
-
-                processedCount++;
-                StatusMessage = $"Processing {processedCount} of {totalEmployees} employees...";
+                BlockingWarnings.Add(warning);
             }
 
-            // Save all pay stubs and their related entities in one transaction
-            await _dbContext.SaveChangesAsync();
+            if (!preview.CanPost)
+            {
+                var blockers = preview.Warnings.Where(w => w.BlocksPosting).ToList();
+                StatusMessage = $"Cannot post: {string.Join(" ", blockers.Select(b => b.Message))}";
+                return;
+            }
+
+            StatusMessage = "Posting pay run...";
+
+            // The run and every stub commit in ONE transaction. The hash proves the posted
+            // amounts are the ones just previewed.
+            var payRun = await _payRunService.PostAsync(
+                draft, inputs, preview.CalculationHash, Environment.UserName);
+
+            GeneratedStubs.Clear();
+
+            var postedStubs = await _dbContext.PayStubs
+                .Include(ps => ps.Employee)
+                .Include(ps => ps.EarningLines)
+                .Where(ps => ps.PayRunId == payRun.Id)
+                .ToListAsync();
+
+            foreach (var stub in postedStubs)
+            {
+                GeneratedStubs.Add(new PayStubResult
+                {
+                    EmployeeId = stub.EmployeeId,
+                    EmployeeName = stub.Employee?.FullName ?? string.Empty,
+                    RegularPay = stub.RegularEarnings,
+                    OvertimePay = stub.OvertimeEarnings,
+                    BonusPay = stub.BonusEarnings + stub.CommissionEarnings,
+                    GrossPay = stub.GrossPay,
+                    NetPay = stub.NetPay,
+                    TotalTaxes = stub.TotalTaxes,
+                    Taxes = stub.TotalTaxes,
+                    YtdGross = stub.YtdGross,
+                    YtdNet = stub.YtdNet
+                });
+            }
 
             IsStep3Complete = true;
             IsRunComplete = true;
             CurrentStep = PayRunStep.Complete;
-            StatusMessage = $"Pay run generated successfully: {processedCount} pay stubs created";
-            
-            // Update command states
+            StatusMessage = $"Pay run posted: {postedStubs.Count} pay stubs, " +
+                            $"net {preview.Totals.NetPay:C}";
+
             GoBackCommand.NotifyCanExecuteChanged();
             GoNextCommand.NotifyCanExecuteChanged();
             FinalizeCommand.NotifyCanExecuteChanged();
         }
+        catch (PayRunPostingException ex)
+        {
+            StatusMessage = ex.Message;
+        }
         catch (Exception ex)
         {
-            StatusMessage = $"Error generating pay run: {ex.Message}";
+            StatusMessage = $"Error posting pay run: {ex.Message}";
         }
         finally
         {
