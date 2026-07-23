@@ -173,7 +173,7 @@ function SettingsForm({ settings }: { settings: CompanySettings }) {
                 label="Default Hours / Period"
                 htmlFor="defaultHoursPerPeriod"
                 error={errors.defaultHoursPerPeriod?.message}
-                hint="Pre-fills hourly employees in a new pay run."
+                hint="Default hours for new employees; each can be overridden per employee."
               >
                 <NumberInput
                   id="defaultHoursPerPeriod"
