@@ -230,6 +230,62 @@ export interface PayRunDetail {
   stubs: PayStubLine[];
 }
 
+export interface CompanyTotals {
+  employeeCount: number;
+  payStubCount: number;
+  grossPay: number;
+  federalTax: number;
+  stateTax: number;
+  socialSecurity: number;
+  medicare: number;
+  totalTaxes: number;
+  preTax401k: number;
+  postTaxDeductions: number;
+  netPay: number;
+  employerTaxes: number;
+  totalEmployerCost: number;
+}
+
+export interface EmployeeTotals {
+  employeeId: number;
+  employeeName: string;
+  grossPay: number;
+  totalTaxes: number;
+  preTax401k: number;
+  postTaxDeductions: number;
+  netPay: number;
+  payStubCount: number;
+}
+
+export interface DashboardData {
+  year: number;
+  companyYtd: CompanyTotals;
+  activeEmployeeCount: number;
+  postedRunCount: number;
+  lastPayRun?: PayRunSummary | null;
+  nextPayDate?: string | null;
+  suiConfigured: boolean;
+}
+
+export interface PayrollReport {
+  startDate: string;
+  endDate: string;
+  company: CompanyTotals;
+  employees: EmployeeTotals[];
+}
+
+export interface AuditEntry {
+  id: number;
+  timestampUtc: string;
+  action: string;
+  entityType: string;
+  entityId?: number | null;
+  oldValue?: string | null;
+  newValue?: string | null;
+  performedBy?: string | null;
+  notes?: string | null;
+}
+
 export interface HealthResponse {
   status: string;
   engineVersion: string;

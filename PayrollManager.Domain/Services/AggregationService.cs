@@ -47,10 +47,14 @@ public class AggregationService
     /// </summary>
     public async Task<EmployeeTotals> GetEmployeeYtdTotalsAsync(int employeeId, int year)
     {
+        // Only POSTED runs count. A voided run's stubs remain in the database (voiding
+        // reverses, it does not delete), so without this filter they would inflate every
+        // aggregate total shown on the dashboard and reports.
         var payStubs = await _dbContext.PayStubs
             .Include(ps => ps.PayRun)
-            .Where(ps => ps.EmployeeId == employeeId && 
-                         ps.PayRun!.PayDate.Year == year)
+            .Where(ps => ps.EmployeeId == employeeId &&
+                         ps.PayRun!.Status == PayRunStatus.Posted &&
+                         ps.PayRun.PayDate.Year == year)
             .ToListAsync();
 
         return new EmployeeTotals
@@ -80,8 +84,9 @@ public class AggregationService
         
         var payStubs = await _dbContext.PayStubs
             .Include(ps => ps.PayRun)
-            .Where(ps => ps.EmployeeId == employeeId && 
-                         ps.PayRun!.PayDate >= quarterStart && 
+            .Where(ps => ps.EmployeeId == employeeId &&
+                         ps.PayRun!.Status == PayRunStatus.Posted &&
+                         ps.PayRun.PayDate >= quarterStart &&
                          ps.PayRun.PayDate <= quarterEnd)
             .ToListAsync();
 
@@ -111,12 +116,12 @@ public class AggregationService
     {
         var payStubs = await _dbContext.PayStubs
             .Include(ps => ps.PayRun)
-            .Where(ps => ps.PayRun!.PayDate.Year == year)
+            .Where(ps => ps.PayRun!.Status == PayRunStatus.Posted && ps.PayRun.PayDate.Year == year)
             .ToListAsync();
 
         var employeeCount = await _dbContext.PayStubs
             .Include(ps => ps.PayRun)
-            .Where(ps => ps.PayRun!.PayDate.Year == year)
+            .Where(ps => ps.PayRun!.Status == PayRunStatus.Posted && ps.PayRun.PayDate.Year == year)
             .Select(ps => ps.EmployeeId)
             .Distinct()
             .CountAsync();
@@ -148,13 +153,15 @@ public class AggregationService
         
         var payStubs = await _dbContext.PayStubs
             .Include(ps => ps.PayRun)
-            .Where(ps => ps.PayRun!.PayDate >= quarterStart && 
+            .Where(ps => ps.PayRun!.Status == PayRunStatus.Posted &&
+                         ps.PayRun.PayDate >= quarterStart &&
                          ps.PayRun.PayDate <= quarterEnd)
             .ToListAsync();
 
         var employeeCount = await _dbContext.PayStubs
             .Include(ps => ps.PayRun)
-            .Where(ps => ps.PayRun!.PayDate >= quarterStart && 
+            .Where(ps => ps.PayRun!.Status == PayRunStatus.Posted &&
+                         ps.PayRun.PayDate >= quarterStart &&
                          ps.PayRun.PayDate <= quarterEnd)
             .Select(ps => ps.EmployeeId)
             .Distinct()
@@ -187,7 +194,8 @@ public class AggregationService
         var payStubs = await _dbContext.PayStubs
             .Include(ps => ps.PayRun)
             .Include(ps => ps.Employee)
-            .Where(ps => ps.PayRun!.PayDate >= startDate && 
+            .Where(ps => ps.PayRun!.Status == PayRunStatus.Posted &&
+                         ps.PayRun.PayDate >= startDate &&
                          ps.PayRun.PayDate <= endDate)
             .ToListAsync();
 
