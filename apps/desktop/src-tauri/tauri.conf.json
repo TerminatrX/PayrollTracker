@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "identifier": "com.payrollmanager.desktop",
   "build": {
-    "beforeDevCommand": "npm run bundle:sidecar -- --if-missing && npm run dev",
+    "beforeDevCommand": "npm run bundle:sidecar -- --if-missing && npm run sidecar:build && npm run dev",
     "devUrl": "http://localhost:5183",
     "beforeBuildCommand": "npm run bundle:sidecar && npm run build",
     "frontendDist": "../dist"

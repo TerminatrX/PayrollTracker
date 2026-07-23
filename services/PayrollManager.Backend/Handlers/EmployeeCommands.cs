@@ -97,6 +97,7 @@ public sealed class EmployeeCommands
             Action = AuditAction.EmployeeCreated,
             EntityType = nameof(Employee),
             NewValue = $"{employee.FullName} ({(employee.IsHourly ? $"{employee.HourlyRate:C}/hr" : $"{employee.AnnualSalary:C}/yr")})",
+            PerformedBy = Environment.UserName,
             ApplicationVersion = BackendInfo.Version
         });
 
@@ -135,6 +136,7 @@ public sealed class EmployeeCommands
                 EntityId = employee.Id,
                 OldValue = before,
                 NewValue = after,
+                PerformedBy = Environment.UserName,
                 ApplicationVersion = BackendInfo.Version
             });
         }
@@ -146,6 +148,7 @@ public sealed class EmployeeCommands
                 EntityType = nameof(Employee),
                 EntityId = employee.Id,
                 NewValue = employee.FullName,
+                PerformedBy = Environment.UserName,
                 ApplicationVersion = BackendInfo.Version
             });
         }

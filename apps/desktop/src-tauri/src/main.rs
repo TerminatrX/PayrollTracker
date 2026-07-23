@@ -54,8 +54,23 @@ fn resolve_sidecar_path(app: &tauri::App) -> PathBuf {
     let suffixed_name = format!("payroll-backend-{}{}", env!("TAURI_ENV_TARGET_TRIPLE"),
         if cfg!(windows) { ".exe" } else { "" });
 
-    // Search the bundled locations first: the resource dir and next to the app executable,
-    // which is where `bundle.externalBin` places the sidecar in an installed app.
+    // The freshly-built .NET Debug output.
+    let dev_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../..")
+        .join("services/PayrollManager.Backend/bin/Debug/net8.0/win-x64")
+        .join(exe_name);
+    let dev_path = dev_path.canonicalize().unwrap_or(dev_path);
+
+    // In a DEBUG (dev) build, always prefer the fresh Debug output. Tauri copies the
+    // externalBin binary next to the dev executable, and that staged copy can be stale
+    // (it is only republished on a full `tauri build`), which would otherwise shadow the
+    // current build and reject newly-added commands.
+    if cfg!(debug_assertions) && dev_path.exists() {
+        return dev_path;
+    }
+
+    // Bundled locations (installed app): the resource dir and next to the app executable,
+    // which is where `bundle.externalBin` places the sidecar.
     let mut candidates: Vec<PathBuf> = Vec::new();
 
     if let Ok(resource_dir) = app.path().resource_dir() {
@@ -76,13 +91,8 @@ fn resolve_sidecar_path(app: &tauri::App) -> PathBuf {
         }
     }
 
-    // Development fallback: walk up from src-tauri to the repository's .NET build output.
-    let dev_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../..")
-        .join("services/PayrollManager.Backend/bin/Debug/net8.0/win-x64")
-        .join(exe_name);
-
-    dev_path.canonicalize().unwrap_or(dev_path)
+    // Last resort: the dev path (surfaces a clear "not found" error if nothing exists).
+    dev_path
 }
 
 fn main() {

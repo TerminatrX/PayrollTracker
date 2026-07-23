@@ -7,6 +7,7 @@ namespace PayrollManager.Domain.Services;
 /// </summary>
 public enum PayFrequency
 {
+    Weekly = 52,        // 52 periods per year (every week)
     BiWeekly = 26,      // 26 periods per year (every 2 weeks)
     Monthly = 12,       // 12 periods per year (once per month)
     SemiMonthly = 24    // 24 periods per year (twice per month, typically 1st and 15th)
@@ -58,6 +59,9 @@ public class PayPeriodCalculator
     {
         DateTime periodEnd = payFrequency switch
         {
+            // Fixed 7-day cadence anchored on the previous period.
+            PayFrequency.Weekly => periodStart.AddDays(6),
+
             // Fixed 14-day cadence anchored on the previous period.
             PayFrequency.BiWeekly => periodStart.AddDays(13),
 
@@ -93,6 +97,7 @@ public class PayPeriodCalculator
     {
         return payFrequency switch
         {
+            PayFrequency.Weekly => CalculateWeekly(referenceDate),
             PayFrequency.BiWeekly => CalculateBiWeekly(referenceDate),
             PayFrequency.Monthly => CalculateMonthly(referenceDate),
             PayFrequency.SemiMonthly => CalculateSemiMonthly(referenceDate),
@@ -107,10 +112,38 @@ public class PayPeriodCalculator
     {
         return payPeriodsPerYear switch
         {
+            52 => PayFrequency.Weekly,
             26 => PayFrequency.BiWeekly,
             12 => PayFrequency.Monthly,
             24 => PayFrequency.SemiMonthly,
             _ => PayFrequency.BiWeekly // Default to biweekly
+        };
+    }
+
+    /// <summary>
+    /// Calculates a weekly pay period (every week, 52 periods per year).
+    /// Period runs Monday to Sunday, pay date is the day after the period ends.
+    /// </summary>
+    private static PayPeriodResult CalculateWeekly(DateTime referenceDate)
+    {
+        var startDate = referenceDate.AddDays(1);
+
+        // Find the next Monday; if today is Monday, take the following one.
+        var daysUntilMonday = ((int)DayOfWeek.Monday - (int)startDate.DayOfWeek + 7) % 7;
+        if (daysUntilMonday == 0)
+        {
+            daysUntilMonday = 7;
+        }
+
+        var periodStart = startDate.AddDays(daysUntilMonday).Date;
+        var periodEnd = periodStart.AddDays(6).Date; // 7-day period (0-6 inclusive)
+        var payDate = periodEnd.AddDays(1).Date;
+
+        return new PayPeriodResult
+        {
+            PeriodStart = periodStart,
+            PeriodEnd = periodEnd,
+            PayDate = payDate
         };
     }
 

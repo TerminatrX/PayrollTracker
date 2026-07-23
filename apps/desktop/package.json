@@ -10,7 +10,8 @@
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
     "typecheck": "tsc --noEmit",
-    "bundle:sidecar": "node scripts/bundle-sidecar.mjs"
+    "bundle:sidecar": "node scripts/bundle-sidecar.mjs",
+    "sidecar:build": "dotnet build ../../services/PayrollManager.Backend/PayrollManager.Backend.csproj -c Debug --nologo -v q"
   },
   "keywords": [],
   "author": "",

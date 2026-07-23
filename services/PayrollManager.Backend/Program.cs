@@ -91,6 +91,9 @@ public static class Program
         }));
 
         new EmployeeCommands(CreateDbContext).RegisterOn(dispatcher);
+        new SettingsCommands(CreateDbContext).RegisterOn(dispatcher);
+        new PayRunCommands(CreateDbContext).RegisterOn(dispatcher);
+        new ReportingCommands(CreateDbContext).RegisterOn(dispatcher);
 
         return dispatcher;
     }

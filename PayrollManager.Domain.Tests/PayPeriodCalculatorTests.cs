@@ -292,14 +292,43 @@ public class PayPeriodCalculatorTests
     }
 
     [Fact]
+    public void CalculateNextPeriod_Weekly_ProducesSevenDayPeriods()
+    {
+        // A weekly schedule must produce 7-day periods, not fall back to 14-day biweekly.
+        var first = PayPeriodCalculator.CalculateNextPeriodFromDate(
+            new DateTime(2026, 1, 5), PayFrequency.Weekly); // Monday
+
+        Assert.Equal(DayOfWeek.Monday, first.PeriodStart.DayOfWeek);
+        Assert.Equal(7, (first.PeriodEnd - first.PeriodStart).Days + 1); // 7 days inclusive
+        Assert.Equal(first.PeriodEnd.AddDays(1), first.PayDate);
+    }
+
+    [Fact]
+    public void CalculateNextPeriod_Weekly_ConsecutivePeriodsHaveNoGap()
+    {
+        var first = new PayRun
+        {
+            PeriodStart = new DateTime(2026, 1, 5),  // Monday
+            PeriodEnd = new DateTime(2026, 1, 11),   // Sunday
+            PayDate = new DateTime(2026, 1, 12)
+        };
+
+        var second = PayPeriodCalculator.CalculateNextPeriod(first, PayFrequency.Weekly);
+
+        // The next period begins the day after the last ends - no gap, no overlap.
+        Assert.Equal(first.PeriodEnd.AddDays(1), second.PeriodStart);
+        Assert.Equal(7, (second.PeriodEnd - second.PeriodStart).Days + 1);
+    }
+
+    [Fact]
     public void GetPayFrequency_ConvertsPayPeriodsPerYearCorrectly()
     {
         // Assert
+        Assert.Equal(PayFrequency.Weekly, PayPeriodCalculator.GetPayFrequency(52));
         Assert.Equal(PayFrequency.BiWeekly, PayPeriodCalculator.GetPayFrequency(26));
         Assert.Equal(PayFrequency.Monthly, PayPeriodCalculator.GetPayFrequency(12));
         Assert.Equal(PayFrequency.SemiMonthly, PayPeriodCalculator.GetPayFrequency(24));
         Assert.Equal(PayFrequency.BiWeekly, PayPeriodCalculator.GetPayFrequency(0)); // Default
-        Assert.Equal(PayFrequency.BiWeekly, PayPeriodCalculator.GetPayFrequency(52)); // Unknown, defaults
     }
 
     [Fact]

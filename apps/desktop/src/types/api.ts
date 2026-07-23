@@ -82,6 +82,210 @@ export interface EmployeeInput {
   ilAdditionalAllowances: number;
 }
 
+export interface CompanySettings {
+  companyName: string;
+  companyAddress: string;
+  taxId: string;
+  payPeriodsPerYear: number;
+  defaultHoursPerPeriod: number;
+  payFrequencyLabel: string;
+  socialSecurityPercent: number;
+  medicarePercent: number;
+  suiRatePercent: number;
+  suiWageBase: number;
+  receivesFullFutaCredit: boolean;
+  suiConfigured: boolean;
+}
+
+export interface CompanySettingsInput {
+  companyName: string;
+  companyAddress: string;
+  taxId: string;
+  payPeriodsPerYear: number;
+  defaultHoursPerPeriod: number;
+  socialSecurityPercent: number;
+  medicarePercent: number;
+  suiRatePercent: number;
+  suiWageBase: number;
+  receivesFullFutaCredit: boolean;
+}
+
+export interface Backup {
+  fileName: string;
+  fullPath: string;
+  sizeBytes: number;
+  createdUtc: string;
+}
+
+export type PayRunStatus = "Draft" | "Calculated" | "Posted" | "Voided";
+
+export interface PayRunSummary {
+  id: number;
+  periodStart: string;
+  periodEnd: string;
+  payDate: string;
+  status: PayRunStatus;
+  employeeCount: number;
+  grossPay: number;
+  netPay: number;
+  employeeTaxes: number;
+  employerTaxes: number;
+  totalEmployerCost: number;
+  postedAtUtc?: string | null;
+  voidedAtUtc?: string | null;
+  voidReason?: string | null;
+  engineVersion?: string | null;
+}
+
+export interface PayRunWarning {
+  code: string;
+  message: string;
+  blocksPosting: boolean;
+  employeeId?: number | null;
+}
+
+export interface PayRunLine {
+  employeeId: number;
+  employeeName: string;
+  hoursWorked: number;
+  grossPay: number;
+  preTaxDeductions: number;
+  totalTaxes: number;
+  postTaxDeductions: number;
+  netPay: number;
+  employerTaxes: number;
+}
+
+export interface PayRunTotals {
+  employeeCount: number;
+  grossPay: number;
+  preTaxDeductions: number;
+  employeeTaxes: number;
+  postTaxDeductions: number;
+  netPay: number;
+  employerTaxes: number;
+  totalEmployerCost: number;
+}
+
+export interface PayRunPreview {
+  periodStart: string;
+  periodEnd: string;
+  payDate: string;
+  lines: PayRunLine[];
+  totals: PayRunTotals;
+  warnings: PayRunWarning[];
+  calculationHash: string;
+  canPost: boolean;
+}
+
+export interface PayRunDraftInput {
+  periodStart: string;
+  periodEnd: string;
+  payDate: string;
+}
+
+export interface PayRunEmployeeInput {
+  employeeId: number;
+  regularHours: number;
+  overtimeHours: number;
+  bonusAmount: number;
+  commissionAmount: number;
+  bonusDescription?: string | null;
+  commissionDescription?: string | null;
+}
+
+export interface PayRunEmployeeSuggestion {
+  employeeId: number;
+  fullName: string;
+  jobTitle?: string | null;
+  department?: string | null;
+  isHourly: boolean;
+  hourlyRate: number;
+  annualSalary: number;
+  salaryPerPeriod: number;
+  suggestedRegularHours: number;
+  suggestedOvertimeHours: number;
+  w4OnFile: boolean;
+}
+
+export interface SuggestPayRunResponse {
+  draft: PayRunDraftInput;
+  employees: PayRunEmployeeSuggestion[];
+}
+
+export interface PayStubLine {
+  payStubId: number;
+  employeeId: number;
+  employeeName: string;
+  hoursWorked: number;
+  grossPay: number;
+  totalTaxes: number;
+  postTaxDeductions: number;
+  netPay: number;
+  employerTaxes: number;
+}
+
+export interface PayRunDetail {
+  summary: PayRunSummary;
+  stubs: PayStubLine[];
+}
+
+export interface CompanyTotals {
+  employeeCount: number;
+  payStubCount: number;
+  grossPay: number;
+  federalTax: number;
+  stateTax: number;
+  socialSecurity: number;
+  medicare: number;
+  totalTaxes: number;
+  preTax401k: number;
+  postTaxDeductions: number;
+  netPay: number;
+  employerTaxes: number;
+  totalEmployerCost: number;
+}
+
+export interface EmployeeTotals {
+  employeeId: number;
+  employeeName: string;
+  grossPay: number;
+  totalTaxes: number;
+  preTax401k: number;
+  postTaxDeductions: number;
+  netPay: number;
+  payStubCount: number;
+}
+
+export interface DashboardData {
+  year: number;
+  companyYtd: CompanyTotals;
+  activeEmployeeCount: number;
+  postedRunCount: number;
+  lastPayRun?: PayRunSummary | null;
+  nextPayDate?: string | null;
+  suiConfigured: boolean;
+}
+
+export interface PayrollReport {
+  startDate: string;
+  endDate: string;
+  company: CompanyTotals;
+  employees: EmployeeTotals[];
+}
+
+export interface AuditEntry {
+  id: number;
+  timestampUtc: string;
+  action: string;
+  entityType: string;
+  entityId?: number | null;
+  oldValue?: string | null;
+  newValue?: string | null;
+  performedBy?: string | null;
+  notes?: string | null;
+}
+
 export interface HealthResponse {
   status: string;
   engineVersion: string;

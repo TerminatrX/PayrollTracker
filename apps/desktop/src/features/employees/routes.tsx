@@ -3,10 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Button, EmptyState, SectionHeading } from "@/components/ui/primitives";
 import { toDateInputValue } from "@/lib/format";
 import type { Employee } from "@/types/api";
+import { useCompanySettings } from "@/features/settings/api";
 import { useCreateEmployee, useEmployee, useUpdateEmployee } from "./api";
 import { EmployeeDetail } from "./EmployeeDetail";
 import { EmployeeForm } from "./EmployeeForm";
-import { EMPTY_EMPLOYEE_FORM, type EmployeeFormValues } from "./schema";
+import { EMPTY_EMPLOYEE_FORM, type EmployeeFormInput, type EmployeeFormValues } from "./schema";
 
 function useEmployeeIdParam(): number | null {
   const { employeeId } = useParams();
@@ -78,6 +79,19 @@ export function EmployeeCreateRoute() {
   const navigate = useNavigate();
   const createEmployee = useCreateEmployee();
 
+  // A new employee inherits the company's default hours per period, which the operator can
+  // then override per employee. Gate the form on settings so useForm captures the seeded
+  // default at mount (it reads defaultValues once). Settings are local and usually cached.
+  const { data: settings, isPending: settingsPending } = useCompanySettings();
+
+  if (settingsPending) {
+    return <EmptyState title="Preparing new employee…" />;
+  }
+
+  const defaults: EmployeeFormInput = settings
+    ? { ...EMPTY_EMPLOYEE_FORM, defaultHoursPerPeriod: settings.defaultHoursPerPeriod }
+    : EMPTY_EMPLOYEE_FORM;
+
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <header className="shrink-0 border-b border-outline-variant px-6 py-4">
@@ -88,7 +102,7 @@ export function EmployeeCreateRoute() {
       </header>
 
       <EmployeeForm
-        defaultValues={EMPTY_EMPLOYEE_FORM}
+        defaultValues={defaults}
         submitLabel="Save Employee"
         error={createEmployee.error}
         onCancel={() => navigate("/employees")}
