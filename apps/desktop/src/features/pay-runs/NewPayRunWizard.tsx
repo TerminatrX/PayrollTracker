@@ -127,12 +127,18 @@ export function NewPayRunWizard() {
 
   async function post() {
     if (!preview) return;
-    const summary = await postPayRun.mutateAsync({
-      draft: draftPayload,
-      employees: includedInputs,
-      calculationHash: preview.calculationHash,
-    });
-    navigate(`/pay-runs/${summary.id}`);
+    try {
+      const summary = await postPayRun.mutateAsync({
+        draft: draftPayload,
+        employees: includedInputs,
+        calculationHash: preview.calculationHash,
+      });
+      navigate(`/pay-runs/${summary.id}`);
+    } catch {
+      // A rejected post (e.g. a stale hash because compensation changed since review, or a
+      // blocking warning) is surfaced to the user via postPayRun.error in the review step.
+      // Swallow it here so it does not become an unhandled promise rejection.
+    }
   }
 
   if (loading) return <EmptyState title="Preparing pay run…" />;

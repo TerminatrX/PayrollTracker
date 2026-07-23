@@ -25,14 +25,18 @@ export function PayRunsPage() {
   );
 
   // Year-to-date paid = net pay of posted runs whose pay date is in the current year.
+  // This is a display aggregate of already-authoritative per-run net figures (the backend
+  // computed each). Summed in integer cents rather than float dollars so accumulation cannot
+  // drift a fraction of a cent - the codebase never does payroll math in float. (The dashboard
+  // remains the authoritative company-wide YTD source.)
   const stats = useMemo(() => {
     const posted = (payRuns ?? []).filter((r) => r.status === "Posted");
     const thisYear = new Date().getFullYear();
-    const ytdNet = posted
-      .filter((r) => new Date(r.payDate).getFullYear() === thisYear)
-      .reduce((sum, r) => sum + r.netPay, 0);
+    const ytdNetCents = posted
+      .filter((r) => Number(r.payDate.slice(0, 4)) === thisYear)
+      .reduce((cents, r) => cents + Math.round(r.netPay * 100), 0);
     const lastPosted = posted[0]; // list is pay-date desc
-    return { ytdNet, postedCount: posted.length, lastPosted };
+    return { ytdNet: ytdNetCents / 100, postedCount: posted.length, lastPosted };
   }, [payRuns]);
 
   return (

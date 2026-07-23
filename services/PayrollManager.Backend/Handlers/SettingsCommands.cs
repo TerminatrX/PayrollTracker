@@ -78,6 +78,7 @@ public sealed class SettingsCommands
                 EntityId = current.Id,
                 OldValue = before,
                 NewValue = Describe(current),
+                PerformedBy = Environment.UserName,
                 ApplicationVersion = BackendInfo.Version
             });
             await auditDb.SaveChangesAsync(ct);

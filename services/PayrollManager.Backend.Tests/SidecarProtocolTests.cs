@@ -286,6 +286,10 @@ public class SidecarProtocolTests : IDisposable
         var audit = db.AuditLog.Single(a => a.Action == AuditAction.CompensationChanged);
         Assert.Contains("42.50", audit.OldValue);
         Assert.Contains("55.00", audit.NewValue);
+
+        // The audit trail must record WHO made the change - answering "who changed this rate"
+        // is the point of the log. Every audited action records the actor, not just pay runs.
+        Assert.False(string.IsNullOrEmpty(audit.PerformedBy), "compensation change must record the actor");
     }
 
     [Fact]
