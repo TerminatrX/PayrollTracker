@@ -63,6 +63,15 @@ export function toEmployeeInput(values: EmployeeFormValues): EmployeeInput {
 
     ilBasicAllowances: Number(values.ilBasicAllowances),
     ilAdditionalAllowances: Number(values.ilAdditionalAllowances),
+
+    streetAddress: values.streetAddress?.trim() || null,
+    city: values.city?.trim() || null,
+    state: values.state?.trim().toUpperCase() || null,
+    postalCode: values.postalCode?.trim() || null,
+
+    // Send the SSN only when the operator actually typed one, so a blank field never wipes an
+    // SSN already on file. The full value never round-trips back from the backend.
+    ssn: values.ssn && values.ssn.trim() ? values.ssn.trim() : null,
   };
 }
 

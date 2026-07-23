@@ -40,6 +40,13 @@ function toFormValues(employee: Employee): EmployeeFormValues {
     w4ExtraWithholding: employee.w4ExtraWithholding,
     ilBasicAllowances: employee.ilBasicAllowances,
     ilAdditionalAllowances: employee.ilAdditionalAllowances,
+    streetAddress: employee.streetAddress ?? "",
+    city: employee.city ?? "",
+    state: employee.state ?? "",
+    postalCode: employee.postalCode ?? "",
+    // SSN is write-only: never populated from the server, so the field starts blank and only
+    // sends a value if the operator types a new one.
+    ssn: "",
   };
 }
 
@@ -137,6 +144,7 @@ export function EmployeeEditRoute() {
       <EmployeeForm
         defaultValues={toFormValues(employee)}
         submitLabel="Save Changes"
+        ssnOnFile={employee.ssnOnFile}
         error={updateEmployee.error}
         onCancel={() => navigate(`/employees/${employee.id}`)}
         onSubmit={async (values) => {

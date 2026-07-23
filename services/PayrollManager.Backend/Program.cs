@@ -4,6 +4,7 @@ using PayrollManager.Backend.Contracts;
 using PayrollManager.Backend.Handlers;
 using PayrollManager.Backend.Rpc;
 using PayrollManager.Domain.Data;
+using PayrollManager.Domain.Services.Security;
 
 namespace PayrollManager.Backend;
 
@@ -90,10 +91,13 @@ public static class Program
             AppliedMigrations = startup.AppliedMigrations
         }));
 
-        new EmployeeCommands(CreateDbContext).RegisterOn(dispatcher);
+        var ssnProtector = new DpapiSsnProtector();
+
+        new EmployeeCommands(CreateDbContext, ssnProtector).RegisterOn(dispatcher);
         new SettingsCommands(CreateDbContext).RegisterOn(dispatcher);
         new PayRunCommands(CreateDbContext).RegisterOn(dispatcher);
         new ReportingCommands(CreateDbContext).RegisterOn(dispatcher);
+        new PayStubCommands(CreateDbContext).RegisterOn(dispatcher);
 
         return dispatcher;
     }

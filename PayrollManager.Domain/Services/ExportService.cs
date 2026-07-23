@@ -111,60 +111,76 @@ public class ExportService
     /// </summary>
     public async Task<string> ExportPayStubToPdfAsync(int payStubId, string? outputPath = null)
     {
-        var payStub = await _dbContext.PayStubs
-            .Include(ps => ps.Employee)
-            .Include(ps => ps.PayRun)
-            .Include(ps => ps.EarningLines)
-            .Include(ps => ps.DeductionLines)
-            .Include(ps => ps.TaxLines)
-            .FirstOrDefaultAsync(ps => ps.Id == payStubId);
-
-        if (payStub == null)
-            throw new ArgumentException($"Pay stub {payStubId} not found");
-
-        if (payStub.Employee == null || payStub.PayRun == null)
-            throw new InvalidOperationException("Pay stub is missing required Employee or PayRun data");
-
-        var companySettings = await _companySettingsService.GetSettingsAsync();
+        // Build the full statement (loads the stub, enforces posted-only, computes YTD). This is
+        // the same assembly the on-screen view uses, so the PDF and the screen never disagree.
+        var statementService = new PayStubStatementService(
+            _dbContext, _companySettingsService, new AggregationService(_dbContext));
+        var statement = await statementService.BuildAsync(payStubId);
 
         if (string.IsNullOrEmpty(outputPath))
         {
-            var fileName = $"paystub_{payStub.Employee.LastName}_{payStub.PayRun.PayDate:yyyyMMdd}.pdf";
+            var fileName = $"paystub_{statement.Employee.LastName}_{statement.PayRun.PayDate:yyyyMMdd}.pdf";
             outputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName);
         }
 
-        // Generate PDF bytes
-        var pdfBytes = GeneratePayStubPdfBytes(payStub, companySettings);
-        
-        // Write to file
+        var pdfBytes = GeneratePayStubPdfBytes(statement);
         await File.WriteAllBytesAsync(outputPath, pdfBytes);
         return outputPath;
     }
 
     /// <summary>
-    /// Generates PDF bytes for a pay stub matching the Design LLC Earnings Statement layout
+    /// Legacy overload (used by the retired WinUI ViewModels). Renders without a year-to-date
+    /// per-tax breakdown or employee address, which the sidecar path supplies via the statement.
     /// </summary>
     public byte[] GeneratePayStubPdfBytes(PayStub payStub, CompanySettings companySettings)
     {
-        var employee = payStub.Employee!;
-        var payRun = payStub.PayRun!;
-        
-        // Derive check number from PayStub ID
-        var checkNumber = payStub.Id.ToString("D4");
-        
-        // Determine pay schedule
-        var paySchedule = companySettings.PayPeriodsPerYear switch
+        var statement = new PayStubStatement
         {
-            52 => "Weekly",
-            26 => "Bi-Weekly",
-            24 => "Semi-Monthly",
-            12 => "Monthly",
-            _ => $"{companySettings.PayPeriodsPerYear} periods/year"
+            PayStub = payStub,
+            Employee = payStub.Employee!,
+            PayRun = payStub.PayRun!,
+            Company = companySettings,
+            // No per-tax YTD available on this path; the aggregate strip still uses stored YTD.
+            Ytd = new EmployeeTotals { EmployeeId = payStub.EmployeeId, Year = payStub.PayRun!.PayDate.Year }
         };
+        return GeneratePayStubPdfBytes(statement);
+    }
 
-        // Calculate total deductions (pre-tax + post-tax)
-        var totalDeductions = payStub.PreTax401kDeduction + payStub.PostTaxDeductions;
-        var ytdDeductions = payStub.YtdGross - payStub.YtdNet - payStub.YtdTaxes;
+    /// <summary>
+    /// Generates PDF bytes for a pay stub matching the ADP-style Earnings Statement layout,
+    /// including the current-period and year-to-date tax breakdown and the employee's real
+    /// address and masked SSN.
+    /// </summary>
+    public byte[] GeneratePayStubPdfBytes(PayStubStatement statement)
+    {
+        var payStub = statement.PayStub;
+        var employee = statement.Employee;
+        var payRun = statement.PayRun;
+        var companySettings = statement.Company;
+        var ytd = statement.Ytd;
+
+        var checkNumber = statement.CheckNumber;
+        var paySchedule = statement.PayScheduleLabel;
+
+        // Employee address lines and masked SSN for the identity block.
+        var addressLine1 = employee.StreetAddress;
+        var addressLine2 = string.Join(", ",
+            new[] { employee.City, employee.State }.Where(s => !string.IsNullOrWhiteSpace(s)));
+        if (!string.IsNullOrWhiteSpace(employee.PostalCode))
+        {
+            addressLine2 = string.IsNullOrEmpty(addressLine2)
+                ? employee.PostalCode
+                : $"{addressLine2} {employee.PostalCode}";
+        }
+        var ssnDisplay = statement.MaskedSsn ?? "SSN not on file";
+
+        // Current and YTD total deductions (all pre-tax + post-tax). Derived by identity
+        // (gross - taxes - net) so health and any other pre-tax lines are included, not just
+        // the 401(k) scalar. Exact because every component is rounded to the cent.
+        var totalDeductions = payStub.GrossPay - payStub.TotalTaxes - payStub.NetPay;
+        var ytdDeductions = ytd.PayStubCount > 0
+            ? ytd.GrossPay - ytd.TotalTaxes - ytd.NetPay
+            : payStub.YtdGross - payStub.YtdTaxes - payStub.YtdNet; // legacy path: no computed YTD
 
         var document = Document.Create(container =>
         {
@@ -228,9 +244,15 @@ public class ExportService
                             {
                                 empCol.Item().Text("EMPLOYEE INFORMATION").FontSize(8).Bold();
                                 empCol.Item().Text(employee.FullName).FontSize(10).Bold();
-                                empCol.Item().Text("SSN: XXX-XX-XXXX").FontSize(8); // Placeholder
-                                empCol.Item().Text("123 Main Street").FontSize(8); // Placeholder address
-                                empCol.Item().Text("City, ST 12345").FontSize(8); // Placeholder
+                                empCol.Item().Text($"SSN: {ssnDisplay}").FontSize(8);
+                                if (!string.IsNullOrWhiteSpace(addressLine1))
+                                {
+                                    empCol.Item().Text(addressLine1).FontSize(8);
+                                }
+                                if (!string.IsNullOrWhiteSpace(addressLine2))
+                                {
+                                    empCol.Item().Text(addressLine2).FontSize(8);
+                                }
                             });
 
                             // Pay Date Column
@@ -335,25 +357,25 @@ public class ExportService
                                     header.Cell().AlignRight().Text("YTD").FontSize(9).Bold();
                                 });
 
-                                // Federal Tax
-                                taxesTable.Cell().Text("Federal").FontSize(9);
+                                // Federal Income Tax
+                                taxesTable.Cell().Text("Federal Income Tax").FontSize(9);
                                 taxesTable.Cell().AlignRight().Text($"${payStub.TaxFederal:F2}").FontSize(9);
-                                taxesTable.Cell().AlignRight().Text("—").FontSize(9); // YTD per tax not tracked separately
+                                taxesTable.Cell().AlignRight().Text($"${ytd.FederalTax:F2}").FontSize(9);
+
+                                // Illinois Income Tax
+                                taxesTable.Cell().Text("IL Income Tax").FontSize(9);
+                                taxesTable.Cell().AlignRight().Text($"${payStub.TaxState:F2}").FontSize(9);
+                                taxesTable.Cell().AlignRight().Text($"${ytd.StateTax:F2}").FontSize(9);
+
+                                // Social Security (FICA)
+                                taxesTable.Cell().Text("Social Security").FontSize(9);
+                                taxesTable.Cell().AlignRight().Text($"${payStub.TaxSocialSecurity:F2}").FontSize(9);
+                                taxesTable.Cell().AlignRight().Text($"${ytd.SocialSecurity:F2}").FontSize(9);
 
                                 // Medicare
                                 taxesTable.Cell().Text("Medicare").FontSize(9);
                                 taxesTable.Cell().AlignRight().Text($"${payStub.TaxMedicare:F2}").FontSize(9);
-                                taxesTable.Cell().AlignRight().Text("—").FontSize(9);
-
-                                // FICA (Social Security)
-                                taxesTable.Cell().Text("FICA").FontSize(9);
-                                taxesTable.Cell().AlignRight().Text($"${payStub.TaxSocialSecurity:F2}").FontSize(9);
-                                taxesTable.Cell().AlignRight().Text("—").FontSize(9);
-
-                                // State Tax
-                                taxesTable.Cell().Text("State").FontSize(9);
-                                taxesTable.Cell().AlignRight().Text($"${payStub.TaxState:F2}").FontSize(9);
-                                taxesTable.Cell().AlignRight().Text("—").FontSize(9);
+                                taxesTable.Cell().AlignRight().Text($"${ytd.Medicare:F2}").FontSize(9);
 
                                 // Other Deductions (if any)
                                 if (totalDeductions > 0)
@@ -436,10 +458,15 @@ public class ExportService
                         // Body: Deposited to / Account of
                         column.Item().Column(bodyCol =>
                         {
-                            bodyCol.Item().Text($"Deposited to {employee.FullName}").FontSize(10);
-                            bodyCol.Item().Text("to the Account of:").FontSize(9);
-                            bodyCol.Item().Text("123 Main Street").FontSize(9); // Placeholder
-                            bodyCol.Item().Text("City, ST 12345").FontSize(9); // Placeholder
+                            bodyCol.Item().Text($"Deposited to the Account of {employee.FullName}").FontSize(10);
+                            if (!string.IsNullOrWhiteSpace(addressLine1))
+                            {
+                                bodyCol.Item().Text(addressLine1).FontSize(9);
+                            }
+                            if (!string.IsNullOrWhiteSpace(addressLine2))
+                            {
+                                bodyCol.Item().Text(addressLine2).FontSize(9);
+                            }
                         });
 
                         column.Item().PaddingTop(10);

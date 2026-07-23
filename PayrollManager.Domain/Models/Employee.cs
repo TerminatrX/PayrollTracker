@@ -41,6 +41,31 @@ public class Employee
     public DateTime? TerminationDate { get; set; }
 
     // ═══════════════════════════════════════════════════════════════
+    // RESIDENTIAL ADDRESS (printed on the pay stub)
+    // ═══════════════════════════════════════════════════════════════
+
+    public string? StreetAddress { get; set; }
+    public string? City { get; set; }
+    public string? State { get; set; }
+    public string? PostalCode { get; set; }
+
+    // ═══════════════════════════════════════════════════════════════
+    // SOCIAL SECURITY NUMBER
+    //
+    // The full SSN is stored ENCRYPTED and is never exposed to the frontend. Only the last four
+    // digits are kept in plaintext, which is what a pay stub displays. See ISsnProtector.
+    // ═══════════════════════════════════════════════════════════════
+
+    /// <summary>DPAPI-encrypted, base64-encoded full SSN. Never sent to the frontend or logged.</summary>
+    public string? SsnEncrypted { get; set; }
+
+    /// <summary>Last four digits, plaintext, for masked display (e.g. XXX-XX-1234).</summary>
+    public string? SsnLast4 { get; set; }
+
+    /// <summary>True when an SSN has been recorded for this employee.</summary>
+    public bool HasSsn => !string.IsNullOrEmpty(SsnEncrypted);
+
+    // ═══════════════════════════════════════════════════════════════
     // FEDERAL FORM W-4 (2020 and later)
     // ═══════════════════════════════════════════════════════════════
 

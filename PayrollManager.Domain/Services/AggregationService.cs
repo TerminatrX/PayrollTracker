@@ -76,6 +76,40 @@ public class AggregationService
     }
 
     /// <summary>
+    /// Year-to-date totals for an employee THROUGH a given pay date (inclusive), within that
+    /// date's year. This is what a pay stub needs: YTD as it stood on that stub's pay date, not
+    /// for the whole year. Posted runs only, so a later or voided run never contributes.
+    /// </summary>
+    public async Task<EmployeeTotals> GetEmployeeYtdThroughAsync(int employeeId, DateTime payDate)
+    {
+        var year = payDate.Year;
+        var payStubs = await _dbContext.PayStubs
+            .Include(ps => ps.PayRun)
+            .Where(ps => ps.EmployeeId == employeeId &&
+                         ps.PayRun!.Status == PayRunStatus.Posted &&
+                         ps.PayRun.PayDate.Year == year &&
+                         ps.PayRun.PayDate <= payDate)
+            .ToListAsync();
+
+        return new EmployeeTotals
+        {
+            EmployeeId = employeeId,
+            Year = year,
+            GrossPay = payStubs.Sum(ps => ps.GrossPay),
+            FederalTax = payStubs.Sum(ps => ps.TaxFederal),
+            StateTax = payStubs.Sum(ps => ps.TaxState),
+            SocialSecurity = payStubs.Sum(ps => ps.TaxSocialSecurity),
+            Medicare = payStubs.Sum(ps => ps.TaxMedicare),
+            TotalTaxes = payStubs.Sum(ps => ps.TotalTaxes),
+            PreTax401k = payStubs.Sum(ps => ps.PreTax401kDeduction),
+            PostTaxDeductions = payStubs.Sum(ps => ps.PostTaxDeductions),
+            TotalDeductions = payStubs.Sum(ps => ps.PreTax401kDeduction + ps.PostTaxDeductions),
+            NetPay = payStubs.Sum(ps => ps.NetPay),
+            PayStubCount = payStubs.Count
+        };
+    }
+
+    /// <summary>
     /// Get quarter-to-date totals for an employee
     /// </summary>
     public async Task<EmployeeTotals> GetEmployeeQtdTotalsAsync(int employeeId, DateTime referenceDate)

@@ -25,6 +25,8 @@ interface Props {
   onSubmit: (values: EmployeeFormValues) => Promise<unknown>;
   onCancel: () => void;
   error?: unknown;
+  /** True when an SSN is already stored, so the field shows it as on file. */
+  ssnOnFile?: boolean;
 }
 
 export function EmployeeForm({
@@ -33,6 +35,7 @@ export function EmployeeForm({
   onSubmit,
   onCancel,
   error,
+  ssnOnFile = false,
 }: Props) {
   const {
     register,
@@ -151,6 +154,50 @@ export function EmployeeForm({
                 </p>
               )}
             </Card>
+          </section>
+
+          {/* ── Address & Identity ─────────────────────────────────── */}
+          <section className="flex flex-col gap-4">
+            <SectionHeading
+              title="Address & Identity"
+              description="Printed on the employee's pay stub. The SSN is stored encrypted; only the last four digits are ever shown."
+            />
+
+            <Field label="Street Address" htmlFor="streetAddress" error={errors.streetAddress?.message}>
+              <TextInput id="streetAddress" placeholder="500 W Madison St" {...register("streetAddress")} />
+            </Field>
+
+            <div className="grid grid-cols-3 gap-4">
+              <Field label="City" htmlFor="city" error={errors.city?.message}>
+                <TextInput id="city" placeholder="Chicago" {...register("city")} />
+              </Field>
+              <Field label="State" htmlFor="state" error={errors.state?.message}>
+                <TextInput id="state" placeholder="IL" maxLength={2} {...register("state")} />
+              </Field>
+              <Field label="ZIP Code" htmlFor="postalCode" error={errors.postalCode?.message}>
+                <TextInput id="postalCode" placeholder="60661" {...register("postalCode")} />
+              </Field>
+            </div>
+
+            <Field
+              label="Social Security Number"
+              htmlFor="ssn"
+              error={errors.ssn?.message}
+              hint={
+                ssnOnFile
+                  ? "An SSN is on file (stored encrypted). Type a new one to replace it, or leave blank to keep it."
+                  : "Stored encrypted. Only the last four digits appear on pay stubs."
+              }
+            >
+              <TextInput
+                id="ssn"
+                inputMode="numeric"
+                autoComplete="off"
+                placeholder={ssnOnFile ? "•••-••-•••• (on file)" : "123-45-6789"}
+                invalid={!!errors.ssn}
+                {...register("ssn")}
+              />
+            </Field>
           </section>
 
           {/* ── Compensation ───────────────────────────────────────── */}
