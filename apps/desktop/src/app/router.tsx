@@ -3,6 +3,7 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import { AppShell } from "@/components/layout/AppShell";
 import { EmptyState } from "@/components/ui/primitives";
 import { EmployeesPage } from "@/features/employees/EmployeesPage";
+import { SettingsPage } from "@/features/settings/SettingsPage";
 import {
   EmployeeCompensationTab,
   EmployeeOverviewTab,
@@ -37,6 +38,7 @@ export const router = createBrowserRouter([
           },
         ],
       },
+      { path: "settings", element: <SettingsPage /> },
       {
         path: "*",
         element: (

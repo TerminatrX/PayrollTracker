@@ -82,6 +82,41 @@ export interface EmployeeInput {
   ilAdditionalAllowances: number;
 }
 
+export interface CompanySettings {
+  companyName: string;
+  companyAddress: string;
+  taxId: string;
+  payPeriodsPerYear: number;
+  defaultHoursPerPeriod: number;
+  payFrequencyLabel: string;
+  socialSecurityPercent: number;
+  medicarePercent: number;
+  suiRatePercent: number;
+  suiWageBase: number;
+  receivesFullFutaCredit: boolean;
+  suiConfigured: boolean;
+}
+
+export interface CompanySettingsInput {
+  companyName: string;
+  companyAddress: string;
+  taxId: string;
+  payPeriodsPerYear: number;
+  defaultHoursPerPeriod: number;
+  socialSecurityPercent: number;
+  medicarePercent: number;
+  suiRatePercent: number;
+  suiWageBase: number;
+  receivesFullFutaCredit: boolean;
+}
+
+export interface Backup {
+  fileName: string;
+  fullPath: string;
+  sizeBytes: number;
+  createdUtc: string;
+}
+
 export interface HealthResponse {
   status: string;
   engineVersion: string;
