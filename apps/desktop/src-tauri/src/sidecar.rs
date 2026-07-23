@@ -30,6 +30,20 @@ struct Connection {
     stdout: BufReader<ChildStdout>,
 }
 
+/// Where in the request lifecycle a call failed.
+///
+/// This distinction is what makes it safe to auto-restart the sidecar for a MUTATING command
+/// (create/update). Retrying is only safe when the request was never delivered.
+enum CallFailure {
+    /// Failed before the request was fully written and flushed - spawn or write failure. The
+    /// sidecar only acts on complete lines, so it did nothing; the command can be re-sent.
+    BeforeSend(SidecarError),
+    /// The request was written and flushed, then reading the response failed. The sidecar may
+    /// already have applied the command (e.g. committed a create), so it must NOT be re-sent -
+    /// doing so could create a duplicate employee or a duplicate audit entry.
+    AfterSend(SidecarError),
+}
+
 /// Owns the .NET payroll sidecar process and speaks newline-delimited JSON-RPC to it.
 ///
 /// Requests are serialized behind a mutex: exactly one request is in flight at a time, so a
@@ -104,38 +118,46 @@ impl SidecarClient {
 
     /// Sends a command and returns the raw response envelope as a JSON string.
     ///
-    /// If the sidecar has died, this restarts it and retries ONCE. A single retry recovers a
-    /// crashed process without risking an unbounded restart loop, and - importantly - without
-    /// re-sending a request that may already have been applied more than once.
+    /// Recovery policy: if the request failed BEFORE it was delivered (the common
+    /// "sidecar died while idle, first write fails" case), restart the sidecar and retry
+    /// exactly once. If it failed AFTER delivery, the command may already have run, so do NOT
+    /// retry - a mutating command must never be silently replayed. A single retry, never a
+    /// loop, so a persistently broken sidecar cannot spin.
     pub fn call(&self, method: &str, params_json: Option<String>) -> Result<String, SidecarError> {
         match self.try_call(method, params_json.clone()) {
             Ok(response) => Ok(response),
-            Err(first_error) => {
-                // Drop the dead connection so the retry spawns a fresh process.
-                {
-                    let mut guard = self.connection.lock().unwrap();
-                    if let Some(mut conn) = guard.take() {
-                        let _ = conn.child.kill();
-                        let _ = conn.child.wait();
-                    }
+
+            Err(CallFailure::BeforeSend(first)) => {
+                // The request never reached the sidecar, so re-sending cannot duplicate a side
+                // effect. Restart on a fresh process and try once more.
+                self.drop_connection();
+                eprintln!("[sidecar] restarting after pre-send error: {first}");
+
+                match self.try_call(method, params_json) {
+                    Ok(response) => Ok(response),
+                    Err(CallFailure::BeforeSend(e)) | Err(CallFailure::AfterSend(e)) => Err(
+                        SidecarError(format!("The payroll service is not responding: {e}")),
+                    ),
                 }
+            }
 
-                eprintln!("[sidecar] restarting after error: {first_error}");
-
-                self.try_call(method, params_json).map_err(|retry_error| {
-                    SidecarError(format!(
-                        "The payroll service is not responding: {retry_error}"
-                    ))
-                })
+            Err(CallFailure::AfterSend(e)) => {
+                // Delivered but unconfirmed. It may have committed, so it is not retried.
+                // Drop the dead connection so the next (separate) request starts fresh.
+                self.drop_connection();
+                Err(SidecarError(format!(
+                    "The payroll service did not confirm the request, so it was not retried \
+                     automatically (it may or may not have been applied): {e}"
+                )))
             }
         }
     }
 
-    fn try_call(&self, method: &str, params_json: Option<String>) -> Result<String, SidecarError> {
+    fn try_call(&self, method: &str, params_json: Option<String>) -> Result<String, CallFailure> {
         let mut guard = self.connection.lock().unwrap();
 
         if guard.is_none() {
-            *guard = Some(self.spawn()?);
+            *guard = Some(self.spawn().map_err(CallFailure::BeforeSend)?);
         }
 
         let conn = guard.as_mut().expect("connection was just established");
@@ -154,23 +176,38 @@ impl SidecarClient {
             None => format!(r#"{{"id":"{id}","method":"{method}"}}"#, id = id, method = method),
         };
 
+        // A write or flush failure means the line was not fully delivered. The sidecar reads
+        // and acts on whole lines only, so an incomplete line is never processed - safe to
+        // retry.
         writeln!(conn.stdin, "{request}")
             .and_then(|_| conn.stdin.flush())
-            .map_err(|e| SidecarError(format!("Could not send the request: {e}")))?;
+            .map_err(|e| {
+                CallFailure::BeforeSend(SidecarError(format!("Could not send the request: {e}")))
+            })?;
 
+        // Past this point the request has been delivered. Any failure now means the command
+        // MAY have been applied, so these are AfterSend failures and are never auto-retried.
         let mut response = String::new();
-        let bytes = conn
-            .stdout
-            .read_line(&mut response)
-            .map_err(|e| SidecarError(format!("Could not read the response: {e}")))?;
+        let bytes = conn.stdout.read_line(&mut response).map_err(|e| {
+            CallFailure::AfterSend(SidecarError(format!("Could not read the response: {e}")))
+        })?;
 
         if bytes == 0 {
-            return Err(SidecarError(
-                "The payroll service closed its output stream.".into(),
-            ));
+            return Err(CallFailure::AfterSend(SidecarError(
+                "The payroll service closed its output stream after receiving the request.".into(),
+            )));
         }
 
         Ok(response.trim_end().to_string())
+    }
+
+    /// Kills and clears the current connection so the next call spawns a fresh process.
+    fn drop_connection(&self) {
+        let mut guard = self.connection.lock().unwrap();
+        if let Some(mut conn) = guard.take() {
+            let _ = conn.child.kill();
+            let _ = conn.child.wait();
+        }
     }
 
     /// Stops the sidecar. Called on window close so no orphan process is left behind.

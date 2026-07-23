@@ -113,34 +113,80 @@ public class AppDbContext : DbContext
 
     private void EnforcePayStubImmutability()
     {
-        var touched = ChangeTracker.Entries<PayStub>()
-            .Where(e => e.State is EntityState.Modified or EntityState.Deleted)
-            .ToList();
-
-        if (touched.Count == 0)
-        {
-            return;
-        }
-
-        foreach (var entry in touched)
+        // Direct edits to, or deletion of, a posted stub.
+        foreach (var entry in ChangeTracker.Entries<PayStub>()
+                     .Where(e => e.State is EntityState.Modified or EntityState.Deleted))
         {
             var payRunId = entry.OriginalValues.GetValue<int>(nameof(PayStub.PayRunId));
 
-            // Prefer the tracked run; fall back to the store for a run loaded elsewhere.
-            var status = ChangeTracker.Entries<PayRun>()
-                             .FirstOrDefault(r => r.Entity.Id == payRunId)?.Entity.Status
-                         ?? PayRuns.AsNoTracking()
-                             .Where(r => r.Id == payRunId)
-                             .Select(r => (PayRunStatus?)r.Status)
-                             .FirstOrDefault();
-
-            if (status is PayRunStatus.Posted or PayRunStatus.Voided)
+            if (IsImmutableRun(payRunId, out var status))
             {
                 throw new ImmutablePayrollRecordException(
                     $"Pay stub {entry.Entity.Id} belongs to pay run {payRunId}, which is {status}. " +
                     "Posted pay stubs are permanent records of what was paid and cannot be changed.");
             }
         }
+
+        // Edits to a posted stub's CHILD LINES. Guarding only the PayStub itself left a hole:
+        // a caller could load a posted stub's TaxLine/DeductionLine/EarningLine and edit it
+        // directly, and SaveChanges would allow it. Those rows drive the displayed
+        // earning/tax breakdown AND the taxable-wage reconstruction used to compute later YTD
+        // wage-base limits, so they must be exactly as immutable as the stub they belong to.
+        EnforceChildLineImmutability<EarningLine>("earning");
+        EnforceChildLineImmutability<DeductionLine>("deduction");
+        EnforceChildLineImmutability<TaxLine>("tax");
+    }
+
+    private void EnforceChildLineImmutability<TLine>(string lineKind) where TLine : class
+    {
+        foreach (var entry in ChangeTracker.Entries<TLine>()
+                     .Where(e => e.State is EntityState.Modified or EntityState.Deleted))
+        {
+            // Use the ORIGINAL PayStubId so that reparenting a line cannot dodge the check.
+            var payStubId = entry.OriginalValues.GetValue<int>("PayStubId");
+            var payRunId = ResolvePayRunIdForStub(payStubId);
+
+            if (payRunId is int runId && IsImmutableRun(runId, out var status))
+            {
+                throw new ImmutablePayrollRecordException(
+                    $"A {lineKind} line on pay stub {payStubId} belongs to pay run {runId}, " +
+                    $"which is {status}. Posted pay stub lines are permanent and cannot be changed.");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Finds the pay run a stub belongs to, preferring a tracked stub and falling back to the
+    /// store for a stub loaded on another context.
+    /// </summary>
+    private int? ResolvePayRunIdForStub(int payStubId)
+    {
+        var tracked = ChangeTracker.Entries<PayStub>()
+            .FirstOrDefault(s => s.Entity.Id == payStubId);
+
+        if (tracked is not null)
+        {
+            return tracked.OriginalValues.GetValue<int>(nameof(PayStub.PayRunId));
+        }
+
+        return PayStubs.AsNoTracking()
+            .Where(s => s.Id == payStubId)
+            .Select(s => (int?)s.PayRunId)
+            .FirstOrDefault();
+    }
+
+    /// <summary>True if the pay run is posted or voided, i.e. its payroll is locked.</summary>
+    private bool IsImmutableRun(int payRunId, out PayRunStatus? status)
+    {
+        // Prefer the tracked run; fall back to the store for a run loaded elsewhere.
+        status = ChangeTracker.Entries<PayRun>()
+                     .FirstOrDefault(r => r.Entity.Id == payRunId)?.Entity.Status
+                 ?? PayRuns.AsNoTracking()
+                     .Where(r => r.Id == payRunId)
+                     .Select(r => (PayRunStatus?)r.Status)
+                     .FirstOrDefault();
+
+        return status is PayRunStatus.Posted or PayRunStatus.Voided;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

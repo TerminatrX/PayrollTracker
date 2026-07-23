@@ -49,32 +49,40 @@ fn resolve_sidecar_path(app: &tauri::App) -> PathBuf {
         "payroll-backend"
     };
 
-    // Bundled location first: alongside the app executable.
+    // externalBin normally strips the target-triple suffix at bundle time, but check the
+    // suffixed name too so a differently-staged bundle still resolves.
+    let suffixed_name = format!("payroll-backend-{}{}", env!("TAURI_ENV_TARGET_TRIPLE"),
+        if cfg!(windows) { ".exe" } else { "" });
+
+    // Search the bundled locations first: the resource dir and next to the app executable,
+    // which is where `bundle.externalBin` places the sidecar in an installed app.
+    let mut candidates: Vec<PathBuf> = Vec::new();
+
     if let Ok(resource_dir) = app.path().resource_dir() {
-        let bundled = resource_dir.join(exe_name);
-        if bundled.exists() {
-            return bundled;
-        }
+        candidates.push(resource_dir.join(exe_name));
+        candidates.push(resource_dir.join(&suffixed_name));
     }
 
     if let Ok(current_exe) = std::env::current_exe() {
         if let Some(dir) = current_exe.parent() {
-            let sibling = dir.join(exe_name);
-            if sibling.exists() {
-                return sibling;
-            }
+            candidates.push(dir.join(exe_name));
+            candidates.push(dir.join(&suffixed_name));
         }
     }
 
-    // Development fallback: walk up from src-tauri to the repository root.
+    for candidate in &candidates {
+        if candidate.exists() {
+            return candidate.clone();
+        }
+    }
+
+    // Development fallback: walk up from src-tauri to the repository's .NET build output.
     let dev_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../../..")
         .join("services/PayrollManager.Backend/bin/Debug/net8.0/win-x64")
         .join(exe_name);
 
-    dev_path
-        .canonicalize()
-        .unwrap_or(dev_path)
+    dev_path.canonicalize().unwrap_or(dev_path)
 }
 
 fn main() {

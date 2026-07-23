@@ -61,7 +61,11 @@ public class PayrollCalculationTests
         {
             PeriodStart = payDate.AddDays(-14),
             PeriodEnd = payDate.AddDays(-1),
-            PayDate = payDate
+            PayDate = payDate,
+            // Only POSTED runs contribute to YTD priors. Prior stubs attached to these runs
+            // represent already-paid history, so the runs must be Posted for the YTD
+            // accumulation tests to see them.
+            Status = PayRunStatus.Posted
         };
         db.PayRuns.Add(payRun);
         await db.SaveChangesAsync();

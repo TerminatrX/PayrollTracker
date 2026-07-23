@@ -132,7 +132,14 @@ public class PayrollService
         var priorPayStubs = await _dbContext.PayStubs
             .Include(ps => ps.TaxLines)
             .Where(ps => ps.EmployeeId == employeeId &&
-                         ps.PayRun!.PayDate.Year == year &&
+                         // Only POSTED runs contribute to YTD - they are the wages actually
+                         // paid. A voided run's stubs remain in the database (voiding reverses,
+                         // it does not delete), so without this filter they would keep
+                         // inflating YTD gross/taxes and keep consuming the Social Security,
+                         // FUTA/SUI, and 401(k) wage bases for the replacement run - producing
+                         // wrong withholding and employer taxes on every later run in the year.
+                         ps.PayRun!.Status == PayRunStatus.Posted &&
+                         ps.PayRun.PayDate.Year == year &&
                          ps.PayRun.PayDate < payDate)
             .ToListAsync();
 

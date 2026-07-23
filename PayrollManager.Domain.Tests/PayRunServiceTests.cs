@@ -388,6 +388,58 @@ public class PayRunServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task PostedPayStub_TaxLine_CannotBeEdited()
+    {
+        // The stub itself was already protected; its child lines were not. Editing a posted
+        // TaxLine directly must be rejected too - those rows are read back to reconstruct
+        // taxable wages for later YTD wage-base limits.
+        using var db = CreateContext();
+        var (runs, _) = CreateServices(db);
+        var employee = AddEmployee(db, "Ann");
+
+        var draft = Draft(new DateTime(2026, 1, 15));
+        var inputs = new[] { Input(employee.Id) };
+        var preview = await runs.PreviewAsync(draft, inputs);
+        await runs.PostAsync(draft, inputs, preview.CalculationHash);
+
+        var taxLine = db.TaxLines.First();
+        taxLine.TaxableAmount = 0m;
+
+        Assert.Throws<ImmutablePayrollRecordException>(() => db.SaveChanges());
+    }
+
+    [Fact]
+    public async Task PostedPayStub_EarningAndDeductionLines_CannotBeEditedOrDeleted()
+    {
+        using var db = CreateContext();
+        var (runs, _) = CreateServices(db);
+        var employee = AddEmployee(db, "Ann");
+        employee.HealthInsurancePerPeriod = 100m;   // ensure a deduction line exists
+        db.SaveChanges();
+
+        var draft = Draft(new DateTime(2026, 1, 15));
+        var inputs = new[] { Input(employee.Id) };
+        var preview = await runs.PreviewAsync(draft, inputs);
+        await runs.PostAsync(draft, inputs, preview.CalculationHash);
+
+        // Editing an earning line is rejected.
+        using (var db2 = CreateContext())
+        {
+            var earning = db2.EarningLines.First();
+            earning.Amount = 1m;
+            Assert.Throws<ImmutablePayrollRecordException>(() => db2.SaveChanges());
+        }
+
+        // Deleting a deduction line is rejected.
+        using (var db3 = CreateContext())
+        {
+            var deduction = db3.DeductionLines.First();
+            db3.DeductionLines.Remove(deduction);
+            Assert.Throws<ImmutablePayrollRecordException>(() => db3.SaveChanges());
+        }
+    }
+
+    [Fact]
     public async Task AuditLog_IsAppendOnly()
     {
         using var db = CreateContext();
@@ -467,6 +519,39 @@ public class PayRunServiceTests : IDisposable
 
         Assert.DoesNotContain(replacement.Warnings, w => w.Code == PayRunWarningCode.OverlappingPayPeriod);
         Assert.True(replacement.CanPost);
+    }
+
+    [Fact]
+    public async Task VoidedRun_DoesNotInflateYtdOnALaterRun()
+    {
+        // A voided run's stubs stay in the database. They must NOT count toward YTD on a later
+        // run, or the replacement would see doubled YTD gross and have its Social Security /
+        // FUTA / SUI / 401(k) wage bases partly consumed by wages that were reversed.
+        using var db = CreateContext();
+        var (runs, _) = CreateServices(db);
+        var employee = AddEmployee(db, "Sal");   // hourly $25, 80h => $2,000 gross
+
+        // First run, then voided.
+        var firstDraft = Draft(new DateTime(2026, 1, 15));
+        var inputs = new[] { Input(employee.Id) };
+        var firstPreview = await runs.PreviewAsync(firstDraft, inputs);
+        var firstRun = await runs.PostAsync(firstDraft, inputs, firstPreview.CalculationHash);
+        await runs.VoidAsync(firstRun.Id, "Wrong hours");
+
+        // A later run for the same employee, same year.
+        var secondDraft = Draft(new DateTime(2026, 1, 29));
+        var secondPreview = await runs.PreviewAsync(secondDraft, inputs);
+        var secondRun = await runs.PostAsync(secondDraft, inputs, secondPreview.CalculationHash);
+
+        var secondStub = db.PayStubs.Single(s => s.PayRunId == secondRun.Id);
+
+        // YTD reflects only the second (posted) run's $2,000 - not $4,000 including the void.
+        Assert.Equal(2000m, secondStub.YtdGross);
+        Assert.Equal(secondStub.NetPay, secondStub.YtdNet);
+
+        // And Social Security is charged on the full $2,000 again, proving the wage base was
+        // not consumed by the voided run (2000 * 6.2% = 124.00).
+        Assert.Equal(124m, secondStub.TaxSocialSecurity);
     }
 
     [Fact]

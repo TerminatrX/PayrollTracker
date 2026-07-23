@@ -160,3 +160,5 @@ apps/desktop/src-tauri/target/
 apps/desktop/src-tauri/gen/
 # Generated from app-icon.png by `npx tauri icon`; regenerate rather than commit.
 apps/desktop/src-tauri/icons/
+# Published sidecar staged by scripts/bundle-sidecar.mjs before `tauri build`.
+apps/desktop/src-tauri/binaries/

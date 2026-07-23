@@ -4,9 +4,9 @@
   "version": "0.1.0",
   "identifier": "com.payrollmanager.desktop",
   "build": {
-    "beforeDevCommand": "npm run dev",
+    "beforeDevCommand": "npm run bundle:sidecar -- --if-missing && npm run dev",
     "devUrl": "http://localhost:5183",
-    "beforeBuildCommand": "npm run build",
+    "beforeBuildCommand": "npm run bundle:sidecar && npm run build",
     "frontendDist": "../dist"
   },
   "app": {
@@ -30,7 +30,7 @@
     "active": true,
     "targets": ["msi", "nsis"],
     "resources": [],
-    "externalBin": [],
+    "externalBin": ["binaries/payroll-backend"],
     "windows": {
       "webviewInstallMode": {
         "type": "downloadBootstrapper"
