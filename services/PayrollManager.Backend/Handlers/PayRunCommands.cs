@@ -191,11 +191,24 @@ public sealed class PayRunCommands
             .ThenByDescending(r => r.Id)
             .ToListAsync(ct);
 
-        var summaries = new List<PayRunSummaryDto>(runs.Count);
-        foreach (var run in runs)
-        {
-            summaries.Add(await BuildSummaryAsync(db, run.Id, ct));
-        }
+        // Aggregate every run's stub totals with a single stub query, grouped IN MEMORY.
+        // SQLite stores decimals as TEXT and cannot SUM them server-side, so aggregation must
+        // happen client-side after materialization. This is still two queries total (runs +
+        // stubs) instead of the previous 2N+1.
+        var aggregates = (await db.PayStubs.AsNoTracking().ToListAsync(ct))
+            .GroupBy(s => s.PayRunId)
+            .ToDictionary(
+                g => g.Key,
+                g => new StubAggregate(
+                    Count: g.Count(),
+                    Gross: g.Sum(s => s.GrossPay),
+                    Net: g.Sum(s => s.NetPay),
+                    EmployeeTaxes: g.Sum(s => s.TotalTaxes),
+                    EmployerTaxes: g.Sum(s => s.TotalEmployerTaxes)));
+
+        var summaries = runs
+            .Select(run => MapSummary(run, aggregates.GetValueOrDefault(run.Id, StubAggregate.Empty)))
+            .ToList();
 
         return new GetPayRunsResponse { PayRuns = summaries };
     }
@@ -238,7 +251,14 @@ public sealed class PayRunCommands
         };
     }
 
-    /// <summary>Aggregates a run's stub totals into a summary DTO.</summary>
+    /// <summary>Stub totals for one pay run.</summary>
+    private readonly record struct StubAggregate(
+        int Count, decimal Gross, decimal Net, decimal EmployeeTaxes, decimal EmployerTaxes)
+    {
+        public static readonly StubAggregate Empty = new(0, 0m, 0m, 0m, 0m);
+    }
+
+    /// <summary>Loads and aggregates a single run's stub totals. Used by post/void/detail.</summary>
     private static async Task<PayRunSummaryDto> BuildSummaryAsync(AppDbContext db, int payRunId, CancellationToken ct)
     {
         var run = await db.PayRuns.AsNoTracking().FirstAsync(r => r.Id == payRunId, ct);
@@ -248,26 +268,32 @@ public sealed class PayRunCommands
             .Where(s => s.PayRunId == payRunId)
             .ToListAsync(ct);
 
-        var gross = stubs.Sum(s => s.GrossPay);
-        var employerTaxes = stubs.Sum(s => s.TotalEmployerTaxes);
+        var aggregate = new StubAggregate(
+            Count: stubs.Count,
+            Gross: stubs.Sum(s => s.GrossPay),
+            Net: stubs.Sum(s => s.NetPay),
+            EmployeeTaxes: stubs.Sum(s => s.TotalTaxes),
+            EmployerTaxes: stubs.Sum(s => s.TotalEmployerTaxes));
 
-        return new PayRunSummaryDto
-        {
-            Id = run.Id,
-            PeriodStart = run.PeriodStart,
-            PeriodEnd = run.PeriodEnd,
-            PayDate = run.PayDate,
-            Status = run.Status.ToString(),
-            EmployeeCount = stubs.Count,
-            GrossPay = gross,
-            NetPay = stubs.Sum(s => s.NetPay),
-            EmployeeTaxes = stubs.Sum(s => s.TotalTaxes),
-            EmployerTaxes = employerTaxes,
-            TotalEmployerCost = gross + employerTaxes,
-            PostedAtUtc = run.PostedAtUtc,
-            VoidedAtUtc = run.VoidedAtUtc,
-            VoidReason = run.VoidReason,
-            EngineVersion = run.CalculationEngineVersion
-        };
+        return MapSummary(run, aggregate);
     }
+
+    private static PayRunSummaryDto MapSummary(PayRun run, StubAggregate agg) => new()
+    {
+        Id = run.Id,
+        PeriodStart = run.PeriodStart,
+        PeriodEnd = run.PeriodEnd,
+        PayDate = run.PayDate,
+        Status = run.Status.ToString(),
+        EmployeeCount = agg.Count,
+        GrossPay = agg.Gross,
+        NetPay = agg.Net,
+        EmployeeTaxes = agg.EmployeeTaxes,
+        EmployerTaxes = agg.EmployerTaxes,
+        TotalEmployerCost = agg.Gross + agg.EmployerTaxes,
+        PostedAtUtc = run.PostedAtUtc,
+        VoidedAtUtc = run.VoidedAtUtc,
+        VoidReason = run.VoidReason,
+        EngineVersion = run.CalculationEngineVersion
+    };
 }

@@ -130,11 +130,10 @@ function VoidDialog({ payRunId, onClose }: { payRunId: number; onClose: () => vo
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
-      <Card
-        className="w-full max-w-md border-outline-variant bg-surface-high p-5 shadow-2xl"
-        // Stop backdrop click-through.
-      >
-        <div onClick={(e) => e.stopPropagation()}>
+      {/* Stop clicks anywhere on the dialog (including its padding) from reaching the
+          backdrop and closing it. */}
+      <div className="w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+        <Card className="border-outline-variant bg-surface-high p-5 shadow-2xl">
           <h2 className="text-[16px] font-semibold text-white">Void this pay run?</h2>
           <p className="mt-1 text-[13px] text-on-surface-variant">
             The run and its pay stubs are kept permanently for audit, but stop counting toward
@@ -171,8 +170,8 @@ function VoidDialog({ payRunId, onClose }: { payRunId: number; onClose: () => vo
               {voidRun.isPending ? "Voiding…" : "Void Run"}
             </Button>
           </div>
-        </div>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 }
