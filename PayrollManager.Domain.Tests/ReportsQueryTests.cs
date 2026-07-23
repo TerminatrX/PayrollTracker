@@ -7,11 +7,15 @@ using Xunit;
 namespace PayrollManager.Domain.Tests;
 
 /// <summary>
-/// Unit tests for ReportsViewModel aggregate calculations.
-/// Tests that company and employee totals are correctly computed from PayStubs in a date range.
-/// These tests verify the core query logic that ReportsViewModel uses.
+/// Tests for the payroll reporting queries: company and employee totals computed from
+/// PayStubs within a date range.
+///
+/// NOTE: these exercise the query logic directly against AppDbContext. They are a parallel
+/// implementation of what ReportsViewModel does - they do NOT execute the ViewModel itself,
+/// so they cannot catch a regression introduced in the ViewModel. Once the reporting logic
+/// moves into a domain service (see migration plan), point these at that service instead.
 /// </summary>
-public class ReportsViewModelTests
+public class ReportsQueryTests
 {
     [Fact]
     public async Task ReportsQuery_Computes_Company_Totals_Correctly()

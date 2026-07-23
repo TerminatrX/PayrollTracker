@@ -39,7 +39,38 @@ public class PayStub
 
     public decimal YtdTaxes { get; set; }
 
+    /// <summary>
+    /// Total tax WITHHELD FROM THE EMPLOYEE. Deliberately excludes every employer-paid tax
+    /// below - those are a company cost, not a deduction from this person's pay.
+    /// </summary>
     public decimal TotalTaxes => TaxFederal + TaxState + TaxSocialSecurity + TaxMedicare;
+
+    // ═══════════════════════════════════════════════════════════════
+    // EMPLOYER-PAID TAXES
+    //
+    // Stored as scalars rather than TaxLines on purpose: TaxLines represent amounts withheld
+    // from the employee, and TotalTaxes ties out to their sum. Mixing employer taxes in would
+    // overstate withholding and understate net pay.
+    // ═══════════════════════════════════════════════════════════════
+
+    /// <summary>Employer's matching Social Security contribution.</summary>
+    public decimal EmployerSocialSecurity { get; set; }
+
+    /// <summary>Employer's matching Medicare contribution (no match on Additional Medicare).</summary>
+    public decimal EmployerMedicare { get; set; }
+
+    /// <summary>Federal unemployment tax paid by the employer.</summary>
+    public decimal EmployerFuta { get; set; }
+
+    /// <summary>State unemployment tax paid by the employer.</summary>
+    public decimal EmployerSui { get; set; }
+
+    /// <summary>Total employer-paid payroll tax for this stub.</summary>
+    public decimal TotalEmployerTaxes =>
+        EmployerSocialSecurity + EmployerMedicare + EmployerFuta + EmployerSui;
+
+    /// <summary>Full cost to the employer: gross pay plus employer-paid taxes.</summary>
+    public decimal TotalEmployerCost => GrossPay + TotalEmployerTaxes;
 
     /// <summary>
     /// Collection of earning lines (Regular, Overtime, Bonus, Commission)

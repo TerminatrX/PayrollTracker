@@ -1,0 +1,113 @@
+@import "tailwindcss";
+
+/*
+  Design tokens from stitch_payrollmanager_desktop_pro/pro_density_enterprise/DESIGN.md
+  ("Pro-Density Enterprise").
+
+  Note: DESIGN.md's prose describes a different palette (#0F172A / #3B82F6) than its YAML
+  frontmatter (#0b1326 / #adc6ff). The exported mock HTML uses the frontmatter values, so
+  those are treated as the source of truth here.
+*/
+@theme {
+  --color-surface: #0b1326;
+  --color-surface-dim: #0b1326;
+  --color-surface-bright: #31394d;
+  --color-surface-lowest: #060e20;
+  --color-surface-low: #131b2e;
+  --color-surface-container: #171f33;
+  --color-surface-high: #222a3d;
+  --color-surface-highest: #2d3449;
+  --color-surface-variant: #2d3449;
+
+  --color-on-surface: #dae2fd;
+  --color-on-surface-variant: #c2c6d6;
+
+  --color-outline: #8c909f;
+  --color-outline-variant: #424754;
+
+  --color-primary: #adc6ff;
+  --color-on-primary: #002e6a;
+  --color-primary-container: #4d8eff;
+  --color-on-primary-container: #00285d;
+
+  --color-secondary: #4edea3;
+  --color-on-secondary: #003824;
+  --color-secondary-container: #00a572;
+
+  --color-tertiary: #ffb95f;
+  --color-on-tertiary: #472a00;
+
+  --color-error: #ffb4ab;
+  --color-on-error: #690005;
+  --color-error-container: #93000a;
+  --color-on-error-container: #ffdad6;
+
+  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* 240px nav rail, per the layout spec. */
+  --spacing-rail: 240px;
+  --spacing-listpane: 320px;
+
+  --radius-sm: 0.25rem;
+  --radius-DEFAULT: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-on-surface);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 20px;
+    /* A desktop shell scrolls its panes, never the window itself. */
+    overflow: hidden;
+  }
+
+  /*
+    Financial columns must align digit-for-digit. Without tabular figures a column of
+    currency values visually ragged-edges and is far harder to scan for anomalies.
+  */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  /* Minimalist 6px scrollbars, hidden until hover, per the design spec. */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 12px;
+  }
+
+  *:hover::-webkit-scrollbar-thumb {
+    background: var(--color-outline-variant);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-outline);
+  }
+
+  /* Focus is a 1px primary border plus a soft outer glow, not the default ring. */
+  :focus-visible {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 20%, transparent);
+  }
+}

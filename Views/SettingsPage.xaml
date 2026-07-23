@@ -364,22 +364,26 @@
                                                    Minimum="0" Maximum="10"
                                                    SmallChange="0.01"
                                                    SpinButtonPlacementMode="Compact" />
-                                        <!-- Validation Warning -->
+                                        <!-- Shown until the IDES figures are entered: without
+                                             them employer unemployment cost is understated. -->
                                         <StackPanel Orientation="Horizontal"
-                                                    Visibility="{x:Bind ViewModel.ShowSuiWarning, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                    Visibility="{x:Bind ViewModel.ShowSuiNotConfiguredWarning, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                                     Margin="0,4,0,0">
-                                            <FontIcon Glyph="&#xE7BA;" FontSize="12" 
+                                            <FontIcon Glyph="&#xE7BA;" FontSize="12"
                                                       Foreground="#EF4444" />
-                                            <TextBlock Text="Rate exceeds state average"
-                                                       FontSize="11" Foreground="#EF4444" />
+                                            <TextBlock Text="Enter from your IDES rate notice"
+                                                       FontSize="11" Foreground="#EF4444"
+                                                       TextWrapping="Wrap" />
                                         </StackPanel>
                                     </StackPanel>
 
+                                    <!-- Replaces an ETT Rate box carried over from a California
+                                         template; ETT is not an Illinois tax. -->
                                     <NumberBox Grid.Column="1"
-                                               Header="ETT Rate (%)"
-                                               Value="{x:Bind ViewModel.EttRate, Mode=TwoWay}"
-                                               Minimum="0" Maximum="5"
-                                               SmallChange="0.01"
+                                               Header="SUI Wage Base ($)"
+                                               Value="{x:Bind ViewModel.SuiWageBase, Mode=TwoWay}"
+                                               Minimum="0" Maximum="100000"
+                                               SmallChange="100"
                                                SpinButtonPlacementMode="Compact" />
                                 </Grid>
                             </StackPanel>

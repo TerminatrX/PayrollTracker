@@ -52,12 +52,6 @@ public partial class SettingsViewModel : ObservableObject
     private double _socialSecurityRate = 6.2;
 
     [ObservableProperty]
-    private double _federalTaxPercent = 12;
-
-    [ObservableProperty]
-    private double _stateTaxPercent = 5;
-
-    [ObservableProperty]
     private double _medicarePercent = 1.45;
 
     // ═══════════════════════════════════════════════════════════════
@@ -65,18 +59,24 @@ public partial class SettingsViewModel : ObservableObject
     // ═══════════════════════════════════════════════════════════════
 
     [ObservableProperty]
-    private string _stateCode = "CALIFORNIA";
+    private string _stateCode = "ILLINOIS";
 
     [ObservableProperty]
     private bool _suiEnabled = true;
 
+    /// <summary>
+    /// Illinois SUI contribution rate, from the employer's annual IDES rate notice.
+    /// Defaults to 0 because there is no correct default - IDES assigns it per employer.
+    /// </summary>
     [ObservableProperty]
-    private double _suiRate = 3.4;
+    private double _suiRate;
 
+    /// <summary>SUI taxable wage base per employee, also from the IDES rate notice.</summary>
     [ObservableProperty]
-    private double _ettRate = 0.1;
+    private double _suiWageBase;
 
-    public bool ShowSuiWarning => SuiRate > 3.0;
+    /// <summary>True until the SUI figures are entered, so employer cost is understated.</summary>
+    public bool ShowSuiNotConfiguredWarning => SuiRate <= 0 || SuiWageBase <= 0;
 
     // ═══════════════════════════════════════════════════════════════
     // PAY PERIOD CONFIGURATION
@@ -138,8 +138,8 @@ public partial class SettingsViewModel : ObservableObject
             CompanyName = settings.CompanyName;
             CompanyAddress = settings.CompanyAddress;
             TaxId = settings.TaxId;
-            FederalTaxPercent = (double)settings.FederalTaxPercent;
-            StateTaxPercent = (double)settings.StateTaxPercent;
+            SuiRate = (double)settings.SuiRatePercent;
+            SuiWageBase = (double)settings.SuiWageBase;
             SocialSecurityRate = (double)settings.SocialSecurityPercent;
             MedicarePercent = (double)settings.MedicarePercent;
             PayPeriodsPerYear = settings.PayPeriodsPerYear;
@@ -187,8 +187,8 @@ public partial class SettingsViewModel : ObservableObject
                 CompanyName = CompanyName,
                 CompanyAddress = CompanyAddress,
                 TaxId = TaxId,
-                FederalTaxPercent = (decimal)FederalTaxPercent,
-                StateTaxPercent = (decimal)StateTaxPercent,
+                SuiRatePercent = (decimal)SuiRate,
+                SuiWageBase = (decimal)SuiWageBase,
                 SocialSecurityPercent = (decimal)SocialSecurityRate,
                 MedicarePercent = (decimal)MedicarePercent,
                 PayPeriodsPerYear = PayPeriodsPerYear,
@@ -234,8 +234,11 @@ public partial class SettingsViewModel : ObservableObject
     partial void OnCompanyNameChanged(string value) => MarkAsChanged();
     partial void OnCompanyAddressChanged(string value) => MarkAsChanged();
     partial void OnTaxIdChanged(string value) => MarkAsChanged();
-    partial void OnFederalTaxPercentChanged(double value) => MarkAsChanged();
-    partial void OnStateTaxPercentChanged(double value) => MarkAsChanged();
+    partial void OnSuiWageBaseChanged(double value)
+    {
+        MarkAsChanged();
+        OnPropertyChanged(nameof(ShowSuiNotConfiguredWarning));
+    }
     partial void OnSocialSecurityRateChanged(double value) => MarkAsChanged();
     partial void OnMedicarePercentChanged(double value) => MarkAsChanged();
     partial void OnPayPeriodsPerYearChanged(int value) => MarkAsChanged();
@@ -244,7 +247,7 @@ public partial class SettingsViewModel : ObservableObject
     partial void OnSuiRateChanged(double value)
     {
         MarkAsChanged();
-        OnPropertyChanged(nameof(ShowSuiWarning));
+        OnPropertyChanged(nameof(ShowSuiNotConfiguredWarning));
     }
     partial void OnOffCycleEnabledChanged(bool value) => MarkAsChanged();
     partial void OnAutoApprovalEnabledChanged(bool value) => MarkAsChanged();

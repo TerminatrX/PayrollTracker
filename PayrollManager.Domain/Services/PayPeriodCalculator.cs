@@ -41,8 +41,46 @@ public class PayPeriodCalculator
             return CalculateNextPeriodFromDate(DateTime.Today, payFrequency);
         }
 
-        // Calculate next period based on last pay run's period end
-        return CalculateNextPeriodFromDate(lastPayRun.PeriodEnd, payFrequency);
+        // Continuing an established schedule: the next period begins the day after the
+        // last one ended, leaving no gap. Do NOT route this through
+        // CalculateNextPeriodFromDate - that searches *forward* for the next period
+        // boundary, which for BiWeekly skips a full week whenever the day after the
+        // last period end is already a Monday (i.e. every correctly-aligned schedule).
+        return CalculateFollowingPeriod(lastPayRun.PeriodEnd.AddDays(1).Date, payFrequency);
+    }
+
+    /// <summary>
+    /// Builds a pay period that begins exactly on <paramref name="periodStart"/>, used when
+    /// chaining from a previous pay run. Unlike <see cref="CalculateNextPeriodFromDate"/>,
+    /// this does not search forward for the next boundary.
+    /// </summary>
+    private static PayPeriodResult CalculateFollowingPeriod(DateTime periodStart, PayFrequency payFrequency)
+    {
+        DateTime periodEnd = payFrequency switch
+        {
+            // Fixed 14-day cadence anchored on the previous period.
+            PayFrequency.BiWeekly => periodStart.AddDays(13),
+
+            // Calendar-anchored: run to the end of the start date's month.
+            PayFrequency.Monthly => new DateTime(
+                periodStart.Year, periodStart.Month,
+                DateTime.DaysInMonth(periodStart.Year, periodStart.Month)),
+
+            // Calendar-anchored: 1st-15th, or 16th-end of month.
+            PayFrequency.SemiMonthly => periodStart.Day <= 15
+                ? new DateTime(periodStart.Year, periodStart.Month, 15)
+                : new DateTime(periodStart.Year, periodStart.Month,
+                    DateTime.DaysInMonth(periodStart.Year, periodStart.Month)),
+
+            _ => periodStart.AddDays(13)
+        };
+
+        return new PayPeriodResult
+        {
+            PeriodStart = periodStart,
+            PeriodEnd = periodEnd.Date,
+            PayDate = periodEnd.AddDays(1).Date
+        };
     }
 
     /// <summary>

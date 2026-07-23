@@ -1,17 +1,25 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using PayrollManager.Domain.Data;
 using PayrollManager.Domain.Models;
+using PayrollManager.Domain.Services;
 using PayrollManager.UI.ViewModels;
 
 namespace PayrollManager.UI.Views;
 
 public sealed partial class PayStubDetailsPage : Page
 {
+    private readonly IServiceScope _scope;
+
     public PayStubDetailsViewModel ViewModel { get; }
 
     public PayStubDetailsPage()
     {
-        ViewModel = App.GetService<PayStubDetailsViewModel>();
+        _scope = App.Services.CreateScope();
+        var dbContext = _scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var exportService = _scope.ServiceProvider.GetRequiredService<ExportService>();
+        ViewModel = new PayStubDetailsViewModel(dbContext, exportService);
         InitializeComponent();
         this.DataContext = ViewModel;
         
@@ -39,6 +47,12 @@ public sealed partial class PayStubDetailsPage : Page
         {
             _ = ViewModel.LoadPayStubByIdAsync(payStubId);
         }
+    }
+
+    protected override void OnNavigatedFrom(NavigationEventArgs e)
+    {
+        base.OnNavigatedFrom(e);
+        _scope?.Dispose();
     }
 }
 

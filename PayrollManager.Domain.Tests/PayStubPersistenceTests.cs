@@ -28,8 +28,6 @@ public class PayStubPersistenceTests
         var initialSettings = new CompanySettings
         {
             CompanyName = "Test Company",
-            FederalTaxPercent = 10m,
-            StateTaxPercent = 5m,
             SocialSecurityPercent = 6.2m,
             MedicarePercent = 1.45m,
             PayPeriodsPerYear = 26
@@ -54,9 +52,9 @@ public class PayStubPersistenceTests
         // Create a pay run
         var payRun = new PayRun
         {
-            PeriodStart = new DateTime(2024, 1, 1),
-            PeriodEnd = new DateTime(2024, 1, 14),
-            PayDate = new DateTime(2024, 1, 15)
+            PeriodStart = new DateTime(2026, 1, 1),
+            PeriodEnd = new DateTime(2026, 1, 14),
+            PayDate = new DateTime(2026, 1, 15)
         };
         dbContext.PayRuns.Add(payRun);
         await dbContext.SaveChangesAsync();
@@ -92,21 +90,17 @@ public class PayStubPersistenceTests
         // Gross pay: 80 hours * $25 = $2000
         Assert.Equal(2000m, originalGrossPay);
         
-        // Taxable income: $2000 - (4% 401k = $80) = $1920
-        // Federal tax: $1920 * 10% = $192
-        // State tax: $1920 * 5% = $96
-        // Social Security: $2000 * 6.2% = $124
-        // Medicare: $2000 * 1.45% = $29
-        // Total taxes: $192 + $96 + $124 + $29 = $441
-        // Net pay: $1920 - $441 - $50 (other deductions) = $1429
+        // Taxable income: $2000 - (4% 401k = $80) - ($100 health) = $1820
+        // Federal comes from Pub 15-T, Illinois from the flat 4.95% - neither from settings.
+        // FICA wages exclude the §125 health premium: ($2000 - $100) = $1900
+        //   Social Security: $1900 * 6.2% = $117.80
+        //   Medicare:        $1900 * 1.45% = $27.55
 
         // Act - Change company settings tax rates significantly
         var changedSettings = new CompanySettings
         {
             Id = initialSettings.Id,
             CompanyName = "Test Company",
-            FederalTaxPercent = 20m,  // Changed from 10% to 20%
-            StateTaxPercent = 10m,    // Changed from 5% to 10%
             SocialSecurityPercent = 7.0m,  // Changed from 6.2% to 7.0%
             MedicarePercent = 2.0m,   // Changed from 1.45% to 2.0%
             PayPeriodsPerYear = 26
@@ -139,29 +133,32 @@ public class PayStubPersistenceTests
 
         // Verify that the new settings are actually different
         var currentSettings = await companySettingsService.GetSettingsAsync();
-        Assert.Equal(20m, currentSettings.FederalTaxPercent);
-        Assert.Equal(10m, currentSettings.StateTaxPercent);
         Assert.Equal(7.0m, currentSettings.SocialSecurityPercent);
         Assert.Equal(2.0m, currentSettings.MedicarePercent);
 
         // Verify that if we generated a NEW pay stub with the new rates, it would have different values
         var newPayRun = new PayRun
         {
-            PeriodStart = new DateTime(2024, 1, 15),
-            PeriodEnd = new DateTime(2024, 1, 28),
-            PayDate = new DateTime(2024, 1, 29)
+            PeriodStart = new DateTime(2026, 1, 15),
+            PeriodEnd = new DateTime(2026, 1, 28),
+            PayDate = new DateTime(2026, 1, 29)
         };
         dbContext.PayRuns.Add(newPayRun);
         await dbContext.SaveChangesAsync();
 
         var newPayStub = await payrollService.GeneratePayStubAsync(employee, newPayRun, payStubInput);
-        
-        // The new pay stub should have different tax values due to changed rates
-        // This proves that the old pay stub values are preserved, not recalculated
-        Assert.NotEqual(originalTaxFederal, newPayStub.TaxFederal);
-        Assert.NotEqual(originalTaxState, newPayStub.TaxState);
+
+        // Social Security and Medicare percentages still come from CompanySettings, so a new
+        // stub reflects the changed rates while the posted stub above keeps its own values.
+        // That contrast is what proves posted stubs are stored, not recalculated on read.
         Assert.NotEqual(originalTaxSocialSecurity, newPayStub.TaxSocialSecurity);
         Assert.NotEqual(originalTaxMedicare, newPayStub.TaxMedicare);
+
+        // Federal and Illinois withholding are STATUTORY - computed from IRS Pub 15-T tables
+        // and the Illinois flat rate. They are not configurable at all, which is why the old
+        // FederalTaxPercent / StateTaxPercent settings have been removed outright.
+        Assert.Equal(originalTaxFederal, newPayStub.TaxFederal);
+        Assert.Equal(originalTaxState, newPayStub.TaxState);
     }
 
     [Fact]
@@ -180,8 +177,6 @@ public class PayStubPersistenceTests
         var initialSettings = new CompanySettings
         {
             CompanyName = "Test Company",
-            FederalTaxPercent = 12m,
-            StateTaxPercent = 5m,
             SocialSecurityPercent = 6.2m,
             MedicarePercent = 1.45m,
             PayPeriodsPerYear = 26
@@ -206,9 +201,9 @@ public class PayStubPersistenceTests
         // Create a pay run
         var payRun = new PayRun
         {
-            PeriodStart = new DateTime(2024, 2, 1),
-            PeriodEnd = new DateTime(2024, 2, 14),
-            PayDate = new DateTime(2024, 2, 15)
+            PeriodStart = new DateTime(2026, 2, 1),
+            PeriodEnd = new DateTime(2026, 2, 14),
+            PayDate = new DateTime(2026, 2, 15)
         };
         dbContext.PayRuns.Add(payRun);
         await dbContext.SaveChangesAsync();
@@ -237,8 +232,6 @@ public class PayStubPersistenceTests
         {
             Id = initialSettings.Id,
             CompanyName = "Test Company",
-            FederalTaxPercent = 25m,  // Significantly increased
-            StateTaxPercent = 15m,    // Significantly increased
             SocialSecurityPercent = 8.0m,
             MedicarePercent = 2.5m,
             PayPeriodsPerYear = 26

@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml;
 using PayrollManager.Domain.Data;
 using PayrollManager.Domain.Models;
 using PayrollManager.Domain.Services;
+using PayrollManager.Domain.Services.Tax;
 using PayrollManager.UI.ViewModels;
 using System;
 using System.Linq;
@@ -25,9 +26,13 @@ namespace PayrollManager.UI
                 services.AddDbContext<AppDbContext>(options =>
                     options.UseSqlite($"Data Source={DbPaths.GetDatabasePath()}"));
 
+                // Statutory federal tax figures - stateless and year-indexed, so a singleton.
+                services.AddSingleton<ITaxRuleProvider, StaticFederalTaxRuleProvider>();
+
                 // Domain Services
                 services.AddScoped<CompanySettingsService>();
                 services.AddScoped<PayrollService>();
+                services.AddScoped<PayRunService>();
                 services.AddScoped<AggregationService>();
                 services.AddScoped<ExportService>();
 
@@ -69,7 +74,12 @@ namespace PayrollManager.UI
             using (var scope = Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                db.Database.Migrate();
+
+                // Goes through the bootstrapper rather than calling Migrate() directly: it
+                // relocates a database from the old install-directory location, runs an
+                // integrity check, and takes a backup before any schema change.
+                DatabaseBootstrapper.Initialize(db);
+
                 SeedSampleDataAsync(scope.ServiceProvider).GetAwaiter().GetResult();
             }
 
@@ -94,10 +104,8 @@ namespace PayrollManager.UI
             var settings = await settingsService.GetSettingsAsync();
             
             // Update seed values if needed (only if using defaults)
-            if (settings.CompanyName == "My Company" && settings.FederalTaxPercent == 12m)
+            if (settings.CompanyName == "My Company")
             {
-                settings.FederalTaxPercent = 10m;
-                settings.StateTaxPercent = 5m;
                 settings.SocialSecurityPercent = 6.2m;
                 settings.MedicarePercent = 1.45m;
                 settings.PayPeriodsPerYear = 26;
@@ -161,8 +169,9 @@ namespace PayrollManager.UI
 
             foreach (var employee in employees)
             {
-                var hoursOverride = employee.IsHourly ? 80m : (decimal?)null;
-                var payStub = await payrollService.GeneratePayStubAsync(employee, payRun, hoursOverride);
+                var payStub = employee.IsHourly
+                    ? await payrollService.GeneratePayStubFromPeriodHoursAsync(employee, payRun, 80m)
+                    : await payrollService.GeneratePayStubAsync(employee, payRun, new PayStubInput());
                 db.PayStubs.Add(payStub);
             }
 

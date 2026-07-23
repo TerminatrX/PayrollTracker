@@ -276,15 +276,42 @@
                 </StackPanel>
             </Border>
 
-            <!-- Export Buttons -->
-            <StackPanel Orientation="Horizontal">
-                <Button Content="Export as CSV" 
-                        Command="{x:Bind ViewModel.DownloadCsvCommand}" />
-                <Button Content="Export as PDF" 
-                        Command="{x:Bind ViewModel.DownloadPdfCommand}" />
+            <!-- Export Button with Flyout -->
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <Button x:Name="ExportButton" Content="Export">
+                    <Button.Flyout>
+                        <MenuFlyout x:Name="ExportMenuFlyout">
+                            <MenuFlyoutItem Text="Save to Desktop" 
+                                          Command="{x:Bind ViewModel.SaveToDesktopCommand}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE74E;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem Text="Print" 
+                                          Command="{x:Bind ViewModel.PrintCommand}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE749;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem Text="Print Preview" 
+                                          Command="{x:Bind ViewModel.PrintPreviewCommand}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE8A5;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
                 <Button Content="Back" 
                         Command="{x:Bind ViewModel.NavigateBackCommand}" />
             </StackPanel>
+
+            <!-- Status Message -->
+            <InfoBar x:Name="StatusInfoBar"
+                     IsOpen="{x:Bind ViewModel.HasStatusMessage, Mode=OneWay}"
+                     Message="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
+                     Severity="Success"
+                     Margin="0,12,0,0" />
 
             <!-- Debug Toggle (only functional in Debug builds) -->
             <Border x:Name="DebugSection" 
