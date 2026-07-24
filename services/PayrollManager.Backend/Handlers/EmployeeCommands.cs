@@ -4,6 +4,7 @@ using PayrollManager.Backend.Rpc;
 using PayrollManager.Backend.Validation;
 using PayrollManager.Domain.Data;
 using PayrollManager.Domain.Models;
+using PayrollManager.Domain.Services.Security;
 
 namespace PayrollManager.Backend.Handlers;
 
@@ -13,10 +14,12 @@ namespace PayrollManager.Backend.Handlers;
 public sealed class EmployeeCommands
 {
     private readonly Func<AppDbContext> _contextFactory;
+    private readonly ISsnProtector _ssnProtector;
 
-    public EmployeeCommands(Func<AppDbContext> contextFactory)
+    public EmployeeCommands(Func<AppDbContext> contextFactory, ISsnProtector? ssnProtector = null)
     {
         _contextFactory = contextFactory;
+        _ssnProtector = ssnProtector ?? new DpapiSsnProtector();
     }
 
     public void RegisterOn(CommandDispatcher dispatcher)
@@ -163,7 +166,7 @@ public sealed class EmployeeCommands
             ? $"hourly {e.HourlyRate:F2}, 401k {e.PreTax401kPercent:F2}%, health {e.HealthInsurancePerPeriod:F2}"
             : $"salary {e.AnnualSalary:F2}, 401k {e.PreTax401kPercent:F2}%, health {e.HealthInsurancePerPeriod:F2}";
 
-    private static void Apply(EmployeeInput input, Employee employee)
+    private void Apply(EmployeeInput input, Employee employee)
     {
         employee.FirstName = input.FirstName.Trim();
         employee.LastName = input.LastName.Trim();
@@ -184,6 +187,21 @@ public sealed class EmployeeCommands
         employee.HireDate = input.HireDate;
         employee.TerminationDate = input.TerminationDate;
 
+        employee.StreetAddress = Clean(input.StreetAddress);
+        employee.City = Clean(input.City);
+        employee.State = Clean(input.State);
+        employee.PostalCode = Clean(input.PostalCode);
+
+        // SSN is write-only: a supplied value replaces what's on file; a blank leaves it
+        // unchanged (so editing an employee without re-typing the SSN keeps the stored one).
+        // The plaintext SSN never leaves this method - only the ciphertext and last-4 persist.
+        if (!string.IsNullOrWhiteSpace(input.Ssn))
+        {
+            var protectedSsn = _ssnProtector.Protect(input.Ssn);
+            employee.SsnEncrypted = protectedSsn.Encrypted;
+            employee.SsnLast4 = protectedSsn.Last4;
+        }
+
         employee.W4OnFile = input.W4OnFile;
         employee.FilingStatus = input.FilingStatus;
         employee.W4MultipleJobsChecked = input.W4MultipleJobsChecked;
@@ -195,6 +213,9 @@ public sealed class EmployeeCommands
         employee.IlBasicAllowances = input.IlBasicAllowances;
         employee.IlAdditionalAllowances = input.IlAdditionalAllowances;
     }
+
+    private static string? Clean(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 }
 
 public static class BackendInfo

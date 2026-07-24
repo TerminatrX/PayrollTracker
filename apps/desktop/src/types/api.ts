@@ -41,6 +41,14 @@ export interface Employee {
   hireDate?: string | null;
   terminationDate?: string | null;
 
+  streetAddress?: string | null;
+  city?: string | null;
+  state?: string | null;
+  postalCode?: string | null;
+  /** Last four digits only; the full SSN is never sent to the frontend. */
+  ssnLast4?: string | null;
+  ssnOnFile: boolean;
+
   w4OnFile: boolean;
   filingStatus: FilingStatus;
   w4MultipleJobsChecked: boolean;
@@ -69,6 +77,13 @@ export interface EmployeeInput {
   department?: string | null;
   hireDate?: string | null;
   terminationDate?: string | null;
+
+  streetAddress?: string | null;
+  city?: string | null;
+  state?: string | null;
+  postalCode?: string | null;
+  /** Write-only full SSN; sent only when set/changed, never returned. Blank = leave unchanged. */
+  ssn?: string | null;
 
   w4OnFile: boolean;
   filingStatus: FilingStatus;
@@ -284,6 +299,63 @@ export interface AuditEntry {
   newValue?: string | null;
   performedBy?: string | null;
   notes?: string | null;
+}
+
+export interface PayStubEarning {
+  description: string;
+  hours: number;
+  rate: number;
+  amount: number;
+}
+
+export interface PayStubDeduction {
+  description: string;
+  amount: number;
+  isPreTax: boolean;
+}
+
+export interface PayStubTax {
+  label: string;
+  current: number;
+  ytd: number;
+}
+
+export interface PayStubStatement {
+  payStubId: number;
+  employeeId: number;
+  employeeName: string;
+  employeeCode: string;
+  jobTitle?: string | null;
+  department?: string | null;
+  maskedSsn?: string | null;
+  addressLine1?: string | null;
+  addressLine2?: string | null;
+
+  companyName: string;
+  companyAddress?: string | null;
+  companyTaxId?: string | null;
+
+  periodStart: string;
+  periodEnd: string;
+  payDate: string;
+  paySchedule: string;
+  checkNumber: string;
+
+  earnings: PayStubEarning[];
+  deductions: PayStubDeduction[];
+  taxes: PayStubTax[];
+
+  grossPay: number;
+  preTaxDeductions: number;
+  totalTaxes: number;
+  postTaxDeductions: number;
+  netPay: number;
+
+  ytdGross: number;
+  ytdPreTaxDeductions: number;
+  ytdTotalTaxes: number;
+  ytdPostTaxDeductions: number;
+  ytdNet: number;
 }
 
 export interface HealthResponse {

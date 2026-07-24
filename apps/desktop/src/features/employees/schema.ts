@@ -52,6 +52,20 @@ export const employeeFormSchema = z
 
     ilBasicAllowances: z.coerce.number().int().min(0, "Cannot be negative."),
     ilAdditionalAllowances: z.coerce.number().int().min(0, "Cannot be negative."),
+
+    streetAddress: z.string().trim().max(200).optional().or(z.literal("")),
+    city: z.string().trim().max(100).optional().or(z.literal("")),
+    state: z.string().trim().max(2, "Two-letter code (e.g. IL).").optional().or(z.literal("")),
+    postalCode: z.string().trim().max(10).optional().or(z.literal("")),
+
+    // Write-only. Blank leaves any existing SSN on file. Accept 9 digits with or without dashes.
+    ssn: z
+      .string()
+      .optional()
+      .or(z.literal(""))
+      .refine((v) => !v || /^\d{9}$/.test(v.replace(/[\s-]/g, "")), {
+        message: "SSN must be nine digits (e.g. 123-45-6789).",
+      }),
   })
   // Compensation must match pay type, or a pay run silently computes zero gross.
   .refine((v) => !v.isHourly || v.hourlyRate > 0, {
@@ -112,4 +126,9 @@ export const EMPTY_EMPLOYEE_FORM: EmployeeFormInput = {
   w4ExtraWithholding: 0,
   ilBasicAllowances: 0,
   ilAdditionalAllowances: 0,
+  streetAddress: "",
+  city: "",
+  state: "",
+  postalCode: "",
+  ssn: "",
 };

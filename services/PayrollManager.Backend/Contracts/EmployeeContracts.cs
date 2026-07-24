@@ -28,6 +28,17 @@ public sealed record EmployeeDto
     public DateTime? HireDate { get; init; }
     public DateTime? TerminationDate { get; init; }
 
+    public string? StreetAddress { get; init; }
+    public string? City { get; init; }
+    public string? State { get; init; }
+    public string? PostalCode { get; init; }
+
+    /// <summary>Last four digits only, for masked display. The full SSN is never sent.</summary>
+    public string? SsnLast4 { get; init; }
+
+    /// <summary>True when an SSN is on file, so the UI can show it as recorded.</summary>
+    public bool SsnOnFile { get; init; }
+
     public bool W4OnFile { get; init; }
     public FilingStatus FilingStatus { get; init; }
     public bool W4MultipleJobsChecked { get; init; }
@@ -58,6 +69,12 @@ public sealed record EmployeeDto
         Department = e.Department,
         HireDate = e.HireDate,
         TerminationDate = e.TerminationDate,
+        StreetAddress = e.StreetAddress,
+        City = e.City,
+        State = e.State,
+        PostalCode = e.PostalCode,
+        SsnLast4 = e.SsnLast4,
+        SsnOnFile = e.HasSsn,
         W4OnFile = e.W4OnFile,
         FilingStatus = e.FilingStatus,
         W4MultipleJobsChecked = e.W4MultipleJobsChecked,
@@ -87,6 +104,17 @@ public sealed record EmployeeInput
     public string? Department { get; init; }
     public DateTime? HireDate { get; init; }
     public DateTime? TerminationDate { get; init; }
+
+    public string? StreetAddress { get; init; }
+    public string? City { get; init; }
+    public string? State { get; init; }
+    public string? PostalCode { get; init; }
+
+    /// <summary>
+    /// WRITE-ONLY full SSN. Sent only when the operator enters/changes it; the response never
+    /// echoes it back (only <see cref="EmployeeDto.SsnLast4"/>). Blank means "leave unchanged".
+    /// </summary>
+    public string? Ssn { get; init; }
 
     public bool W4OnFile { get; init; }
     public FilingStatus FilingStatus { get; init; } = FilingStatus.Single;

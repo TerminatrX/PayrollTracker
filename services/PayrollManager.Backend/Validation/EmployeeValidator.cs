@@ -127,6 +127,26 @@ public static class EmployeeValidator
             Add(nameof(input.TerminationDate), "Termination date cannot precede the hire date.");
         }
 
+        // SSN is write-only and optional. Validate format only when one is supplied.
+        if (!string.IsNullOrWhiteSpace(input.Ssn))
+        {
+            var digits = new string(input.Ssn.Where(char.IsDigit).ToArray());
+            if (digits.Length != 9)
+            {
+                Add(nameof(input.Ssn), "SSN must be nine digits (e.g. 123-45-6789).");
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(input.State) && input.State.Trim().Length > 2)
+        {
+            Add(nameof(input.State), "Use the two-letter state code (e.g. IL).");
+        }
+
+        if (!string.IsNullOrWhiteSpace(input.PostalCode) && input.PostalCode.Trim().Length > 10)
+        {
+            Add(nameof(input.PostalCode), "ZIP code cannot exceed 10 characters.");
+        }
+
         // An active employee with a past termination date would be offered up for pay runs.
         if (input.IsActive && input.TerminationDate is { } termination && termination < DateTime.Today)
         {

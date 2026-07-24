@@ -111,3 +111,41 @@
     box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 20%, transparent);
   }
 }
+
+/*
+  Printing: show only the pay stub statement (.print-area), on white paper, with the app
+  chrome (nav rail, toolbars marked .no-print) hidden. window.print() then produces just the
+  statement.
+*/
+@media print {
+  body {
+    overflow: visible;
+    background: #ffffff;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  /* Collapse the app shell so the statement prints from the top of the page. */
+  body * {
+    visibility: hidden;
+  }
+
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+
+  .print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0.5in;
+    box-shadow: none;
+    border-radius: 0;
+  }
+}

@@ -10,6 +10,7 @@ import { PayRunDetail } from "@/features/pay-runs/PayRunDetail";
 import { DashboardPage } from "@/features/dashboard/DashboardPage";
 import { ReportsPage } from "@/features/reports/ReportsPage";
 import { AuditLogPage } from "@/features/audit/AuditLogPage";
+import { PayStubPage } from "@/features/pay-stubs/PayStubPage";
 import {
   EmployeeCompensationTab,
   EmployeeOverviewTab,
@@ -53,6 +54,7 @@ export const router = createBrowserRouter([
           { path: ":payRunId", element: <PayRunDetail /> },
         ],
       },
+      { path: "pay-stubs/:payStubId", element: <PayStubPage /> },
       { path: "reports", element: <ReportsPage /> },
       { path: "settings", element: <SettingsPage /> },
       { path: "audit", element: <AuditLogPage /> },

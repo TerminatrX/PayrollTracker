@@ -92,16 +92,30 @@ export function PayRunDetail() {
                   </tr>
                 </thead>
                 <tbody>
-                  {stubs.map((s) => (
-                    <tr key={s.payStubId} className="border-b border-outline-variant/60">
-                      <td className="px-3 py-2.5 text-[13px] text-on-surface">{s.employeeName}</td>
-                      <td className="tabular px-3 py-2.5 text-right text-[13px] text-on-surface-variant">{s.hoursWorked || "—"}</td>
-                      <td className="tabular px-3 py-2.5 text-right text-[13px] text-on-surface">{formatCurrency(s.grossPay)}</td>
-                      <td className="tabular px-3 py-2.5 text-right text-[13px] text-on-surface-variant">{formatCurrency(s.totalTaxes)}</td>
-                      <td className="tabular px-3 py-2.5 text-right text-[13px] font-medium text-primary">{formatCurrency(s.netPay)}</td>
-                      <td className="tabular px-3 py-2.5 text-right text-[13px] text-on-surface-variant">{formatCurrency(s.employerTaxes)}</td>
-                    </tr>
-                  ))}
+                  {stubs.map((s) => {
+                    // Only a posted run yields a viewable pay stub.
+                    const clickable = summary.status === "Posted";
+                    return (
+                      <tr
+                        key={s.payStubId}
+                        onClick={clickable ? () => navigate(`/pay-stubs/${s.payStubId}`) : undefined}
+                        className={cx(
+                          "border-b border-outline-variant/60",
+                          clickable && "cursor-pointer transition-colors hover:bg-surface-high/40",
+                        )}
+                      >
+                        <td className="px-3 py-2.5 text-[13px] text-on-surface">
+                          {s.employeeName}
+                          {clickable && <span className="ml-2 text-[11px] text-primary">view stub →</span>}
+                        </td>
+                        <td className="tabular px-3 py-2.5 text-right text-[13px] text-on-surface-variant">{s.hoursWorked || "—"}</td>
+                        <td className="tabular px-3 py-2.5 text-right text-[13px] text-on-surface">{formatCurrency(s.grossPay)}</td>
+                        <td className="tabular px-3 py-2.5 text-right text-[13px] text-on-surface-variant">{formatCurrency(s.totalTaxes)}</td>
+                        <td className="tabular px-3 py-2.5 text-right text-[13px] font-medium text-primary">{formatCurrency(s.netPay)}</td>
+                        <td className="tabular px-3 py-2.5 text-right text-[13px] text-on-surface-variant">{formatCurrency(s.employerTaxes)}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
