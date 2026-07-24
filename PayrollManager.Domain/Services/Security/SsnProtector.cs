@@ -40,7 +40,9 @@ public interface ISsnProtector
 ///     full SSN is re-enterable reference data. W-2 generation, which would need the full SSN,
 ///     is out of scope.
 ///   - Windows-only. This app targets Windows (WinUI heritage, WebView2, win-x64 publish);
-///     ProtectedData throws on other platforms.
+///     ProtectedData throws on other platforms. The DPAPI calls below suppress the
+///     platform-compatibility analyzer (CA1416) locally, since this is a deliberate,
+///     documented Windows-only implementation.
 /// </summary>
 public sealed class DpapiSsnProtector : ISsnProtector
 {
@@ -59,16 +61,20 @@ public sealed class DpapiSsnProtector : ISsnProtector
             throw new ArgumentException("An SSN must contain exactly nine digits.", nameof(rawSsn));
         }
 
+#pragma warning disable CA1416 // DPAPI is Windows-only by design; see the class summary.
         var cipher = ProtectedData.Protect(
             Encoding.UTF8.GetBytes(digits), Entropy, DataProtectionScope.CurrentUser);
+#pragma warning restore CA1416
 
         return new ProtectedSsn(Convert.ToBase64String(cipher), digits[^4..]);
     }
 
     public string Unprotect(string encrypted)
     {
+#pragma warning disable CA1416 // DPAPI is Windows-only by design; see the class summary.
         var plain = ProtectedData.Unprotect(
             Convert.FromBase64String(encrypted), Entropy, DataProtectionScope.CurrentUser);
+#pragma warning restore CA1416
 
         return Encoding.UTF8.GetString(plain);
     }
